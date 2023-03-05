@@ -10,7 +10,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.sinq.sinqadmin.presentation.ui.theme.primaryColor
+import com.lgn.presentation.ui.theme.primaryColor
 import com.lgn.presentation.ui.utils.Constants
 
 @Composable

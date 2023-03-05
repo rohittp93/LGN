@@ -26,7 +26,7 @@ fun SplashScreen(viewModel: SplashViewModel = hiltViewModel(), navController: Na
     }
     LaunchedEffect(key1 = true) {
         scale.animateTo(
-            targetValue = 0.5f,
+            targetValue = 0.8f,
             animationSpec = tween(
                 durationMillis = 800,
                 easing = {

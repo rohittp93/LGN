@@ -5,9 +5,8 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import com.sinq.sinqadmin.presentation.ui.theme.borderColorGray
-import com.sinq.sinqadmin.presentation.ui.theme.primaryColor
-import com.sinq.sinqadmin.presentation.ui.theme.textColorGray
+import com.lgn.presentation.ui.theme.primaryColor
+import com.lgn.presentation.ui.theme.textColorGray
 
 @Composable
 fun SimpleAlertDialog(
