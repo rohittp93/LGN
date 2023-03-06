@@ -1,16 +1,14 @@
-package com.lgn.sinqadmin.presentation.navigations.graphs
+package com.lgn.presentation.navigations.graphs
 
-import android.util.Log
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.lgn.presentation.Screen
-import com.lgn.presentation.navigations.graphs.authNavGraph
+import com.lgn.presentation.dashboard.myteam.MyTeamScreen
 import com.lgn.presentation.navigations.Graph
 import com.lgn.presentation.splash.SplashScreen
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -25,20 +23,20 @@ fun DashNavGraph(navController: NavHostController, paddingValues: PaddingValues)
         startDestination = Screen.HomeScreen.route
     ) {
         composable(route = Screen.HomeScreen.route) {
-            //HomeScreen(navController = navController)
+            MyTeamScreen(navController = navController)
         }
 
         composable(route = Screen.EventDetailScreen.route) {
             //EventDetailScreen(navController = navController)
         }
         composable(route = Screen.VenueScreen.route) {
-            //VenueScreen(navController = navController)
+            //MetricsScreen(navController = navController)
         }
         composable(route = Graph.ROOT) {
             SplashScreen(navController = navController)
         }
         composable(route = Screen.ProfileScreen.route) {
-            //ProfileScreen(navController = navController)
+            //MyProfileScreen(navController = navController)
         }
         detailsNavGraph(navController = navController)
         bookingsNavGraph(navController = navController)

@@ -2,10 +2,7 @@ package com.lgn.di
 
 import com.lgn.data.RemoteRepositoryImpl
 import com.lgn.domain.repository.Repository
-import com.lgn.domain.usecase.CheckAuthStatus
-import com.lgn.domain.usecase.LoginUser
-import com.lgn.domain.usecase.LogoutUser
-import com.lgn.domain.usecase.UseCases
+import com.lgn.domain.usecase.*
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -48,6 +45,9 @@ object AppModule {
     fun provideUseCases(repository: Repository) = UseCases(
         loginUser = LoginUser(repository),
         logoutUser = LogoutUser(repository),
-        checkAuthStatus = CheckAuthStatus(repository)
+        validateUserCode = ValidateUserCode(),
+        checkAuthStatus = CheckAuthStatus(repository),
+        validatePassword = ValidatePassword(),
+        fetchTeam = FetchTeam(repository)
     )
 }

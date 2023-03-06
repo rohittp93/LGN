@@ -3,6 +3,7 @@ package com.lgn.domain.repository
 import android.content.Context
 import com.lgn.domain.model.AuthResult
 import com.lgn.domain.model.Response
+import com.lgn.domain.model.TeamData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import java.io.File
@@ -19,6 +20,8 @@ interface Repository {
     fun logoutUser(context: Context): Flow<Response<Boolean>>
 
     fun isUserLoggedIn(): Boolean
+
+    fun fetchTeam(context: Context): Flow<Response<TeamData>>
 
     /*suspend fun firebaseRegisterWithEmailAndPassword(
         email: String,

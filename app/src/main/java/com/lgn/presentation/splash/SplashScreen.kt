@@ -17,6 +17,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.lgn.R
+import com.lgn.presentation.Screen
+import com.lgn.presentation.navigations.Graph
 import kotlinx.coroutines.delay
 
 @Composable
@@ -33,8 +35,8 @@ fun SplashScreen(viewModel: SplashViewModel = hiltViewModel(), navController: Na
                     OvershootInterpolator(5f).getInterpolation(it)
                 })
         )
-        //delay(3000L)
-        /*if (viewModel.isUserLoggedIn()) {
+        delay(3000L)
+        if (viewModel.isUserLoggedIn()) {
             navController.navigate(Graph.DASHBOARD) {
                 launchSingleTop = true
                 popUpTo(Screen.SplashScreen.route) {
@@ -48,7 +50,7 @@ fun SplashScreen(viewModel: SplashViewModel = hiltViewModel(), navController: Na
                     inclusive = true
                 }
             }
-        }*/
+        }
     }
 
     Box(

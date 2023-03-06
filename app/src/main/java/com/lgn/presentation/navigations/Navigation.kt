@@ -5,6 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.lgn.presentation.Screen
+import com.lgn.presentation.dashboard.DashboardScreen
 import com.lgn.presentation.navigations.graphs.authNavGraph
 import com.lgn.presentation.splash.SplashScreen
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -21,6 +22,7 @@ object Graph {
     const val SCANNER = "scanner_graph"
 }
 
+@OptIn(InternalCoroutinesApi::class, ExperimentalCoroutinesApi::class)
 @Composable
 fun Navigation(navController: NavHostController) {
     NavHost(
@@ -32,8 +34,8 @@ fun Navigation(navController: NavHostController) {
             SplashScreen(navController = navController)
         }
         authNavGraph(navController = navController)
-        /* composable(route = Graph.DASHBOARD) {
+         composable(route = Graph.DASHBOARD) {
             DashboardScreen()
-        }*/
+        }
     }
 }
