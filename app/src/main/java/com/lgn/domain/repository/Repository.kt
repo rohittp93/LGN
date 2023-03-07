@@ -19,7 +19,7 @@ interface Repository {
 
     fun logoutUser(context: Context): Flow<Response<Boolean>>
 
-    fun isUserLoggedIn(): Boolean
+    fun isUserLoggedIn(context: Context): Boolean
 
     fun fetchTeam(context: Context): Flow<Response<TeamData>>
 

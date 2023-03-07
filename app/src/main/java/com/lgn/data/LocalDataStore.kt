@@ -1,17 +1,17 @@
-package com.sinq.sinqadmin.data
+package com.lgn.data
 
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.*
 import androidx.datastore.preferences.preferencesDataStore
-import com.sinq.sinqadmin.core.Constants.PREFERENCES_ADMIN
+import com.lgn.core.Constants.PREFERENCES_LGN
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 class LocalDataStore(private val context: Context) {
     companion object {
         private val Context.prefsDataStore: DataStore<Preferences>  by preferencesDataStore(
-            name = PREFERENCES_ADMIN
+            name = PREFERENCES_LGN
         )
     }
 

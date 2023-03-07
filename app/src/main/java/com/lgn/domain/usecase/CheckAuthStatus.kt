@@ -1,7 +1,8 @@
 package com.lgn.domain.usecase
 
+import android.content.Context
 import com.lgn.domain.repository.Repository
 
 class CheckAuthStatus(private val repository: Repository) {
-    fun execute(): Boolean = repository.isUserLoggedIn()
+    fun execute(appContext: Context): Boolean = repository.isUserLoggedIn(context = appContext)
 }

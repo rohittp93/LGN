@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -36,7 +37,7 @@ fun SplashScreen(viewModel: SplashViewModel = hiltViewModel(), navController: Na
                 })
         )
         delay(3000L)
-        if (viewModel.isUserLoggedIn()) {
+        if (viewModel.isUserLoggedIn) {
             navController.navigate(Graph.DASHBOARD) {
                 launchSingleTop = true
                 popUpTo(Screen.SplashScreen.route) {

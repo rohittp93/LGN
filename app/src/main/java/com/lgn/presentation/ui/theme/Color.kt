@@ -9,6 +9,7 @@ val green = Color(0xFF15B079)
 val orange = Color(0xFFFF6C00)
 
 val primaryColor = Color(0xFF066F4A)
+val white = Color(0xFFFFFFFF)
 val textColorGray = Color(0xFF222222)
 val borderColorGray = Color(0xFF8D8D8D)
 val hintColorGray = Color(0xFFA0A0A0)

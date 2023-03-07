@@ -1,22 +1,16 @@
 package com.lgn.data
 
 import android.content.Context
-import android.net.Uri
+import com.lgn.core.Constants.KEY_IS_LOGGED
 import com.lgn.domain.model.*
 import com.lgn.domain.repository.Repository
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.tasks.await
-import java.io.File
 import java.lang.Exception
-import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -52,7 +46,9 @@ class RemoteRepositoryImpl @Inject constructor() : Repository {
                     status = 1
                 )
             )
-            delay(5000L)
+            delay(3000L)
+            val dataStore = LocalDataStore(context)
+            dataStore.saveBooleanValue(KEY_IS_LOGGED, true)
             emit(Response.Success(mockAuthResult))
         } catch (e: Exception) {
             emit(Response.Error(e.message ?: e.toString()))
@@ -66,14 +62,16 @@ class RemoteRepositoryImpl @Inject constructor() : Repository {
             //val authResult = apiService.fetchTeam(userCode, password)
 
             val studentList = mutableListOf<StudentData>()
-            studentList.add(StudentData(
-                id = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
-                userName = "Nikita",
-                userEmail = "example@gmail.com",
-                userPhone = "123456789",
-                role = "Trainer",
-                batch = "null"
-            ))
+            studentList.add(
+                StudentData(
+                    id = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
+                    userName = "Nikita",
+                    userEmail = "example@gmail.com",
+                    userPhone = "123456789",
+                    role = "Trainer",
+                    batch = "null"
+                )
+            )
             val mockTeamResult = TeamData(
                 id = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
                 userName = "Nikita",
@@ -101,7 +99,8 @@ class RemoteRepositoryImpl @Inject constructor() : Repository {
         TODO("Not yet implemented")
     }
 
-    override fun isUserLoggedIn(): Boolean {
-        return false
+    override fun isUserLoggedIn(context: Context): Boolean {
+        val dataStore = LocalDataStore(context)
+        return runBlocking { dataStore.getBooleanValue(KEY_IS_LOGGED).first() } ?: false
     }
 }
