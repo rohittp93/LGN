@@ -8,9 +8,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.lgn.presentation.Screen
+import com.lgn.presentation.dashboard.metrics.MetricScreen
 import com.lgn.presentation.dashboard.myteam.MyTeamScreen
 import com.lgn.presentation.navigations.Graph
 import com.lgn.presentation.splash.SplashScreen
+import com.lgn.presentation.dashboard.myprofile.ProfileScreen
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
 
@@ -25,18 +27,17 @@ fun DashNavGraph(navController: NavHostController, paddingValues: PaddingValues)
         composable(route = Screen.HomeScreen.route) {
             MyTeamScreen(navController = navController)
         }
-
         composable(route = Screen.EventDetailScreen.route) {
             //EventDetailScreen(navController = navController)
         }
-        composable(route = Screen.VenueScreen.route) {
-            //MetricsScreen(navController = navController)
+        composable(route = Screen.MetricsScreen.route) {
+            MetricScreen(navController = navController)
         }
         composable(route = Graph.ROOT) {
             SplashScreen(navController = navController)
         }
         composable(route = Screen.ProfileScreen.route) {
-            //MyProfileScreen(navController = navController)
+            ProfileScreen(navController = navController)
         }
         detailsNavGraph(navController = navController)
         bookingsNavGraph(navController = navController)

@@ -1,4 +1,4 @@
-package com.lgn.presentation.dashboard.myteam
+package com.lgn.presentation.dashboard.metrics
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -11,10 +11,8 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
@@ -27,7 +25,10 @@ import androidx.navigation.NavController
 import com.lgn.R
 import com.lgn.domain.model.Response
 import com.lgn.presentation.Screen
-import com.lgn.presentation.ui.theme.*
+import com.lgn.presentation.ui.theme.backgroundGray
+import com.lgn.presentation.ui.theme.green
+import com.lgn.presentation.ui.theme.hintColorGray
+import com.lgn.presentation.ui.theme.textColorGray
 import com.lgn.presentation.ui.utils.CustomProgressBar
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
@@ -36,7 +37,7 @@ import kotlinx.coroutines.InternalCoroutinesApi
 @Composable
 @InternalCoroutinesApi
 @ExperimentalCoroutinesApi
-fun MyTeamScreen(viewModel: MyTeamViewModel = hiltViewModel(), navController: NavController) {
+fun MetricScreen(viewModel: MetricsViewModel = hiltViewModel(), navController: NavController) {
     val focusManager = LocalFocusManager.current
     val context = LocalContext.current
     val imageRes = painterResource(id = R.drawable.lgn_logo)
@@ -70,17 +71,9 @@ fun MyTeamScreen(viewModel: MyTeamViewModel = hiltViewModel(), navController: Na
                             contentDescription = "App Logo",
                             modifier = Modifier.width(130.dp)
                         )
-                        Image(
-                            painterResource(id = R.drawable.filter),
-                            contentDescription = "App Logo",
-                            colorFilter = ColorFilter.tint(
-                                green
-                            ),
-                            modifier = Modifier.height(26.dp).padding(end = 16.dp)
-                        )
                     }
                     Text(
-                        text = "My Team",
+                        text = "Metrics",
                         style = TextStyle(
                             fontWeight = FontWeight.Bold,
                         ),

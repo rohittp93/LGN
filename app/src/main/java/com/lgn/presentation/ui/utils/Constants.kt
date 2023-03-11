@@ -10,18 +10,18 @@ object Constants {
 
     val BottomNavItems = listOf(
         BottomNavItem(
-            label = "My Team",
+            label = "MY TEAM",
             drawable = R.drawable.people,
             route = Screen.HomeScreen.route
         ),
         BottomNavItem(
-            label = "Venue",
-            drawable = R.drawable.people,
-            route = Screen.VenueScreen.route
+            label = "METRICS",
+            drawable = R.drawable.document,
+            route = Screen.MetricsScreen.route
         ),
         BottomNavItem(
-            label = "Profile",
-            drawable = R.drawable.people,
+            label = "MY PROFILE",
+            drawable = R.drawable.account,
             route = Screen.ProfileScreen.route
         )
     )
