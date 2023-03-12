@@ -18,7 +18,6 @@ import javax.inject.Inject
 class MetricsViewModel @Inject constructor(private val useCase: UseCases, application: Application) :
     AndroidViewModel(application) {
     private val _teamState = mutableStateOf<Response<TeamData>>(Response.Loading)
-    val teamState: State<Response<TeamData>> = _teamState
 
     private val _isStudentAddedState = mutableStateOf<Response<Void?>>(Response.Success(null))
     val isStudentAddedState: State<Response<Void?>> = _isStudentAddedState
