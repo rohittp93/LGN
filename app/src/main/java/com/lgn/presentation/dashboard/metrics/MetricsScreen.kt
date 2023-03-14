@@ -1,5 +1,8 @@
 package com.lgn.presentation.dashboard.metrics
 
+import android.os.Build
+import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -24,6 +27,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.lgn.R
+import com.lgn.presentation.Screen
 import com.lgn.presentation.ui.theme.*
 import com.lgn.presentation.ui.utils.DatePickerview
 import com.lgn.presentation.ui.utils.YearPickerDialog
@@ -31,6 +35,8 @@ import com.lgn.presentation.ui.utils.convertDateToString
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
 import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 
@@ -126,6 +132,21 @@ fun MetricScreen(viewModel: MetricsViewModel = hiltViewModel(), navController: N
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier
                             .background(color = Color.White)
+                            .clickable {
+
+                                val month = String.format("%02d", months.indexOf(item) + 1)
+                                val date = SimpleDateFormat("MM-yyyy").parse("$month-$yearPicked")
+                                val dateFormated =
+                                    SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").format(date)
+                                Log.d("dateFormated", dateFormated)
+
+
+                                // TODO: Change click to
+                                navController.currentBackStackEntry?.savedStateHandle?.set(
+                                    "monthYear", dateFormated
+                                )
+                                navController.navigate(Screen.AllStudentMetricScreen.route)
+                            }
                             .fillMaxWidth()
                             .padding(20.dp)
                     ) {
@@ -149,8 +170,6 @@ fun MetricScreen(viewModel: MetricsViewModel = hiltViewModel(), navController: N
                             fontSize = 18.sp
                         )
                     }
-
-
                 }
             }
         }

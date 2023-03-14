@@ -9,6 +9,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.lgn.presentation.Screen
 import com.lgn.presentation.dashboard.metrics.MetricScreen
+import com.lgn.presentation.dashboard.metrics.allmetrics.AllMetricsScreen
 import com.lgn.presentation.dashboard.myteam.MyTeamScreen
 import com.lgn.presentation.navigations.Graph
 import com.lgn.presentation.splash.SplashScreen
@@ -41,7 +42,7 @@ fun DashNavGraph(navController: NavHostController, paddingValues: PaddingValues)
         }
         detailsNavGraph(navController = navController)
         bookingsNavGraph(navController = navController)
-        tablesNavGraph(navController = navController)
+        metricsNavGraph(navController = navController)
         eventSelectionNavGraph(navController = navController)
         authNavGraph(navController = navController)
     }
@@ -79,17 +80,17 @@ fun NavGraphBuilder.bookingsNavGraph(navController: NavHostController) {
 }
 
 @OptIn(InternalCoroutinesApi::class, ExperimentalCoroutinesApi::class)
-fun NavGraphBuilder.tablesNavGraph(navController: NavHostController) {
+fun NavGraphBuilder.metricsNavGraph(navController: NavHostController) {
     navigation(
         route = Graph.TABLES,
-        startDestination = Screen.AllTablesScreen.route
+        startDestination = Screen.AllStudentMetricScreen.route
     ) {
-        composable(route = Screen.AllTablesScreen.route) {
-            //AllTablesScreen(navController = navController)
+        composable(route = Screen.AllStudentMetricScreen.route) {
+            AllMetricsScreen(navController = navController)
         }
-        composable(
+       /* composable(
             route = Screen.AddTableScreen.route,
-        ) {
+        ) {*/
             //var result = TableData()
             var isUpdating = false
             /*LaunchedEffect(key1 = it) {
@@ -100,7 +101,7 @@ fun NavGraphBuilder.tablesNavGraph(navController: NavHostController) {
             }*/
 
             //AddTableScreen(navController = navController)
-        }
+        //}
     }
 }
 

@@ -7,4 +7,5 @@ data class UseCases(
     val validateUserCode: ValidateUserCode,
     val validatePassword: ValidatePassword,
     val fetchTeam: FetchTeam,
+    val fetchStudents: FetchStudents
     )

@@ -4,9 +4,11 @@ import android.content.Context
 import com.lgn.domain.model.AuthResult
 import com.lgn.domain.model.Response
 import com.lgn.domain.model.TeamData
+import com.lgn.domain.model.Users
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import java.io.File
+import java.time.Year
 
 interface Repository {
 
@@ -22,6 +24,8 @@ interface Repository {
     fun isUserLoggedIn(context: Context): Boolean
 
     fun fetchTeam(context: Context): Flow<Response<TeamData>>
+
+    fun fetchStudents(context: Context, monthYear: String): Flow<Response<List<Users>>>
 
     /*suspend fun firebaseRegisterWithEmailAndPassword(
         email: String,

@@ -8,6 +8,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+
 //TODO: Add retrofit related dependencies
 @Module
 @ExperimentalCoroutinesApi
@@ -25,18 +26,18 @@ object AppModule {
     @Provides
     fun provideAuthAdminQuery(userReference: CollectionReference) = userReference.orderBy(EMAIL)*/
 
-   /* @Provides
-    fun provideFirebaseAuth() = FirebaseAuth.getInstance()
+    /* @Provides
+     fun provideFirebaseAuth() = FirebaseAuth.getInstance()
 
-    @Provides
-    fun provideFirebaseStorage() =  FirebaseStorage.getInstance()
+     @Provides
+     fun provideFirebaseStorage() =  FirebaseStorage.getInstance()
 
-    @Provides
-    fun provideUserRepository(
-        auth: FirebaseAuth,
-        fireStore: FirebaseFirestore,
-        firebaseStorage: FirebaseStorage
-    ): AuthRepository = AuthRepositoryImpl(auth, fireStore, firebaseStorage)*/
+     @Provides
+     fun provideUserRepository(
+         auth: FirebaseAuth,
+         fireStore: FirebaseFirestore,
+         firebaseStorage: FirebaseStorage
+     ): AuthRepository = AuthRepositoryImpl(auth, fireStore, firebaseStorage)*/
 
     @Provides
     fun provideRepository(): Repository = RemoteRepositoryImpl()
@@ -48,6 +49,7 @@ object AppModule {
         validateUserCode = ValidateUserCode(),
         checkAuthStatus = CheckAuthStatus(repository),
         validatePassword = ValidatePassword(),
-        fetchTeam = FetchTeam(repository)
+        fetchTeam = FetchTeam(repository),
+        fetchStudents = FetchStudents(repository)
     )
 }
