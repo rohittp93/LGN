@@ -1,15 +1,19 @@
 package com.lgn.presentation.dashboard.metrics
 
-import android.app.Activity
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
@@ -26,6 +30,7 @@ import com.lgn.presentation.ui.utils.YearPickerDialog
 import com.lgn.presentation.ui.utils.convertDateToString
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
+import java.text.SimpleDateFormat
 import java.util.*
 
 
@@ -37,12 +42,18 @@ fun MetricScreen(viewModel: MetricsViewModel = hiltViewModel(), navController: N
     val focusManager = LocalFocusManager.current
     val context = LocalContext.current
     val scrollState = rememberLazyListState()
+    val months =
+        listOf("Jan", "Feb", "March", "April", "May", "June", "July", "Aug", "Sept", "Nov", "Dec")
+
     var showCustomDialog by remember {
         mutableStateOf(false)
     }
 
+    val calendar = GregorianCalendar()
+    calendar.time = Date()
+
     var yearPicked: Int by rememberSaveable {
-        mutableStateOf(-1)
+        mutableStateOf(calendar.get(Calendar.YEAR))
     }
 
     if (showCustomDialog) {
@@ -66,8 +77,7 @@ fun MetricScreen(viewModel: MetricsViewModel = hiltViewModel(), navController: N
             verticalArrangement = Arrangement.Top,
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight()
-                .verticalScroll(rememberScrollState())
+                .wrapContentSize()
         ) {
             Surface(elevation = 9.dp, color = Color.White) {
                 Box(modifier = Modifier.height(60.dp)) {
@@ -99,10 +109,49 @@ fun MetricScreen(viewModel: MetricsViewModel = hiltViewModel(), navController: N
                 modifier = Modifier.padding(top = 16.dp)
             ) {
                 DatePickerview(
-                    label = if (yearPicked == -1) "Select Year" else yearPicked.toString(),
+                    label = "Select Year",
                     onSelectYearClicked = {
                         showCustomDialog = !showCustomDialog
                     })
+            }
+
+            Spacer(modifier = Modifier.padding(10.dp))
+
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(10.dp),
+            ) {
+                items(months) { item ->
+                    Row(
+                        horizontalArrangement = Arrangement.Start,
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .background(color = Color.White)
+                            .fillMaxWidth()
+                            .padding(20.dp)
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.task),
+                            contentDescription = null,
+                            colorFilter = ColorFilter.tint(
+                                Color.White
+                            ),
+                            modifier = Modifier
+                                .clip(CircleShape)
+                                .background(color = green)
+                                .height(50.dp)
+                                .width(50.dp)
+                                .padding(10.dp)
+                        )
+                        Text(
+                            text = "$item $yearPicked",
+                            modifier = Modifier.padding(start = 16.dp),
+                            color = textColorLightGray,
+                            fontSize = 18.sp
+                        )
+                    }
+
+
+                }
             }
         }
     }
