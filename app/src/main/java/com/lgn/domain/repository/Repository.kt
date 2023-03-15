@@ -2,12 +2,8 @@ package com.lgn.domain.repository
 
 import android.content.Context
 import com.lgn.domain.model.*
-import com.lgn.domain.usecase.UpdateStudentMetrics
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
-import java.io.File
-import java.time.Year
-import java.time.ZoneId
 
 interface Repository {
 
@@ -29,6 +25,14 @@ interface Repository {
     fun fetchStudentMetrics(context: Context, id: String): Flow<Response<StudentMerticsResponse>>
 
     fun updateStudentMetrics(context: Context, studentMetrics: StudentMerticsResponse): Flow<Response<StudentMerticsResponse>>
+
+    fun fetchStudentProfileMetrics(context: Context, userId: String, year: String): Flow<Response<StudentProfileMerticsResponse>>
+
+    fun changeToGraduate(context: Context, userId: String, batch: String): Flow<Response<UpdateStudentResponse>>
+
+    fun updateStudentStatus(context: Context, userId: String, status: Int): Flow<Response<UpdateStudentResponse>>
+
+    fun addStudent(context: Context, student: UpdateStudentResponse): Flow<Response<UpdateStudentResponse>>
 
     /*suspend fun firebaseRegisterWithEmailAndPassword(
         email: String,

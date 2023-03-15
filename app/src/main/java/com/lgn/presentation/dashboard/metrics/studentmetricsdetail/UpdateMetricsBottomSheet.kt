@@ -392,10 +392,15 @@ fun UpdateMetricsBottomSheet(
         when (viewModel.metricsUpdateState.value) {
             is Response.Loading -> {
                 canClose = false
-                CustomProgressBar()
+                Box(modifier = Modifier.fillMaxWidth().height(40.dp)) {
+                    CustomProgressBar()
+                }
             }
             is Response.Success -> {
                 canClose = true
+                LaunchedEffect(key1 = context) {
+                    onCloseClicked()
+                }
             }
             is Response.Error -> {
                 canClose = true

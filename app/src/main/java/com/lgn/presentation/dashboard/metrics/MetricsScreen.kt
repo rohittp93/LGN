@@ -1,8 +1,6 @@
 package com.lgn.presentation.dashboard.metrics
 
-import android.os.Build
 import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -31,12 +29,9 @@ import com.lgn.presentation.Screen
 import com.lgn.presentation.ui.theme.*
 import com.lgn.presentation.ui.utils.DatePickerview
 import com.lgn.presentation.ui.utils.YearPickerDialog
-import com.lgn.presentation.ui.utils.convertDateToString
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
 import java.text.SimpleDateFormat
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import java.util.*
 
 
@@ -67,7 +62,7 @@ fun MetricScreen(viewModel: MetricsViewModel = hiltViewModel(), navController: N
             showCustomDialog = !showCustomDialog
         }, onYearSelected = {
             yearPicked = it
-        })
+        }, "Select Year Of Completion")
     }
 
 

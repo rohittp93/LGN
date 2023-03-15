@@ -15,6 +15,8 @@ import com.lgn.presentation.dashboard.myteam.MyTeamScreen
 import com.lgn.presentation.navigations.Graph
 import com.lgn.presentation.splash.SplashScreen
 import com.lgn.presentation.dashboard.myprofile.ProfileScreen
+import com.lgn.presentation.dashboard.myteam.studentprofile.StudentProfileScreen
+import com.lgn.presentation.dashboard.myteam.studentprofilemetrics.StudentProfileMetricsScreen
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
 
@@ -29,8 +31,11 @@ fun DashNavGraph(navController: NavHostController, paddingValues: PaddingValues)
         composable(route = Screen.HomeScreen.route) {
             MyTeamScreen(navController = navController)
         }
-        composable(route = Screen.EventDetailScreen.route) {
-            //EventDetailScreen(navController = navController)
+        composable(route = Screen.StudentProfileScreen.route) {
+            StudentProfileScreen(navController = navController)
+        }
+        composable(route = Screen.StudentProfileMetricsScreen.route) {
+            StudentProfileMetricsScreen(navController = navController)
         }
         composable(route = Screen.MetricsScreen.route) {
             MetricScreen(navController = navController)

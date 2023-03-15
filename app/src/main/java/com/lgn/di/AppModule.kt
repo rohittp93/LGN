@@ -52,6 +52,10 @@ object AppModule {
         fetchTeam = FetchTeam(repository),
         fetchStudentMetrics = FetchStudentMetrics(repository),
         fetchStudents = FetchStudents(repository),
-        updateStudentMetrics = UpdateStudentMetrics(repository)
+        updateStudentMetrics = UpdateStudentMetrics(repository),
+        fetchStudentProfileMetrics = FetchStudentProfileMetrics(repository),
+        changeToGraduate = ChangeToGraduate(repository),
+        updateStudentStatus = UpdateStudentStatus(repository),
+        addStudent = AddStudent(repository)
     )
 }

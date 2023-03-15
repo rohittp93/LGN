@@ -1,15 +1,9 @@
 package com.lgn.data
 
-import com.lgn.domain.model.AuthResult
-import com.lgn.domain.model.StudentMerticsResponse
-import com.lgn.domain.model.UsersMetricsResponse
-import com.lgn.domain.model.TeamData
+import com.lgn.domain.model.*
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.POST
-import retrofit2.http.Path
+import retrofit2.http.*
 
 interface ApiService {
     @POST("login")
@@ -26,6 +20,15 @@ interface ApiService {
 
     @POST("metrics")
     suspend fun updateStudentMetrics(@Body studentMerticsResponse: StudentMerticsResponse): StudentMerticsResponse
+
+    @GET("metrics/user/{id}")
+    suspend fun fetchStudentProfileMetrics(@Path(value = "id", encoded = true) id: String, year: String): StudentProfileMerticsResponse
+
+    @PUT("user/{id}")
+    suspend fun changeToGraduate(@Path(value = "id", encoded = true) id: String, @Body changeToGraduate: UpdateStudentResponse): UpdateStudentResponse
+
+    @PUT("user")
+    suspend fun addStudent(@Body student: UpdateStudentResponse): UpdateStudentResponse
 
     companion object {
         var apiService: ApiService? = null

@@ -19,7 +19,12 @@ import com.lgn.presentation.ui.theme.textColorLightGray
 
 
 @Composable
-fun YearPickerDialog(onDismiss: () -> Unit, onYearSelected: (Int) -> Unit) {
+fun YearPickerDialog(
+    onDismiss: () -> Unit,
+    onYearSelected: (Int) -> Unit,
+    title: String = "Select Year",
+    buttonText: String = "Select"
+) {
     var yearState by remember { mutableStateOf(2023) }
 
     Dialog(
@@ -45,13 +50,13 @@ fun YearPickerDialog(onDismiss: () -> Unit, onYearSelected: (Int) -> Unit) {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "Select Year",
+                    text = title,
                     style = TextStyle(
                         fontWeight = FontWeight.Normal,
                     ),
-                    modifier = Modifier.padding(bottom = 16.dp, top = 8.dp),
-                    fontSize = 24.sp,
-                    color = textColorLightGray
+                    modifier = Modifier.padding(bottom = 16.dp, top = 16.dp),
+                    fontSize = 18.sp,
+                    color = Color.Black
                 )
 
                 NumberPicker(
@@ -66,7 +71,7 @@ fun YearPickerDialog(onDismiss: () -> Unit, onYearSelected: (Int) -> Unit) {
                     )
                 )
 
-                Row(Modifier.padding(top = 10.dp)) {
+                Row(Modifier.padding(top = 10.dp, bottom = 8.dp)) {
                     OutlinedButton(
                         onClick = { onDismiss() },
                         colors = ButtonDefaults.buttonColors(backgroundColor = textColorLightGray),
@@ -82,14 +87,14 @@ fun YearPickerDialog(onDismiss: () -> Unit, onYearSelected: (Int) -> Unit) {
                         onClick = {
                             onYearSelected(yearState)
                             onDismiss()
-                                  },
+                        },
                         colors = ButtonDefaults.buttonColors(backgroundColor = green),
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(8.dp)
                             .weight(1F)
                     ) {
-                        Text(text = "Select", color = Color.White)
+                        Text(text = buttonText, color = Color.White)
                     }
                 }
             }

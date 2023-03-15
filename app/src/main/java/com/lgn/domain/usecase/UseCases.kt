@@ -9,5 +9,9 @@ data class UseCases(
     val fetchTeam: FetchTeam,
     val fetchStudents: FetchStudents,
     val fetchStudentMetrics: FetchStudentMetrics,
-    val updateStudentMetrics: UpdateStudentMetrics
+    val updateStudentMetrics: UpdateStudentMetrics,
+    val addStudent: AddStudent,
+    val fetchStudentProfileMetrics: FetchStudentProfileMetrics,
+    val changeToGraduate: ChangeToGraduate,
+    val updateStudentStatus: UpdateStudentStatus,
     )
