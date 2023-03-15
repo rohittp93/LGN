@@ -5,6 +5,7 @@ import com.lgn.core.Constants.KEY_IS_LOGGED
 import com.lgn.data.ApiService.Companion.apiService
 import com.lgn.domain.model.*
 import com.lgn.domain.repository.Repository
+import com.lgn.domain.usecase.UpdateStudentMetrics
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -54,6 +55,23 @@ class RemoteRepositoryImpl @Inject constructor() : Repository {
         } catch (e: Exception) {
             emit(Response.Error(e.message ?: e.toString()))
         }
+    }
+
+    override fun updateStudentMetrics(
+        context: Context,
+        studentMerticsResponse: StudentMerticsResponse
+    ) = flow {
+        emit(Response.Loading)
+        //val apiService = ApiService.getInstance()
+
+        try {
+            //val authResult = apiService.updateStudentMetrics(studentMerticsResponse)
+            delay(1000L)
+            emit(Response.Success(studentMerticsResponse))
+        } catch (e: Exception) {
+            emit(Response.Error(e.message ?: e.toString()))
+        }
+
     }
 
     override fun fetchTeam(context: Context): Flow<Response<TeamData>> = flow {
@@ -124,17 +142,45 @@ class RemoteRepositoryImpl @Inject constructor() : Repository {
                     )
                 )
 
-                delay(2000L)
-               /* students?.let {
-                    emit(Response.Success(students))
-                }*/
-
+                delay(1000L)
                 emit(Response.Success(studentList))
             } catch (e: Exception) {
                 emit(Response.Error(e.message ?: e.toString()))
             }
         }
 
+    override fun fetchStudentMetrics(
+        context: Context,
+        id: String
+    ): Flow<Response<StudentMerticsResponse>> =
+        flow {
+            emit(Response.Loading)
+            val apiService = ApiService.getInstance()
+            try {
+                //val studentMerticsResponse = apiService.fetchStudentMetrics(id)
+
+                var studentMerticsResponse = StudentMerticsResponse(
+                    id = id,
+                    userId = "ahjdausidtbiandgas",
+                    monthyear = "dadkjadkad",
+                    ev = 1,
+                    de = 2,
+                    jb = 1,
+                    aa = 5,
+                    p = 7,
+                    e = 9,
+                    a = 5,
+                    c = 2,
+                    ed = 1,
+                    isDeleted = 0
+                )
+
+                delay(1000L)
+                emit(Response.Success(studentMerticsResponse))
+            } catch (e: Exception) {
+                emit(Response.Error(e.message ?: e.toString()))
+            }
+        }
 
     override fun logoutUser(context: Context): Flow<Response<Boolean>> {
         TODO("Not yet implemented")

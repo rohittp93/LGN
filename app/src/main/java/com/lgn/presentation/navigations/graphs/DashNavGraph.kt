@@ -10,6 +10,7 @@ import androidx.navigation.navigation
 import com.lgn.presentation.Screen
 import com.lgn.presentation.dashboard.metrics.MetricScreen
 import com.lgn.presentation.dashboard.metrics.allmetrics.AllMetricsScreen
+import com.lgn.presentation.dashboard.metrics.studentmetricsdetail.StudentMetricsDetailScreen
 import com.lgn.presentation.dashboard.myteam.MyTeamScreen
 import com.lgn.presentation.navigations.Graph
 import com.lgn.presentation.splash.SplashScreen
@@ -87,6 +88,9 @@ fun NavGraphBuilder.metricsNavGraph(navController: NavHostController) {
     ) {
         composable(route = Screen.AllStudentMetricScreen.route) {
             AllMetricsScreen(navController = navController)
+        }
+        composable(route = Screen.StudentMetricsDetail.route) {
+            StudentMetricsDetailScreen(navController = navController)
         }
        /* composable(
             route = Screen.AddTableScreen.route,

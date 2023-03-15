@@ -15,5 +15,5 @@ sealed class Screen(val route: String) {
     object ScannerScreen: Screen("scanner_screen")
     object EventSummaryScreen: Screen("event_summary_screen")
     object AllStudentMetricScreen: Screen("all_student_metric_screen")
-    object ViewStudentMetricScreen: Screen("view_student_metric_screen")
+    object StudentMetricsDetail: Screen("student_metric_detail_screen")
 }

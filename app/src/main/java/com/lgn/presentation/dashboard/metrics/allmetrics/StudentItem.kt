@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.lgn.domain.model.StudentData
+import com.lgn.presentation.dashboard.metrics.studentmetricsdetail.StudentMetricsDetailViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
 
@@ -23,7 +24,7 @@ import kotlinx.coroutines.InternalCoroutinesApi
 @ExperimentalCoroutinesApi
 fun StudentItem(
     student: StudentData,
-    viewModel: AllMetricsViewModel = hiltViewModel(),
+    viewModel: StudentMetricsDetailViewModel = hiltViewModel(),
     onTableClicked: ((StudentData) -> Unit),
 ) {
     Card(

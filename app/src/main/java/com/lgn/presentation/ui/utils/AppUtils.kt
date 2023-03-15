@@ -1,16 +1,31 @@
 package com.lgn.presentation.ui.utils
 
+import android.content.Context
+import android.widget.Toast
 import java.text.ParseException
 import java.text.SimpleDateFormat
+import java.time.Year
 import java.util.*
 
 
-fun convertToDisplayDate(milliSeconds: Long): String {
-    val dateFormat = "dd/MM/yyyy hh:mm"
+fun convertToMonthAndYear(month: Int, year: Int): String {
+    val dateFormat = "MMM yyyy"
     val formatter = SimpleDateFormat(dateFormat)
     val calendar: Calendar = Calendar.getInstance()
-    calendar.timeInMillis = milliSeconds
+    calendar.set(year, month - 1, 1, 0, 0);
     return formatter.format(calendar.time)
+}
+
+
+fun showToast(context: Context, message: String) {
+    Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+}
+
+fun convertToMonthAndYear(monthYear: String): String {
+    val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").parse(monthYear)
+    val dateFormated =
+        SimpleDateFormat("MMM yyyy").format(sdf)
+    return dateFormated
 }
 
 fun convertDayToDate(milliSeconds: Long): Date {

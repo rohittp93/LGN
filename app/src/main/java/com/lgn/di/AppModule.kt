@@ -50,6 +50,8 @@ object AppModule {
         checkAuthStatus = CheckAuthStatus(repository),
         validatePassword = ValidatePassword(),
         fetchTeam = FetchTeam(repository),
-        fetchStudents = FetchStudents(repository)
+        fetchStudentMetrics = FetchStudentMetrics(repository),
+        fetchStudents = FetchStudents(repository),
+        updateStudentMetrics = UpdateStudentMetrics(repository)
     )
 }

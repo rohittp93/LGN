@@ -8,17 +8,13 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -28,14 +24,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.lgn.R
 import com.lgn.domain.model.Response
-import com.lgn.domain.model.StudentData
 import com.lgn.presentation.Screen
+import com.lgn.presentation.dashboard.metrics.studentmetricsdetail.StudentMetricsDetailViewModel
 import com.lgn.presentation.ui.theme.*
 import com.lgn.presentation.ui.utils.CustomProgressBar
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
 import java.text.SimpleDateFormat
-import java.util.*
 
 @Composable
 @InternalCoroutinesApi
@@ -81,8 +76,8 @@ fun AllMetricsScreen(
                             green
                         ),
                         modifier = Modifier
-                            .width(40.dp)
-                            .height(40.dp)
+                            .width(45.dp)
+                            .height(45.dp)
                             .padding(start = 16.dp, top = 8.dp, bottom = 8.dp, end = 8.dp)
                             .clickable {
                                 navController.popBackStack()
@@ -92,6 +87,7 @@ fun AllMetricsScreen(
 
                 if (monthYear.isNotEmpty()) {
                     val date = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").parse(monthYear)
+                    Log.d("monthYear ", "$monthYear")
                     val dateFormated =
                         SimpleDateFormat("MMM yyyy").format(date)
 
@@ -171,21 +167,27 @@ fun AllMetricsScreen(
                                                     text = "${user.userName}",
                                                     modifier = Modifier.padding(start = 16.dp),
                                                     color = textColorLightGray,
-                                                    fontSize = 16.sp
+                                                    fontSize = 18.sp
                                                 )
                                                 Text(
                                                     text = "${user.role}",
                                                     modifier = Modifier.padding(start = 16.dp),
                                                     color = textColorLightGray,
-                                                    fontSize = 14.sp
+                                                    fontSize = 16.sp
                                                 )
                                             }
 
                                             Text(
-                                                text = "VIEW",
+                                                text = if (user.id?.isEmpty() == true) "ADD" else "VIEW",
                                                 modifier = Modifier
                                                     .padding(start = 16.dp)
-                                                    .background(green)
+                                                    .clickable {
+                                                        navController.currentBackStackEntry?.savedStateHandle?.set(
+                                                            "user", user
+                                                        )
+                                                        navController.navigate(Screen.StudentMetricsDetail.route)
+                                                    }
+                                                    .background(if (user.id?.isEmpty() == true) orange else green)
                                                     .padding(
                                                         start = 16.dp,
                                                         top = 8.dp,
