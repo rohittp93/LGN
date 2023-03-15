@@ -8,19 +8,35 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.lgn.domain.model.StudentFilter
 import com.lgn.presentation.ui.theme.green
+import com.lgn.presentation.ui.theme.hintColorGray
+import com.lgn.presentation.ui.theme.textColorGray
 import com.lgn.presentation.ui.theme.textColorLightGray
 
 
 @Composable
-fun YearPickerDialog(onDismiss: () -> Unit, onYearSelected: (Int) -> Unit) {
-    var yearState by remember { mutableStateOf(2023) }
+fun StudentFilterDialog(
+    onDismiss: () -> Unit,
+    onFilterOptionChanged: (StudentFilter) -> Unit,
+    userTypeFilter: MutableState<String>,
+    statusFilter: MutableState<String>
+) {
+
+    val userTypes = listOf("Show All", "Graduate", "Associate")
+    val (userSelected, setUserSelected) = remember { mutableStateOf(userTypeFilter.value) }
+
+    val statusTypes = listOf("Both", "Active", "Inactive")
+    val (statusSelected, setStatusSelected) = remember { mutableStateOf(statusFilter.value) }
+
 
     Dialog(
         onDismissRequest = { onDismiss() }, properties = DialogProperties(
@@ -42,47 +58,51 @@ fun YearPickerDialog(onDismiss: () -> Unit, onYearSelected: (Int) -> Unit) {
                     .background(Color.White)
                     .padding(start = 24.dp, end = 24.dp),
                 verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.Start
             ) {
                 Text(
-                    text = "Select Year",
+                    text = "User Type",
                     style = TextStyle(
-                        fontWeight = FontWeight.Normal,
+                        fontWeight = FontWeight.Light,
                     ),
-                    modifier = Modifier.padding(bottom = 16.dp, top = 8.dp),
-                    fontSize = 24.sp,
+                    modifier = Modifier.padding(bottom = 6.dp, top = 16.dp),
+                    fontSize = 16.sp,
                     color = textColorLightGray
                 )
 
-                NumberPicker(
-                    value = yearState,
-                    range = 1970..2023,
-                    onValueChange = {
-                        yearState = it
-                    },
-                    textStyle = TextStyle(
-                        color = textColorLightGray,
-                        fontSize = 24.sp
-                    )
+                FilterRadioGroup(
+                    mItems = userTypes,
+                    userSelected,
+                    setUserSelected
                 )
 
-                Row(Modifier.padding(top = 10.dp)) {
-                    OutlinedButton(
-                        onClick = { onDismiss() },
-                        colors = ButtonDefaults.buttonColors(backgroundColor = textColorLightGray),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp)
-                            .weight(1F)
-                    ) {
-                        Text(text = "Cancel", color = Color.White)
-                    }
+                Text(
+                    text = "Status",
+                    style = TextStyle(
+                        fontWeight = FontWeight.Light,
+                    ),
+                    modifier = Modifier.padding(bottom = 6.dp, top = 16.dp),
+                    fontSize = 16.sp,
+                    color = textColorLightGray
+                )
 
+                FilterRadioGroup(
+                    mItems = statusTypes,
+                    statusSelected,
+                    setStatusSelected
+                )
+
+                Row(Modifier.padding(top = 24.dp)) {
                     Button(
                         onClick = {
-                            onYearSelected(yearState)
+                            onFilterOptionChanged(
+                                StudentFilter(
+                                    userSelected,
+                                    statusSelected
+                                )
+                            )
                             onDismiss()
-                                  },
+                        },
                         colors = ButtonDefaults.buttonColors(backgroundColor = green),
                         modifier = Modifier
                             .fillMaxWidth()
@@ -97,25 +117,45 @@ fun YearPickerDialog(onDismiss: () -> Unit, onYearSelected: (Int) -> Unit) {
     }
 }
 
+
 @Composable
-fun NumberPicker(
-    modifier: Modifier = Modifier,
-    label: (Int) -> String = {
-        it.toString()
-    },
-    value: Int,
-    onValueChange: (Int) -> Unit,
-    dividersColor: Color = textColorLightGray,
-    range: Iterable<Int>,
-    textStyle: TextStyle = LocalTextStyle.current,
+fun FilterRadioGroup(
+    mItems: List<String>,
+    selected: String,
+    setSelected: (selected: String) -> Unit,
 ) {
-    ListItemPicker(
-        modifier = modifier,
-        label = label,
-        value = value,
-        onValueChange = onValueChange,
-        dividersColor = dividersColor,
-        list = range.toList(),
-        textStyle = textStyle
-    )
+    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.Start,
+            verticalArrangement = Arrangement.Center
+        ) {
+            mItems.forEach { item ->
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    RadioButton(
+                        selected = selected == item,
+                        onClick = {
+                            setSelected(item)
+                        },
+                        enabled = true,
+                        colors = RadioButtonDefaults.colors(
+                            selectedColor = green,
+                            unselectedColor = hintColorGray
+                        )
+                    )
+                    Text(
+                        text = item,
+                        style = TextStyle(
+                            fontWeight = FontWeight.Normal,
+                        ),
+                        modifier = Modifier.padding(start = 8.dp),
+                        fontSize = 16.sp,
+                        color = textColorGray
+                    )
+                }
+            }
+        }
+    }
 }

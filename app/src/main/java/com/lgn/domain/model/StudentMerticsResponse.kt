@@ -6,15 +6,15 @@ data class StudentMerticsResponse (
     @SerializedName("id"         ) var id        : String? = null,
     @SerializedName("user_id"    ) var userId    : String? = null,
     @SerializedName("monthyear"  ) var monthyear : String? = null,
-    @SerializedName("ev"         ) var ev        : Int?    = null,
-    @SerializedName("de"         ) var de        : Int?    = null,
-    @SerializedName("jb"         ) var jb        : Int?    = null,
-    @SerializedName("aa"         ) var aa        : Int?    = null,
-    @SerializedName("p"          ) var p         : Int?    = null,
-    @SerializedName("e"          ) var e         : Int?    = null,
-    @SerializedName("a"          ) var a         : Int?    = null,
-    @SerializedName("c"          ) var c         : Int?    = null,
-    @SerializedName("ed"         ) var ed        : Int?    = null,
-    @SerializedName("is_deleted" ) var isDeleted : Int?    = null
+    @SerializedName("ev"         ) var ev        : Int?    = 0,
+    @SerializedName("de"         ) var de        : Int?    = 0,
+    @SerializedName("jb"         ) var jb        : Int?    = 0,
+    @SerializedName("aa"         ) var aa        : Int?    = 0,
+    @SerializedName("p"          ) var p         : Int?    = 0,
+    @SerializedName("e"          ) var e         : Int?    = 0,
+    @SerializedName("a"          ) var a         : Int?    = 0,
+    @SerializedName("c"          ) var c         : Int?    = 0,
+    @SerializedName("ed"         ) var ed        : Int?    = 0,
+    @SerializedName("is_deleted" ) var isDeleted : Int?    = 0
 
 )

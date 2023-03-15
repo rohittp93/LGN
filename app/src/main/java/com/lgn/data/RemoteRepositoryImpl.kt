@@ -87,8 +87,21 @@ class RemoteRepositoryImpl @Inject constructor() : Repository {
                     userName = "Nikita",
                     userEmail = "example@gmail.com",
                     userPhone = "123456789",
-                    role = "Trainer",
-                    batch = "null"
+                    role = "Associate",
+                    batch = "null",
+                    status = 1
+                )
+            )
+
+            studentList.add(
+                StudentData(
+                    id = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
+                    userName = "Rohit",
+                    userEmail = "example@gmail.com",
+                    userPhone = "123456789",
+                    role = "Graduate",
+                    batch = "null",
+                    status = 0
                 )
             )
             val mockTeamResult = TeamData(

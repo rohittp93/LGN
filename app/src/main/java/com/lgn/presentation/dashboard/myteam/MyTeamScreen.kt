@@ -1,20 +1,19 @@
 package com.lgn.presentation.dashboard.myteam
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
@@ -29,6 +28,9 @@ import com.lgn.domain.model.Response
 import com.lgn.presentation.Screen
 import com.lgn.presentation.ui.theme.*
 import com.lgn.presentation.ui.utils.CustomProgressBar
+import com.lgn.presentation.ui.utils.StudentFilterDialog
+import com.lgn.presentation.ui.utils.getFilterFromStatus
+import com.lgn.presentation.ui.utils.getStatusFromFilter
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
 
@@ -40,6 +42,9 @@ fun MyTeamScreen(viewModel: MyTeamViewModel = hiltViewModel(), navController: Na
     val focusManager = LocalFocusManager.current
     val context = LocalContext.current
     val imageRes = painterResource(id = R.drawable.lgn_logo)
+    var showCustomDialog by remember {
+        mutableStateOf(false)
+    }
 
     Box(
         modifier = Modifier
@@ -76,7 +81,12 @@ fun MyTeamScreen(viewModel: MyTeamViewModel = hiltViewModel(), navController: Na
                             colorFilter = ColorFilter.tint(
                                 green
                             ),
-                            modifier = Modifier.height(26.dp).padding(end = 16.dp)
+                            modifier = Modifier
+                                .height(26.dp)
+                                .padding(end = 16.dp)
+                                .clickable {
+                                    showCustomDialog = !showCustomDialog
+                                }
                         )
                     }
                     Text(
@@ -92,36 +102,150 @@ fun MyTeamScreen(viewModel: MyTeamViewModel = hiltViewModel(), navController: Na
             }
 
         }
+
+        if (showCustomDialog) {
+            StudentFilterDialog(
+                userTypeFilter = viewModel.userTypeFilter,
+                statusFilter = viewModel.statusFilter,
+                onDismiss = {
+                    showCustomDialog = !showCustomDialog
+                },
+                onFilterOptionChanged = { sf ->
+                    viewModel.showFilterList(true)
+
+                    viewModel.userTypeFilter.value = sf.userType ?: "Show All"
+                    viewModel.statusFilter.value = sf.statusType ?: "Both"
+
+                    viewModel.updateFilterList(viewModel.teamListState.filter {
+                        if(sf.statusType != "Both"){
+                            getFilterFromStatus(it.status) == sf.statusType
+                        } else {
+                            it.status == 1 || it.status == 0
+                        } &&
+                        if(sf.userType != "Show All") {
+                            it.role == sf.userType
+                        } else {
+                            (it.role == "Associate") || (it.role == "Graduate")
+                        }
+
+                         /*&& !sf.userType.equals("Show All")*/
+                    })
+                }
+            )
+        }
+
+
         when (val teamResponse = viewModel.teamState.value) {
             is Response.Loading -> CustomProgressBar()
             is Response.Success ->
                 if (teamResponse.data.associate.isNotEmpty()) {
+                    viewModel.updateList(teamResponse.data.associate)
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
                             .align(Alignment.TopStart)
-                            .padding(top = 78.dp),
+                            .padding(top = 70.dp),
                     ) {
-                        /*LazyColumn(modifier = Modifier
-                            .fillMaxWidth()) {
-                            items(items = tablesResponse.data) { event ->
-                                EventItem(
-                                    event = event,
-                                    onEventClicked = {
-                                        if ((adminDetails.admin_type ?: "") != Constants.BOUNCER) {
-                                            navController.currentBackStackEntry?.savedStateHandle?.set(
-                                                "event", event
-                                            )
-                                            if(event.bookingStartTime.before(Date())) {
-                                                navController.navigate(Screen.EventSummaryScreen.route)
-                                            } else {
-                                                navController.navigate(Screen.EventDetailScreen.route)
-                                            }
+                        LazyColumn(
+                            verticalArrangement = Arrangement.spacedBy(10.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 10.dp)
+                        ) {
+                            items(items = if(viewModel.showFilterList.value)
+                                viewModel.filteredTeamListState
+                            else viewModel.teamListState
+                            ) { user ->
+                                Row(
+                                    horizontalArrangement = Arrangement.Start,
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier = Modifier
+                                        .background(color = Color.White)
+                                        .clickable {
+                                            /*navController.currentBackStackEntry?.savedStateHandle?.set(
+                                                    "monthYear", dateFormated
+                                                )
+                                                navController.navigate(Screen.AllStudentMetricScreen.route)*/
                                         }
+                                        .fillMaxWidth()
+                                        .padding(20.dp)
+                                ) {
+                                    Image(
+                                        painter = painterResource(id = R.drawable.people),
+                                        contentDescription = null,
+                                        colorFilter = ColorFilter.tint(
+                                            Color.White
+                                        ),
+                                        modifier = Modifier
+                                            .clip(CircleShape)
+                                            .background(color = green)
+                                            .height(50.dp)
+                                            .width(50.dp)
+                                            .padding(10.dp)
+                                    )
+
+                                    Row(
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        modifier = Modifier.fillMaxWidth()
+                                    ) {
+                                        Column(
+                                            verticalArrangement = Arrangement.Center,
+                                            horizontalAlignment = Alignment.Start,
+                                            modifier = Modifier.padding(start = 16.dp)
+                                        ) {
+                                            Text(
+                                                text = "${user.userName}",
+                                                modifier = Modifier.padding(start = 16.dp),
+                                                color = textColorLightGray,
+                                                fontSize = 18.sp
+                                            )
+                                            Text(
+                                                text = "${user.role}",
+                                                modifier = Modifier.padding(start = 16.dp),
+                                                color = textColorLightGray,
+                                                fontSize = 16.sp
+                                            )
+                                        }
+
+                                        /*Text(
+                                            text = if (user.id?.isEmpty() == true) "ADD" else "VIEW",
+                                            modifier = Modifier
+                                                .padding(start = 16.dp)
+                                                .clickable {
+                                                    navController.currentBackStackEntry?.savedStateHandle?.set(
+                                                        "user", user
+                                                    )
+                                                    navController.navigate(Screen.StudentMetricsDetail.route)
+                                                }
+                                                .background(if (user.id?.isEmpty() == true) orange else green)
+                                                .padding(
+                                                    start = 16.dp,
+                                                    top = 8.dp,
+                                                    bottom = 8.dp,
+                                                    end = 16.dp
+                                                ),
+                                            color = Color.White,
+                                            fontSize = 14.sp
+                                        )*/
+
+                                        Image(
+                                            painter = if (user.status == 1) painterResource(id = R.drawable.tick) else painterResource(
+                                                id = R.drawable.cross
+                                            ),
+                                            contentDescription = null,
+                                            colorFilter = ColorFilter.tint(
+                                                if (user.status == 1) green else errorRed
+                                            ),
+                                            modifier = Modifier
+                                                .clip(CircleShape)
+                                                .height(50.dp)
+                                                .width(50.dp)
+                                                .padding(10.dp)
+                                        )
                                     }
-                                )
+                                }
                             }
-                        }*/
+                        }
                     }
                 } else {
                     Text(

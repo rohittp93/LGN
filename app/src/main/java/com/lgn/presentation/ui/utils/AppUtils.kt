@@ -17,6 +17,21 @@ fun convertToMonthAndYear(month: Int, year: Int): String {
 }
 
 
+fun getStatusFromFilter(status: String) = when (status) {
+    "Active" -> 1
+    "Inactive" -> 0
+    else -> {
+        -1
+    }
+}
+fun getFilterFromStatus(status: Int? = -1) = when (status) {
+    1 -> "Active"
+    0 -> "Inactive"
+    else -> {
+        "Both"
+    }
+}
+
 fun showToast(context: Context, message: String) {
     Toast.makeText(context, message, Toast.LENGTH_LONG).show()
 }
@@ -45,7 +60,7 @@ fun convertDayToDate(milliSeconds: Long): Date {
 
 fun convertDateToString(date: Date?): String {
     val simpleDate = SimpleDateFormat("dd/MM/yy hh:mm a")
-    date?. let {
+    date?.let {
         return simpleDate.format(date)
     } ?: run { return "" }
 }

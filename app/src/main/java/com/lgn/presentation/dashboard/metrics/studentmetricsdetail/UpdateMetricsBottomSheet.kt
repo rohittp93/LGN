@@ -41,9 +41,10 @@ fun UpdateMetricsBottomSheet(
     viewModel: UpdateMetricsViewModel = hiltViewModel(),
     onCloseClicked: () -> Unit,
     user: Users? = null,
-    userResponseData: StudentMerticsResponse? = null
+    userResponseData: StudentMerticsResponse? = StudentMerticsResponse()
 ) {
     val context = LocalContext.current
+    val state = viewModel.state
 
     var visible by remember {
         mutableStateOf(false)
@@ -61,27 +62,9 @@ fun UpdateMetricsBottomSheet(
     val currentMonth = Calendar.getInstance().get(Calendar.MONTH)
     val year = Calendar.getInstance().get(Calendar.YEAR)
 
-    var ev_text by remember { mutableStateOf(TextFieldValue("0")) }
-    var de_text by remember { mutableStateOf(TextFieldValue("0")) }
-    var jb_text by remember { mutableStateOf(TextFieldValue("0")) }
-    var aa_text by remember { mutableStateOf(TextFieldValue("0")) }
-    var p_text by remember { mutableStateOf(TextFieldValue("0")) }
-    var e_text by remember { mutableStateOf(TextFieldValue("0")) }
-    var a_text by remember { mutableStateOf(TextFieldValue("0")) }
-    var c_text by remember { mutableStateOf(TextFieldValue("0")) }
-    var ed_text by remember { mutableStateOf(TextFieldValue("0")) }
-
-
-    if (userResponseData != null) {
-        ev_text = TextFieldValue(userResponseData.ev.toString())
-        de_text = TextFieldValue(userResponseData.de.toString())
-        jb_text = TextFieldValue(userResponseData.jb.toString())
-        aa_text = TextFieldValue(userResponseData.aa.toString())
-        p_text = TextFieldValue(userResponseData.p.toString())
-        e_text = TextFieldValue(userResponseData.e.toString())
-        a_text = TextFieldValue(userResponseData.a.toString())
-        c_text = TextFieldValue(userResponseData.c.toString())
-        ed_text = TextFieldValue(userResponseData.ed.toString())
+    userResponseData?.let {
+        if (!viewModel.initialLaunchCompleted && it.userId != null)
+            viewModel.updateStudentMetrics(it)
     }
 
 
@@ -187,7 +170,7 @@ fun UpdateMetricsBottomSheet(
             horizontalArrangement = Arrangement.spacedBy(24.dp)
         ) {
             OutlinedTextField(
-                value = ev_text,
+                value = if (state.ev == -1) "" else state.ev.toString(),
                 label = {
                     Text(
                         text = "EV",
@@ -201,12 +184,12 @@ fun UpdateMetricsBottomSheet(
                 ),
                 modifier = Modifier.weight(1F),
                 onValueChange = { newText ->
-                    ev_text = newText
+                    viewModel.valueChanged("ev", newText)
                 },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
             )
             OutlinedTextField(
-                value = de_text,
+                value = if (state.de == -1) "" else state.de.toString(),
                 modifier = Modifier.weight(1F),
                 label = {
                     Text(
@@ -220,7 +203,8 @@ fun UpdateMetricsBottomSheet(
                     unfocusedBorderColor = green, textColor = textColorGray
                 ),
                 onValueChange = { newText ->
-                    de_text = newText
+                    viewModel.valueChanged("de", newText)
+
                 },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
             )
@@ -234,7 +218,7 @@ fun UpdateMetricsBottomSheet(
             horizontalArrangement = Arrangement.spacedBy(24.dp)
         ) {
             OutlinedTextField(
-                value = jb_text,
+                value = if (state.jb == -1) "" else state.jb.toString(),
                 label = {
                     Text(
                         text = "JB",
@@ -248,13 +232,14 @@ fun UpdateMetricsBottomSheet(
                 ),
                 modifier = Modifier.weight(1F),
                 onValueChange = { newText ->
-                    jb_text = newText
+                    viewModel.valueChanged("jb", newText)
+
                 },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
             )
 
             OutlinedTextField(
-                value = aa_text,
+                value = if (state.aa == -1) "" else state.aa.toString(),
                 modifier = Modifier.weight(1F),
                 label = {
                     Text(
@@ -268,7 +253,7 @@ fun UpdateMetricsBottomSheet(
                     unfocusedBorderColor = green, textColor = textColorGray
                 ),
                 onValueChange = { newText ->
-                    aa_text = newText
+                    viewModel.valueChanged("aa", newText)
                 },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
             )
@@ -282,7 +267,7 @@ fun UpdateMetricsBottomSheet(
             horizontalArrangement = Arrangement.spacedBy(24.dp)
         ) {
             OutlinedTextField(
-                value = p_text,
+                value = if (state.p == -1) "" else state.p.toString(),
                 label = {
                     Text(
                         text = "P",
@@ -296,13 +281,14 @@ fun UpdateMetricsBottomSheet(
                 ),
                 modifier = Modifier.weight(1F),
                 onValueChange = { newText ->
-                    p_text = newText
+                    viewModel.valueChanged("p", newText)
+
                 },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
             )
 
             OutlinedTextField(
-                value = e_text,
+                value = if (state.e == -1) "" else state.e.toString(),
                 modifier = Modifier.weight(1F),
                 label = {
                     Text(
@@ -316,7 +302,7 @@ fun UpdateMetricsBottomSheet(
                     unfocusedBorderColor = green, textColor = textColorGray
                 ),
                 onValueChange = { newText ->
-                    e_text = newText
+                    viewModel.valueChanged("e", newText)
                 },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
             )
@@ -330,7 +316,7 @@ fun UpdateMetricsBottomSheet(
             horizontalArrangement = Arrangement.spacedBy(24.dp)
         ) {
             OutlinedTextField(
-                value = a_text,
+                value = if (state.a == -1) "" else state.a.toString(),
                 label = {
                     Text(
                         text = "A",
@@ -344,13 +330,14 @@ fun UpdateMetricsBottomSheet(
                 ),
                 modifier = Modifier.weight(1F),
                 onValueChange = { newText ->
-                    a_text = newText
+                    viewModel.valueChanged("a", newText)
+
                 },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
             )
 
             OutlinedTextField(
-                value = c_text,
+                value = if (state.c == -1) "" else state.c.toString(),
                 modifier = Modifier.weight(1F),
                 label = {
                     Text(
@@ -364,7 +351,8 @@ fun UpdateMetricsBottomSheet(
                     unfocusedBorderColor = green, textColor = textColorGray
                 ),
                 onValueChange = { newText ->
-                    c_text = newText
+                    viewModel.valueChanged("c", newText)
+
                 },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
             )
@@ -379,7 +367,7 @@ fun UpdateMetricsBottomSheet(
             horizontalArrangement = Arrangement.spacedBy(24.dp)
         ) {
             OutlinedTextField(
-                value = ed_text,
+                value = if (state.ed == -1) "" else state.ed.toString(),
                 label = {
                     Text(
                         text = "ED",
@@ -393,7 +381,8 @@ fun UpdateMetricsBottomSheet(
                 ),
                 modifier = Modifier.weight(1F),
                 onValueChange = { newText ->
-                    ed_text = newText
+                    viewModel.valueChanged("ed", newText)
+
                 },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
             )
@@ -423,18 +412,18 @@ fun UpdateMetricsBottomSheet(
                 viewModel.updateStudentMetrics(
                     context,
                     StudentMerticsResponse(
-                        userId = userResponseData?.id,
-                        monthyear = userResponseData?.monthyear,
-                        ev = userResponseData?.ev,
-                        de = userResponseData?.de,
-                        jb = userResponseData?.jb,
-                        aa = userResponseData?.aa,
-                        p = userResponseData?.p,
-                        e = userResponseData?.e,
-                        a = userResponseData?.a,
-                        c = userResponseData?.c,
-                        ed = userResponseData?.ed,
-                        isDeleted = userResponseData?.isDeleted,
+                        userId = state.id,
+                        monthyear = state.monthyear,
+                        ev = state.ev,
+                        de = state.de,
+                        jb = state.jb,
+                        aa = state.aa,
+                        p = state.p,
+                        e = state.e,
+                        a = state.a,
+                        c = state.c,
+                        ed = state.ed,
+                        isDeleted = state.isDeleted,
 
                         )
                 )
