@@ -31,6 +31,8 @@ import com.lgn.presentation.dashboard.metrics.studentmetricsdetail.StudentMetric
 import com.lgn.presentation.dashboard.metrics.studentmetricsdetail.UpdateMetricsBottomSheet
 import com.lgn.presentation.ui.theme.*
 import com.lgn.presentation.ui.utils.CustomProgressBar
+import com.lgn.presentation.ui.utils.MultipleEventsCutter
+import com.lgn.presentation.ui.utils.get
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.launch
@@ -52,6 +54,8 @@ fun AllMetricsScreen(
     var canClose by remember {
         mutableStateOf(false)
     }
+
+    val multipleEventsCutter = remember { MultipleEventsCutter.get() }
 
     var closeClicked by remember {
         mutableStateOf(false)
@@ -123,7 +127,9 @@ fun AllMetricsScreen(
                                 .height(45.dp)
                                 .padding(start = 16.dp, top = 8.dp, bottom = 8.dp, end = 8.dp)
                                 .clickable {
-                                    navController.popBackStack()
+                                    multipleEventsCutter.processEvent {
+                                        navController.popBackStack()
+                                    }
                                 }
                         )
                     }
@@ -174,12 +180,6 @@ fun AllMetricsScreen(
                                             verticalAlignment = Alignment.CenterVertically,
                                             modifier = Modifier
                                                 .background(color = Color.White)
-                                                .clickable {
-                                                    /* navController.currentBackStackEntry?.savedStateHandle?.set(
-                                                        "monthYear", dateFormated
-                                                    )
-                                                    navController.navigate(Screen.AllStudentMetricScreen.route)*/
-                                                }
                                                 .fillMaxWidth()
                                                 .padding(20.dp)
                                         ) {
@@ -225,16 +225,18 @@ fun AllMetricsScreen(
                                                     modifier = Modifier
                                                         .padding(start = 16.dp)
                                                         .clickable {
-                                                            if ((user.id == null || user.id?.isEmpty() == true)) {
-                                                                coroutineScope.launch {
-                                                                    if (sheetState.isVisible) sheetState.hide()
-                                                                    else sheetState.show()
+                                                            multipleEventsCutter.processEvent {
+                                                                if ((user.id == null || user.id?.isEmpty() == true)) {
+                                                                    coroutineScope.launch {
+                                                                        if (sheetState.isVisible) sheetState.hide()
+                                                                        else sheetState.show()
+                                                                    }
+                                                                } else {
+                                                                    navController.currentBackStackEntry?.savedStateHandle?.set(
+                                                                        "user", user
+                                                                    )
+                                                                    navController.navigate(Screen.StudentMetricsDetail.route)
                                                                 }
-                                                            } else {
-                                                                navController.currentBackStackEntry?.savedStateHandle?.set(
-                                                                    "user", user
-                                                                )
-                                                                navController.navigate(Screen.StudentMetricsDetail.route)
                                                             }
                                                         }
                                                         .background(if (user.id?.isEmpty() == true) orange else green)

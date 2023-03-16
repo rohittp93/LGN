@@ -92,7 +92,7 @@ fun StudentFilterDialog(
                     setStatusSelected
                 )
 
-                Row(Modifier.padding(top = 24.dp)) {
+                Row(Modifier.padding(top = 24.dp, bottom = 12.dp)) {
                     Button(
                         onClick = {
                             onFilterOptionChanged(

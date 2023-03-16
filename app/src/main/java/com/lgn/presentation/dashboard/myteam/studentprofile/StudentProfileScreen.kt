@@ -29,10 +29,7 @@ import com.lgn.domain.model.StudentData
 import com.lgn.domain.model.StudentMerticsResponse
 import com.lgn.presentation.Screen
 import com.lgn.presentation.ui.theme.*
-import com.lgn.presentation.ui.utils.CustomProgressBar
-import com.lgn.presentation.ui.utils.YearPickerDialog
-import com.lgn.presentation.ui.utils.convertToMonthAndYear
-import com.lgn.presentation.ui.utils.showToast
+import com.lgn.presentation.ui.utils.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
 import java.text.SimpleDateFormat
@@ -47,22 +44,13 @@ fun StudentProfileScreen(
     navController: NavController
 ) {
     val context = LocalContext.current
+    val showDialogState: Boolean by viewModel.showDialog.collectAsState()
 
     var closeClicked by remember {
         mutableStateOf(false)
     }
-    val sheetState = rememberModalBottomSheetState(
-        initialValue = ModalBottomSheetValue.Hidden,
-        skipHalfExpanded = true,
-        confirmValueChange = {
-            it != ModalBottomSheetValue.HalfExpanded
-        },
-    )
-    val coroutineScope = rememberCoroutineScope()
 
-    BackHandler(sheetState.isVisible) {
-        //coroutineScope.launch { sheetState.hide() }
-    }
+    val multipleEventsCutter = remember { MultipleEventsCutter.get() }
 
     var user: StudentData by rememberSaveable {
         mutableStateOf(StudentData())
@@ -102,6 +90,24 @@ fun StudentProfileScreen(
         )
     }
 
+
+    SimpleAlertDialog(
+        title = if (user.status == 1) "DEACTIVATE" else "ACTIVATE",
+        message = "Are you sure you want to " + (if (user.status == 1) "deactivate" else "activate") + " this user?",
+        show = showDialogState,
+        showDismissButton = true,
+        onDismiss = viewModel::onDialogDismiss,
+        onConfirm = {
+            user.id?.let {
+                viewModel.updateStatus(
+                    context,
+                    it,
+                    if (user.status == 1) 0 else 1
+                )
+            }
+            viewModel.onDialogDismiss()
+        }
+    )
     LaunchedEffect(key1 = context) {
         user =
             navController.previousBackStackEntry?.savedStateHandle?.get<StudentData>("studentData")
@@ -276,10 +282,12 @@ fun StudentProfileScreen(
                 modifier = Modifier
                     .fillMaxWidth(),
                 onClick = {
-                    navController.currentBackStackEntry?.savedStateHandle?.set(
-                        "studentData", user
-                    )
-                    navController.navigate(Screen.StudentProfileMetricsScreen.route)
+                    multipleEventsCutter.processEvent {
+                        navController.currentBackStackEntry?.savedStateHandle?.set(
+                            "studentData", user
+                        )
+                        navController.navigate(Screen.StudentProfileMetricsScreen.route)
+                    }
                 },
                 colors = ButtonDefaults.buttonColors(backgroundColor = green)
             )
@@ -291,7 +299,9 @@ fun StudentProfileScreen(
                     modifier = Modifier
                         .fillMaxWidth(),
                     onClick = {
-                        showCustomDialog = !showCustomDialog
+                        multipleEventsCutter.processEvent {
+                            showCustomDialog = !showCustomDialog
+                        }
                     },
                     colors = ButtonDefaults.buttonColors(backgroundColor = green)
                 )
@@ -303,11 +313,11 @@ fun StudentProfileScreen(
                 modifier = Modifier
                     .fillMaxWidth(),
                 onClick = {
-                    user.id?.let {
-                        viewModel.updateStatus(
-                            context,
-                            it, if (user.status == 1) 0 else 1
-                        )
+                    multipleEventsCutter.processEvent {
+                        multipleEventsCutter.processEvent {
+
+                            viewModel.onOpenDialogClicked()
+                        }
                     }
                 },
                 colors = ButtonDefaults.buttonColors(backgroundColor = green)
@@ -321,6 +331,9 @@ fun StudentProfileScreen(
             when (val usersResponse = viewModel.changeToGraduateState.value) {
                 is Response.Loading -> CustomProgressBar()
                 is Response.Success -> {
+                    navController.previousBackStackEntry
+                        ?.savedStateHandle
+                        ?.set("needsRefresh", true)
                     viewModel.updateRole("Graduate")
                 }
                 is Error -> {
@@ -344,9 +357,12 @@ fun StudentProfileScreen(
             when (val usersResponse = viewModel.studentStatusState.value) {
                 is Response.Loading -> CustomProgressBar()
                 is Response.Success -> {
-                    //TODO : pass data back to refresh list
                     if (!viewModel.exiting) {
+                        navController.previousBackStackEntry
+                            ?.savedStateHandle
+                            ?.set("needsRefresh", true)
                         navController.popBackStack()
+
                         viewModel.exiting = true
                     }
                 }
@@ -371,4 +387,3 @@ fun StudentProfileScreen(
 
     }
 }
-

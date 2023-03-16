@@ -1,6 +1,7 @@
 package com.lgn.presentation.dashboard.myteam.addstudent
 
 import android.util.Log
+import android.util.Patterns
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -22,6 +23,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.lgn.R
 import com.lgn.domain.model.*
 import com.lgn.presentation.ui.theme.green
@@ -35,7 +37,7 @@ import java.util.*
 @Composable
 fun AddStudentBottomSheet(
     viewModel: AddStudentViewModel = hiltViewModel(),
-    onCloseClicked: () -> Unit
+    onCloseClicked: (Boolean) -> Unit
 ) {
     val context = LocalContext.current
     val state = viewModel.state
@@ -74,7 +76,7 @@ fun AddStudentBottomSheet(
                     .height(15.dp)
                     .width(15.dp)
                     .clickable {
-                        onCloseClicked()
+                        onCloseClicked(false)
                     }
             )
         }
@@ -159,7 +161,7 @@ fun AddStudentBottomSheet(
             is Response.Success -> {
                 Log.d("RTAG ", "onCloseClicked called")
                 LaunchedEffect(key1 = context) {
-                    onCloseClicked()
+                    onCloseClicked(true)
                 }
             }
             is Response.Error -> {
@@ -172,14 +174,40 @@ fun AddStudentBottomSheet(
             modifier = Modifier
                 .fillMaxWidth(),
             onClick = {
-                viewModel.addStudent(
-                    context,
-                    UpdateStudentResponse(
-                        userFirstname = state.name,
-                        userEmail = state.email,
-                        userPhone = state.phone
+                var errorShown = false
+                if (state.name.isEmpty()) {
+                    showToast(context, "Please enter name")
+                    errorShown = true
+                }
+                if (state.email.isEmpty()) {
+                    showToast(context, "Please enter email")
+                    errorShown = true
+                }
+
+                if (state.phone.isEmpty()) {
+                    showToast(context, "Please enter phone")
+                    errorShown = true
+                }
+
+                if (!Patterns.EMAIL_ADDRESS.matcher(state.email).matches()) {
+                    showToast(context, "Please enter valid email ID")
+                    errorShown = true
+                }
+                if (state.phone.length != 10) {
+                    showToast(context, "Please enter correct phone number")
+                    errorShown = true
+                }
+
+                if (!errorShown) {
+                    viewModel.addStudent(
+                        context,
+                        UpdateStudentResponse(
+                            userFirstname = state.name,
+                            userEmail = state.email,
+                            userPhone = state.phone
+                        )
                     )
-                )
+                }
             },
             colors = ButtonDefaults.buttonColors(backgroundColor = green)
         )

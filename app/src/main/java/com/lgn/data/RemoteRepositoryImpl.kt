@@ -102,6 +102,191 @@ class RemoteRepositoryImpl @Inject constructor() : Repository {
                     status = 0
                 )
             )
+             studentList.add(
+                StudentData(
+                    id = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
+                    userName = "Nikita",
+                    userEmail = "example@gmail.com",
+                    userPhone = "123456789",
+                    role = "Associate",
+                    batch = "null",
+                    status = 1
+                )
+            )
+
+            studentList.add(
+                StudentData(
+                    id = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
+                    userName = "Rohit",
+                    userEmail = "example@gmail.com",
+                    userPhone = "123456789",
+                    role = "Graduate",
+                    batch = "null",
+                    status = 0
+                )
+            )
+             studentList.add(
+                StudentData(
+                    id = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
+                    userName = "Nikita",
+                    userEmail = "example@gmail.com",
+                    userPhone = "123456789",
+                    role = "Associate",
+                    batch = "null",
+                    status = 1
+                )
+            )
+
+            studentList.add(
+                StudentData(
+                    id = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
+                    userName = "Rohit",
+                    userEmail = "example@gmail.com",
+                    userPhone = "123456789",
+                    role = "Graduate",
+                    batch = "null",
+                    status = 0
+                )
+            )
+             studentList.add(
+                StudentData(
+                    id = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
+                    userName = "Nikita",
+                    userEmail = "example@gmail.com",
+                    userPhone = "123456789",
+                    role = "Associate",
+                    batch = "null",
+                    status = 1
+                )
+            )
+
+            studentList.add(
+                StudentData(
+                    id = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
+                    userName = "Rohit",
+                    userEmail = "example@gmail.com",
+                    userPhone = "123456789",
+                    role = "Graduate",
+                    batch = "null",
+                    status = 0
+                )
+            )
+             studentList.add(
+                StudentData(
+                    id = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
+                    userName = "Nikita",
+                    userEmail = "example@gmail.com",
+                    userPhone = "123456789",
+                    role = "Associate",
+                    batch = "null",
+                    status = 1
+                )
+            )
+
+            studentList.add(
+                StudentData(
+                    id = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
+                    userName = "Rohit",
+                    userEmail = "example@gmail.com",
+                    userPhone = "123456789",
+                    role = "Graduate",
+                    batch = "null",
+                    status = 0
+                )
+            )
+             studentList.add(
+                StudentData(
+                    id = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
+                    userName = "Nikita",
+                    userEmail = "example@gmail.com",
+                    userPhone = "123456789",
+                    role = "Associate",
+                    batch = "null",
+                    status = 1
+                )
+            )
+
+            studentList.add(
+                StudentData(
+                    id = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
+                    userName = "Rohit",
+                    userEmail = "example@gmail.com",
+                    userPhone = "123456789",
+                    role = "Graduate",
+                    batch = "null",
+                    status = 0
+                )
+            )
+             studentList.add(
+                StudentData(
+                    id = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
+                    userName = "Nikita",
+                    userEmail = "example@gmail.com",
+                    userPhone = "123456789",
+                    role = "Associate",
+                    batch = "null",
+                    status = 1
+                )
+            )
+
+            studentList.add(
+                StudentData(
+                    id = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
+                    userName = "Rohit",
+                    userEmail = "example@gmail.com",
+                    userPhone = "123456789",
+                    role = "Graduate",
+                    batch = "null",
+                    status = 0
+                )
+            )
+             studentList.add(
+                StudentData(
+                    id = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
+                    userName = "Nikita",
+                    userEmail = "example@gmail.com",
+                    userPhone = "123456789",
+                    role = "Associate",
+                    batch = "null",
+                    status = 1
+                )
+            )
+
+            studentList.add(
+                StudentData(
+                    id = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
+                    userName = "Rohit",
+                    userEmail = "example@gmail.com",
+                    userPhone = "123456789",
+                    role = "Graduate",
+                    batch = "null",
+                    status = 0
+                )
+            )
+             studentList.add(
+                StudentData(
+                    id = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
+                    userName = "Nikita",
+                    userEmail = "example@gmail.com",
+                    userPhone = "123456789",
+                    role = "Associate",
+                    batch = "null",
+                    status = 1
+                )
+            )
+
+            studentList.add(
+                StudentData(
+                    id = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
+                    userName = "Rohit",
+                    userEmail = "example@gmail.com",
+                    userPhone = "123456789",
+                    role = "Graduate",
+                    batch = "null",
+                    status = 0
+                )
+            )
+
             val mockTeamResult = TeamData(
                 id = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
                 userName = "Nikita",
@@ -134,6 +319,114 @@ class RemoteRepositoryImpl @Inject constructor() : Repository {
                 //val students = userResult?.users
 
                 val studentList = mutableListOf<Users>()
+                studentList.add(
+                    Users(
+                        id = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
+                        userName = "Nikita",
+                        userId = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
+                        role = "Trainer",
+                        monthyear = "2020-01-01T00:00:00.000Z"
+                    )
+                )
+                studentList.add(
+                    Users(
+                        id = "",
+                        userName = "Rohit",
+                        userId = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
+                        role = "Trainer",
+                        monthyear = "2020-01-01T00:00:00.000Z"
+                    )
+                )
+                studentList.add(
+                    Users(
+                        id = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
+                        userName = "Nikita",
+                        userId = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
+                        role = "Trainer",
+                        monthyear = "2020-01-01T00:00:00.000Z"
+                    )
+                )
+                studentList.add(
+                    Users(
+                        id = "",
+                        userName = "Rohit",
+                        userId = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
+                        role = "Trainer",
+                        monthyear = "2020-01-01T00:00:00.000Z"
+                    )
+                )
+                studentList.add(
+                    Users(
+                        id = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
+                        userName = "Nikita",
+                        userId = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
+                        role = "Trainer",
+                        monthyear = "2020-01-01T00:00:00.000Z"
+                    )
+                )
+                studentList.add(
+                    Users(
+                        id = "",
+                        userName = "Rohit",
+                        userId = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
+                        role = "Trainer",
+                        monthyear = "2020-01-01T00:00:00.000Z"
+                    )
+                )
+                studentList.add(
+                    Users(
+                        id = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
+                        userName = "Nikita",
+                        userId = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
+                        role = "Trainer",
+                        monthyear = "2020-01-01T00:00:00.000Z"
+                    )
+                )
+                studentList.add(
+                    Users(
+                        id = "",
+                        userName = "Rohit",
+                        userId = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
+                        role = "Trainer",
+                        monthyear = "2020-01-01T00:00:00.000Z"
+                    )
+                )
+                studentList.add(
+                    Users(
+                        id = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
+                        userName = "Nikita",
+                        userId = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
+                        role = "Trainer",
+                        monthyear = "2020-01-01T00:00:00.000Z"
+                    )
+                )
+                studentList.add(
+                    Users(
+                        id = "",
+                        userName = "Rohit",
+                        userId = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
+                        role = "Trainer",
+                        monthyear = "2020-01-01T00:00:00.000Z"
+                    )
+                )
+                studentList.add(
+                    Users(
+                        id = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
+                        userName = "Nikita",
+                        userId = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
+                        role = "Trainer",
+                        monthyear = "2020-01-01T00:00:00.000Z"
+                    )
+                )
+                studentList.add(
+                    Users(
+                        id = "",
+                        userName = "Rohit",
+                        userId = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
+                        role = "Trainer",
+                        monthyear = "2020-01-01T00:00:00.000Z"
+                    )
+                )
                 studentList.add(
                     Users(
                         id = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
@@ -281,6 +574,150 @@ class RemoteRepositoryImpl @Inject constructor() : Repository {
 
                 val metricsList = mutableListOf<Metrics>() as ArrayList
 
+                metricsList.add(
+                    Metrics(
+                        id = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
+                        userId = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
+                        monthyear = "2020-01-01T00:00:00.000Z",
+                        ev = 1,
+                        de = 2,
+                        jb = 1,
+                        aa = 5,
+                        p = 7,
+                        e = 9,
+                        a = 5,
+                        c = 2,
+                        ed = 1,
+                        isDeleted = 0
+                    )
+                )
+
+
+                metricsList.add(
+                    Metrics(
+                        id = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
+                        userId = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
+                        monthyear = "2020-01-01T00:00:00.000Z",
+                        ev = 12,
+                        de = 32,
+                        jb = 16,
+                        aa = 52,
+                        p = 71,
+                        e = 93,
+                        a = 35,
+                        c = 26,
+                        ed = 19,
+                        isDeleted = 0
+                    )
+                )
+                metricsList.add(
+                    Metrics(
+                        id = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
+                        userId = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
+                        monthyear = "2020-01-01T00:00:00.000Z",
+                        ev = 1,
+                        de = 2,
+                        jb = 1,
+                        aa = 5,
+                        p = 7,
+                        e = 9,
+                        a = 5,
+                        c = 2,
+                        ed = 1,
+                        isDeleted = 0
+                    )
+                )
+
+
+                metricsList.add(
+                    Metrics(
+                        id = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
+                        userId = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
+                        monthyear = "2020-01-01T00:00:00.000Z",
+                        ev = 12,
+                        de = 32,
+                        jb = 16,
+                        aa = 52,
+                        p = 71,
+                        e = 93,
+                        a = 35,
+                        c = 26,
+                        ed = 19,
+                        isDeleted = 0
+                    )
+                )
+                metricsList.add(
+                    Metrics(
+                        id = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
+                        userId = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
+                        monthyear = "2020-01-01T00:00:00.000Z",
+                        ev = 1,
+                        de = 2,
+                        jb = 1,
+                        aa = 5,
+                        p = 7,
+                        e = 9,
+                        a = 5,
+                        c = 2,
+                        ed = 1,
+                        isDeleted = 0
+                    )
+                )
+
+
+                metricsList.add(
+                    Metrics(
+                        id = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
+                        userId = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
+                        monthyear = "2020-01-01T00:00:00.000Z",
+                        ev = 12,
+                        de = 32,
+                        jb = 16,
+                        aa = 52,
+                        p = 71,
+                        e = 93,
+                        a = 35,
+                        c = 26,
+                        ed = 19,
+                        isDeleted = 0
+                    )
+                )
+                metricsList.add(
+                    Metrics(
+                        id = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
+                        userId = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
+                        monthyear = "2020-01-01T00:00:00.000Z",
+                        ev = 1,
+                        de = 2,
+                        jb = 1,
+                        aa = 5,
+                        p = 7,
+                        e = 9,
+                        a = 5,
+                        c = 2,
+                        ed = 1,
+                        isDeleted = 0
+                    )
+                )
+
+
+                metricsList.add(
+                    Metrics(
+                        id = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
+                        userId = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
+                        monthyear = "2020-01-01T00:00:00.000Z",
+                        ev = 12,
+                        de = 32,
+                        jb = 16,
+                        aa = 52,
+                        p = 71,
+                        e = 93,
+                        a = 35,
+                        c = 26,
+                        ed = 19,
+                        isDeleted = 0
+                    )
+                )
                 metricsList.add(
                     Metrics(
                         id = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",

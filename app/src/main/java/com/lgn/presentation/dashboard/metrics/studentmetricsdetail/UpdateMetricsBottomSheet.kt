@@ -1,5 +1,6 @@
 package com.lgn.presentation.dashboard.metrics.studentmetricsdetail
 
+import android.util.Patterns
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -25,6 +26,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.lgn.R
 import com.lgn.domain.model.Response
 import com.lgn.domain.model.StudentMerticsResponse
+import com.lgn.domain.model.UpdateStudentResponse
 import com.lgn.domain.model.Users
 import com.lgn.presentation.ui.theme.green
 import com.lgn.presentation.ui.theme.hintColorGray
@@ -414,6 +416,49 @@ fun UpdateMetricsBottomSheet(
             modifier = Modifier
                 .fillMaxWidth(),
             onClick = {
+
+                var errorShown = false
+                if(date.isEmpty()) {
+                    showToast(context, "Please add date")
+                    errorShown = true
+                }
+
+                if(state.ev.toString().isEmpty()
+                    || state.de.toString().isEmpty()
+                    || state.jb.toString().isEmpty()
+                    || state.aa.toString().isEmpty()
+                    || state.p.toString().isEmpty()
+                    || state.e.toString().isEmpty()
+                    || state.a.toString().isEmpty()
+                    || state.c.toString().isEmpty()
+                    || state.ed.toString().isEmpty()
+                ) {
+                    showToast(context, "Please enter all required fields")
+                    errorShown = true
+                }
+
+                if(!errorShown) {
+                    viewModel.updateStudentMetrics(
+                        context,
+                        StudentMerticsResponse(
+                            userId = state.id,
+                            monthyear = state.monthyear,
+                            ev = state.ev,
+                            de = state.de,
+                            jb = state.jb,
+                            aa = state.aa,
+                            p = state.p,
+                            e = state.e,
+                            a = state.a,
+                            c = state.c,
+                            ed = state.ed,
+                            isDeleted = state.isDeleted,
+
+                            )
+                    )
+                }
+
+
                 viewModel.updateStudentMetrics(
                     context,
                     StudentMerticsResponse(

@@ -13,6 +13,9 @@ import com.lgn.domain.model.UpdateStudentResponse
 import com.lgn.domain.model.Response
 import com.lgn.domain.usecase.UseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -26,6 +29,21 @@ class StudentProfileViewModel @Inject constructor(
 
     private val _studentStatusState = mutableStateOf<Response<UpdateStudentResponse>>(Response.Idle)
     val studentStatusState: State<Response<UpdateStudentResponse>> = _studentStatusState
+
+    private val _showDialog = MutableStateFlow(false)
+    val showDialog: StateFlow<Boolean> = _showDialog.asStateFlow()
+
+    fun onOpenDialogClicked() {
+        _showDialog.value = true
+    }
+
+    fun onDialogConfirm() {
+        _showDialog.value = false
+    }
+
+    fun onDialogDismiss() {
+        _showDialog.value = false
+    }
 
     var rolseState by mutableStateOf("Associate")
     var loadedFirstTime by mutableStateOf(true)
