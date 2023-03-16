@@ -43,6 +43,7 @@ fun UpdateMetricsBottomSheet(
     viewModel: UpdateMetricsViewModel = hiltViewModel(),
     onCloseClicked: () -> Unit,
     user: Users? = null,
+    addMetric: Boolean = true,
     userResponseData: StudentMerticsResponse? = StudentMerticsResponse()
 ) {
     val context = LocalContext.current
@@ -394,7 +395,11 @@ fun UpdateMetricsBottomSheet(
         when (viewModel.metricsUpdateState.value) {
             is Response.Loading -> {
                 canClose = false
-                Box(modifier = Modifier.fillMaxWidth().height(40.dp)) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(40.dp)
+                ) {
                     CustomProgressBar()
                 }
             }
@@ -418,12 +423,12 @@ fun UpdateMetricsBottomSheet(
             onClick = {
 
                 var errorShown = false
-                if(date.isEmpty()) {
+                if (date.isEmpty()) {
                     showToast(context, "Please add date")
                     errorShown = true
                 }
 
-                if(state.ev.toString().isEmpty()
+                if (state.ev.toString().isEmpty()
                     || state.de.toString().isEmpty()
                     || state.jb.toString().isEmpty()
                     || state.aa.toString().isEmpty()
@@ -437,46 +442,46 @@ fun UpdateMetricsBottomSheet(
                     errorShown = true
                 }
 
-                if(!errorShown) {
-                    viewModel.updateStudentMetrics(
-                        context,
-                        StudentMerticsResponse(
-                            userId = state.id,
-                            monthyear = state.monthyear,
-                            ev = state.ev,
-                            de = state.de,
-                            jb = state.jb,
-                            aa = state.aa,
-                            p = state.p,
-                            e = state.e,
-                            a = state.a,
-                            c = state.c,
-                            ed = state.ed,
-                            isDeleted = state.isDeleted,
-
+                if (!errorShown) {
+                    if (addMetric) {
+                        viewModel.updateStudentMetrics(
+                            context,
+                            StudentMerticsResponse(
+                                userId = state.userId,
+                                monthyear = state.monthyear,
+                                ev = state.ev,
+                                de = state.de,
+                                jb = state.jb,
+                                aa = state.aa,
+                                p = state.p,
+                                e = state.e,
+                                a = state.a,
+                                c = state.c,
+                                ed = state.ed,
+                                isDeleted = 0
                             )
-                    )
-                }
-
-
-                viewModel.updateStudentMetrics(
-                    context,
-                    StudentMerticsResponse(
-                        userId = state.id,
-                        monthyear = state.monthyear,
-                        ev = state.ev,
-                        de = state.de,
-                        jb = state.jb,
-                        aa = state.aa,
-                        p = state.p,
-                        e = state.e,
-                        a = state.a,
-                        c = state.c,
-                        ed = state.ed,
-                        isDeleted = state.isDeleted,
-
                         )
-                )
+                    } else {
+                        viewModel.updateStudentMetrics(
+                            context,
+                            StudentMerticsResponse(
+                                id = state.id,
+                                userId = state.userId,
+                                monthyear = state.monthyear,
+                                ev = state.ev,
+                                de = state.de,
+                                jb = state.jb,
+                                aa = state.aa,
+                                p = state.p,
+                                e = state.e,
+                                a = state.a,
+                                c = state.c,
+                                ed = state.ed,
+                                isDeleted = state.isDeleted,
+                            )
+                        )
+                    }
+                }
             },
             colors = ButtonDefaults.buttonColors(backgroundColor = green)
         )

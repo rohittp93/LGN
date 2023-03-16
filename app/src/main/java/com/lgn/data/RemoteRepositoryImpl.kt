@@ -63,7 +63,15 @@ class RemoteRepositoryImpl @Inject constructor() : Repository {
         //val apiService = ApiService.getInstance()
 
         try {
-            //val authResult = apiService.updateStudentMetrics(studentMerticsResponse)
+/*
+            if (studentMerticsResponse.id != null) {
+                // Update Metric
+                val authResult = apiService.updateStudentMetrics(studentMerticsResponse.id ?: "", studentMerticsResponse)
+            } else {
+                // Add Metric
+                val authResult = apiService.addStudentMetrics(studentMerticsResponse)
+            }*/
+
             delay(1000L)
             emit(Response.Success(studentMerticsResponse))
         } catch (e: Exception) {
@@ -102,7 +110,7 @@ class RemoteRepositoryImpl @Inject constructor() : Repository {
                     status = 0
                 )
             )
-             studentList.add(
+            studentList.add(
                 StudentData(
                     id = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
                     userName = "Nikita",
@@ -125,7 +133,7 @@ class RemoteRepositoryImpl @Inject constructor() : Repository {
                     status = 0
                 )
             )
-             studentList.add(
+            studentList.add(
                 StudentData(
                     id = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
                     userName = "Nikita",
@@ -148,7 +156,7 @@ class RemoteRepositoryImpl @Inject constructor() : Repository {
                     status = 0
                 )
             )
-             studentList.add(
+            studentList.add(
                 StudentData(
                     id = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
                     userName = "Nikita",
@@ -171,7 +179,7 @@ class RemoteRepositoryImpl @Inject constructor() : Repository {
                     status = 0
                 )
             )
-             studentList.add(
+            studentList.add(
                 StudentData(
                     id = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
                     userName = "Nikita",
@@ -194,7 +202,7 @@ class RemoteRepositoryImpl @Inject constructor() : Repository {
                     status = 0
                 )
             )
-             studentList.add(
+            studentList.add(
                 StudentData(
                     id = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
                     userName = "Nikita",
@@ -217,7 +225,7 @@ class RemoteRepositoryImpl @Inject constructor() : Repository {
                     status = 0
                 )
             )
-             studentList.add(
+            studentList.add(
                 StudentData(
                     id = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
                     userName = "Nikita",
@@ -240,7 +248,7 @@ class RemoteRepositoryImpl @Inject constructor() : Repository {
                     status = 0
                 )
             )
-             studentList.add(
+            studentList.add(
                 StudentData(
                     id = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
                     userName = "Nikita",
@@ -263,7 +271,7 @@ class RemoteRepositoryImpl @Inject constructor() : Repository {
                     status = 0
                 )
             )
-             studentList.add(
+            studentList.add(
                 StudentData(
                     id = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
                     userName = "Nikita",

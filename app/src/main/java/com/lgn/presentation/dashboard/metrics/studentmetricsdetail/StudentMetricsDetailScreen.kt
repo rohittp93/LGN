@@ -27,6 +27,7 @@ import com.lgn.domain.model.StudentMerticsResponse
 import com.lgn.domain.model.Users
 import com.lgn.presentation.ui.theme.*
 import com.lgn.presentation.ui.utils.CustomProgressBar
+import com.lgn.presentation.ui.utils.SimpleAlertDialog
 import com.lgn.presentation.ui.utils.showToast
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
@@ -46,6 +47,7 @@ fun StudentMetricsDetailScreen(
     var canClose by remember {
         mutableStateOf(false)
     }
+    val showDialogState: Boolean by viewModel.showDialog.collectAsState()
 
     var closeClicked by remember {
         mutableStateOf(false)
@@ -80,6 +82,22 @@ fun StudentMetricsDetailScreen(
         }
     }
 
+    SimpleAlertDialog(
+        title = "Delete Metric",
+        message = "Are you sure you want to delete this metric?",
+        show = showDialogState,
+        showDismissButton = true,
+        onDismiss = viewModel::onDialogDismiss,
+        onConfirm = {
+            updateMetricsViewModel.updateStudentMetrics(
+                context,
+                userResponseData.apply {
+                    isDeleted = 1
+                })
+            viewModel.onDialogDismiss()
+        }
+    )
+
     ModalBottomSheetLayout(
         sheetState = sheetState,
         sheetElevation = 8.dp,
@@ -89,6 +107,7 @@ fun StudentMetricsDetailScreen(
         sheetContent = {
             UpdateMetricsBottomSheet(
                 user = user,
+                addMetric = false,
                 userResponseData = userResponseData,
                 onCloseClicked = {
                     coroutineScope.launch {
@@ -511,11 +530,7 @@ fun StudentMetricsDetailScreen(
                                     .fillMaxWidth()
                                     .padding(top = 16.dp, start = 24.dp, end = 24.dp),
                                 onClick = {
-                                    updateMetricsViewModel.updateStudentMetrics(
-                                        context,
-                                        userResponseData.apply {
-                                            isDeleted = 1
-                                        })
+                                    viewModel.onOpenDialogClicked()
                                 },
                                 colors = ButtonDefaults.buttonColors(backgroundColor = green)
                             )

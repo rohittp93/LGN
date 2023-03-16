@@ -94,6 +94,7 @@ fun AllMetricsScreen(
 
         sheetContent = {
             UpdateMetricsBottomSheet(
+                addMetric = true,
                 onCloseClicked = {
                     coroutineScope.launch {
                         if (sheetState.isVisible) sheetState.hide()

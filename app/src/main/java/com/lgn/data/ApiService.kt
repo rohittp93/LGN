@@ -18,8 +18,11 @@ interface ApiService {
     @GET("metrics/{id}")
     suspend fun fetchStudentMetrics(@Path(value = "id", encoded = true) id: String): StudentMerticsResponse
 
+    @PUT("metrics/{id}")
+    suspend fun updateStudentMetrics(@Path(value = "id", encoded = true) id: String, @Body studentMerticsResponse: StudentMerticsResponse): StudentMerticsResponse
+
     @POST("metrics")
-    suspend fun updateStudentMetrics(@Body studentMerticsResponse: StudentMerticsResponse): StudentMerticsResponse
+    suspend fun addStudentMetrics(@Body studentMerticsResponse: StudentMerticsResponse): StudentMerticsResponse
 
     @GET("metrics/user/{id}")
     suspend fun fetchStudentProfileMetrics(@Path(value = "id", encoded = true) id: String, year: String): StudentProfileMerticsResponse
