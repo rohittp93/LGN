@@ -26,13 +26,13 @@ interface Repository {
 
     fun fetchStudentMetrics(context: Context, id: String): Flow<Response<StudentMerticsResponse>>
 
-    fun updateStudentMetrics(context: Context, studentMetrics: StudentMerticsResponse): Flow<Response<StudentMerticsResponse>>
+    fun updateStudentMetrics(context: Context, id: String, studentMetrics: StudentMerticsResponse): Flow<Response<StudentMerticsResponse>>
 
     fun fetchStudentProfileMetrics(context: Context, userId: String, year: String): Flow<Response<StudentProfileMerticsResponse>>
 
-    fun changeToGraduate(context: Context, userId: String, batch: String): Flow<Response<UpdateStudentResponse>>
+    fun changeToGraduate(context: Context, user: StudentData): Flow<Response<UpdateStudentResponse>>
 
-    fun updateStudentStatus(context: Context, userId: String, status: Int, role: String): Flow<Response<UpdateStudentResponse>>
+    fun updateStudentStatus(context: Context, user: StudentData, status: Int): Flow<Response<UpdateStudentResponse>>
 
     fun addStudent(context: Context, student: UpdateStudentResponse): Flow<Response<UpdateStudentResponse>>
 

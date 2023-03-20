@@ -47,9 +47,9 @@ class StudentMetricsDetailViewModel @Inject constructor(
         //fetchStudentMetrics(application.applicationContext)
     }
 
-    fun fetchStudentMetrics(context: Context, monthYear: String) {
+    fun fetchStudentMetrics(context: Context, userId: String) {
         viewModelScope.launch {
-            useCase.fetchStudentMetrics(context, monthYear).collect { response ->
+            useCase.fetchStudentMetrics(context, userId).collect { response ->
                 _usersState.value = response
             }
         }

@@ -5,8 +5,10 @@ import com.google.gson.annotations.SerializedName
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
-data class TeamData (
+data class TeamData(
     @SerializedName("id") var id: String? = null,
+    @SerializedName("user_firstname") var userFirstName: String? = null,
+    @SerializedName("user_lastname") var userLastName: String? = null,
     @SerializedName("user_name") var userName: String? = null,
     @SerializedName("user_email") var userEmail: String? = null,
     @SerializedName("user_phone") var userPhone: String? = null,
@@ -18,18 +20,19 @@ data class TeamData (
     @SerializedName("user_aadhar") var userAadhar: String? = null,
     @SerializedName("role") var role: String? = null,
     @SerializedName("status") var status: Int? = null,
-    @SerializedName("assoiate") var associate: List<StudentData> = listOf()
+    @SerializedName("associate") var associate: List<StudentData> = listOf()
 ) : Parcelable
 
 
 @Parcelize
-data class StudentData (
-    @SerializedName("id"             ) var id            : String? = null,
-    @SerializedName("user_id"        ) var userId        : String? = null,
-    @SerializedName("user_firstname" ) var userFirstname : String? = null,
-    @SerializedName("user_lastname"  ) var userLastname  : String? = null,
-    @SerializedName("user_phone"     ) var userPhone     : String? = null,
-    @SerializedName("role"           ) var role          : String = "",
-    @SerializedName("batch"          ) var batch         : String? = null,
-    @SerializedName("status"         ) var status        : Int?    = null
+data class StudentData(
+    @SerializedName("id") var id: String? = null,
+    @SerializedName("user_id") var userId: String? = null,
+    @SerializedName("user_firstname") var userFirstname: String? = null,
+    @SerializedName("user_lastname") var userLastname: String? = null,
+    @SerializedName("user_email") var userEmail: String? = null,
+    @SerializedName("user_phone") var userPhone: String? = null,
+    @SerializedName("role") var role: String = "",
+    @SerializedName("batch") var batch: String? = null,
+    @SerializedName("status") var status: Int? = null
 ) : Parcelable

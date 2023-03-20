@@ -27,5 +27,5 @@ data class User(
     @SerializedName("user_aadhar") var userAadhar: String? = null,
     @SerializedName("role") var role: String? = null,
     @SerializedName("trainer_id") var trainerId: String? = null,
-    @SerializedName("status") var status: Boolean? = null
+    @SerializedName("status") var status: Int? = null
 ): Parcelable

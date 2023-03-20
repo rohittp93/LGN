@@ -83,10 +83,10 @@ fun AddStudentBottomSheet(
         Spacer(modifier = Modifier.height(32.dp))
 
         OutlinedTextField(
-            value = state.name,
+            value = state.firstName,
             label = {
                 Text(
-                    text = "Student Name",
+                    text = "Associate First Name",
                     fontSize = 16.sp,
                     color = textColorGray
                 )
@@ -97,7 +97,27 @@ fun AddStudentBottomSheet(
                 unfocusedBorderColor = green, textColor = textColorGray
             ),
             onValueChange = { newText ->
-                viewModel.valueChanged("name", newText)
+                viewModel.valueChanged("firstname", newText)
+            },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        OutlinedTextField(
+            value = state.lastName,
+            label = {
+                Text(
+                    text = "Associate Last Name",
+                    fontSize = 16.sp,
+                    color = textColorGray
+                )
+            },
+            modifier = Modifier.fillMaxWidth(),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                focusedBorderColor = green,
+                unfocusedBorderColor = green, textColor = textColorGray
+            ),
+            onValueChange = { newText ->
+                viewModel.valueChanged("lastname", newText)
             },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
         )
@@ -163,6 +183,11 @@ fun AddStudentBottomSheet(
                     ?.savedStateHandle
                     ?.set("needsRefresh", true)
                 LaunchedEffect(key1 = context) {
+                    state.email = ""
+                    state.firstName = ""
+                    state.lastName = ""
+                    state.phone = ""
+
                     onCloseClicked(true)
                 }
             }
@@ -177,8 +202,12 @@ fun AddStudentBottomSheet(
                 .fillMaxWidth(),
             onClick = {
                 var errorShown = false
-                if (state.name.isEmpty()) {
-                    showToast(context, "Please enter name")
+                if (state.firstName.isEmpty()) {
+                    showToast(context, "Please enter first name")
+                    errorShown = true
+                }
+                if (state.lastName.isEmpty()) {
+                    showToast(context, "Please enter last name")
                     errorShown = true
                 }
                 if (state.email.isEmpty()) {
@@ -204,9 +233,12 @@ fun AddStudentBottomSheet(
                     viewModel.addStudent(
                         context,
                         UpdateStudentResponse(
-                            userFirstname = state.name,
+                            userFirstname = state.firstName,
+                            userLastname = state.lastName,
                             userEmail = state.email,
-                            userPhone = state.phone
+                            userPhone = state.phone,
+                            roleId = "Associate",
+                            status = 1,
                         )
                     )
                 }

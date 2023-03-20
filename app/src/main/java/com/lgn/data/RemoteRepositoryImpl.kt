@@ -5,6 +5,7 @@ import android.widget.Toast
 import com.lgn.core.Constants
 import com.lgn.core.Constants.KEY_ACCESS_TOKEN
 import com.lgn.core.Constants.KEY_IS_LOGGED
+import com.lgn.core.Constants.KEY_USERID
 import com.lgn.core.Constants.KEY_USERNAME
 import com.lgn.core.Constants.KEY_USER_AADHAR
 import com.lgn.core.Constants.KEY_USER_ADDRESS
@@ -29,7 +30,6 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 
-// TODO: REMOVE ALL MOCK API RESPONSES AND REQUESTS
 @Singleton
 class RemoteRepositoryImpl @Inject constructor() : Repository {
 
@@ -40,7 +40,7 @@ class RemoteRepositoryImpl @Inject constructor() : Repository {
         scope: CoroutineScope
     ) = flow {
         emit(Response.Loading)
-        val apiService = ApiService.getInstance()
+        val apiService = ApiService.getInstance(true)
         try {
             val authResult = apiService.login(LoginRequest(userCode, password))
 
@@ -66,9 +66,10 @@ class RemoteRepositoryImpl @Inject constructor() : Repository {
             dataStore.saveBooleanValue(KEY_IS_LOGGED, true)
             dataStore.saveStringValue(
                 KEY_USERNAME,
-                (authResult.user?.userFirstName ?: "") + (authResult.user?.userLastName ?: "")
+                (authResult.user?.userFirstName ?: "") + " " + (authResult.user?.userLastName ?: "")
             )
             dataStore.saveStringValue(KEY_USER_EMAIL, authResult.user?.userEmail ?: "")
+            dataStore.saveStringValue(KEY_USERID, authResult.user?.id ?: "")
             dataStore.saveStringValue(KEY_USER_PHONE, authResult.user?.userPhone ?: "")
             dataStore.saveStringValue(KEY_USER_ADDRESS, authResult.user?.userAddress ?: "")
             dataStore.saveStringValue(KEY_USER_BLOCK, authResult.user?.userBlock ?: "")
@@ -82,6 +83,7 @@ class RemoteRepositoryImpl @Inject constructor() : Repository {
             authResult.accessToken?.let {
                 dataStore.saveStringValue(KEY_ACCESS_TOKEN, it)
             }
+            delay(2000L)
             emit(Response.Success(authResult))
         } catch (e: Exception) {
             try {
@@ -152,6 +154,7 @@ class RemoteRepositoryImpl @Inject constructor() : Repository {
 
     override fun updateStudentMetrics(
         context: Context,
+        id: String,
         studentMerticsResponse: StudentMerticsResponse
     ) = flow {
         emit(Response.Loading)
@@ -161,8 +164,21 @@ class RemoteRepositoryImpl @Inject constructor() : Repository {
             if (studentMerticsResponse.id != null) {
                 // Update Metric
                 val authResult = apiService.updateStudentMetrics(
-                    studentMerticsResponse.id ?: "",
-                    studentMerticsResponse
+                    id ?: "",
+                    UpdateStudentMerticsRequest(
+                        userId = studentMerticsResponse.userId,
+                        monthyear = studentMerticsResponse.monthyear,
+                        ev = studentMerticsResponse.ev,
+                        de = studentMerticsResponse.de,
+                        jb = studentMerticsResponse.jb,
+                        aa = studentMerticsResponse.aa,
+                        p = studentMerticsResponse.p,
+                        e = studentMerticsResponse.e,
+                        a = studentMerticsResponse.a,
+                        c = studentMerticsResponse.c,
+                        ed = studentMerticsResponse.ed,
+                        isDeleted = studentMerticsResponse.isDeleted,
+                    )
                 )
                 emit(Response.Success(authResult))
             } else {
@@ -182,121 +198,140 @@ class RemoteRepositoryImpl @Inject constructor() : Repository {
         emit(Response.Loading)
         val apiService = ApiService.getInstance()
         try {
-            //val teamResponse = apiService.fetchTeam()
+            val teamResponse = apiService.fetchTeam()
 
-            val studentList = mutableListOf<StudentData>()
-            studentList.add(
-                StudentData(
-                    id = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
-                    userFirstname = "Nikita",
-                    userPhone = "123456789",
-                    role = "Associate",
-                    batch = "2020-01-01T00:00:00.000Z",
-                    status = 1
-                )
-            )
+            /* val studentList = mutableListOf<StudentData>()
+             studentList.add(
+                 StudentData(
+                     id = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
+                     userFirstname = "Nikita",
+                     userPhone = "123456789",
+                     role = "Associate",
+                     batch = "2020-01-01T00:00:00.000Z",
+                     status = 1
+                 )
+             )
 
-            studentList.add(
-                StudentData(
-                    id = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
-                    userFirstname = "Rohit",
-                    userPhone = "123456789",
-                    role = "Graduate",
-                    batch = "2020-01-01T00:00:00.000Z",
-                    status = 0
-                )
-            )
-            studentList.add(
-                StudentData(
-                    id = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
-                    userFirstname = "Nikita",
-                    userPhone = "123456789",
-                    role = "Associate",
-                    batch = "2020-01-01T00:00:00.000Z",
-                    status = 1
-                )
-            )
+             studentList.add(
+                 StudentData(
+                     id = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
+                     userFirstname = "Rohit",
+                     userPhone = "123456789",
+                     role = "Graduate",
+                     batch = "2020-01-01T00:00:00.000Z",
+                     status = 0
+                 )
+             )
+             studentList.add(
+                 StudentData(
+                     id = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
+                     userFirstname = "Nikita",
+                     userPhone = "123456789",
+                     role = "Associate",
+                     batch = "2020-01-01T00:00:00.000Z",
+                     status = 1
+                 )
+             )
 
-            studentList.add(
-                StudentData(
-                    id = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
-                    userFirstname = "Rohit",
-                    userPhone = "123456789",
-                    role = "Graduate",
-                    batch = "2020-01-01T00:00:00.000Z",
-                    status = 0
-                )
-            )
-            studentList.add(
-                StudentData(
-                    id = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
-                    userFirstname = "Nikita",
-                    userPhone = "123456789",
-                    role = "Associate",
-                    batch = "2020-01-01T00:00:00.000Z",
-                    status = 1
-                )
-            )
+             studentList.add(
+                 StudentData(
+                     id = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
+                     userFirstname = "Rohit",
+                     userPhone = "123456789",
+                     role = "Graduate",
+                     batch = "2020-01-01T00:00:00.000Z",
+                     status = 0
+                 )
+             )
+             studentList.add(
+                 StudentData(
+                     id = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
+                     userFirstname = "Nikita",
+                     userPhone = "123456789",
+                     role = "Associate",
+                     batch = "2020-01-01T00:00:00.000Z",
+                     status = 1
+                 )
+             )
 
-            studentList.add(
-                StudentData(
-                    id = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
-                    userFirstname = "Rohit",
-                    userPhone = "123456789",
-                    role = "Graduate",
-                    batch = "2020-01-01T00:00:00.000Z",
-                    status = 0
-                )
-            )
-            studentList.add(
-                StudentData(
-                    id = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
-                    userFirstname = "Nikita",
-                    userPhone = "123456789",
-                    role = "Associate",
-                    batch = "2020-01-01T00:00:00.000Z",
-                    status = 1
-                )
-            )
+             studentList.add(
+                 StudentData(
+                     id = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
+                     userFirstname = "Rohit",
+                     userPhone = "123456789",
+                     role = "Graduate",
+                     batch = "2020-01-01T00:00:00.000Z",
+                     status = 0
+                 )
+             )
+             studentList.add(
+                 StudentData(
+                     id = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
+                     userFirstname = "Nikita",
+                     userPhone = "123456789",
+                     role = "Associate",
+                     batch = "2020-01-01T00:00:00.000Z",
+                     status = 1
+                 )
+             )
 
-            studentList.add(
-                StudentData(
-                    id = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
-                    userFirstname = "Rohit",
-                    userPhone = "123456789",
-                    role = "Graduate",
-                    batch = "2020-01-01T00:00:00.000Z",
-                    status = 0
-                )
-            )
-            studentList.add(
-                StudentData(
-                    id = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
-                    userFirstname = "Nikita",
-                    userPhone = "123456789",
-                    role = "Associate",
-                    batch = "2020-01-01T00:00:00.000Z",
-                    status = 1
-                )
-            )
+             studentList.add(
+                 StudentData(
+                     id = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
+                     userFirstname = "Rohit",
+                     userPhone = "123456789",
+                     role = "Graduate",
+                     batch = "2020-01-01T00:00:00.000Z",
+                     status = 0
+                 )
+             )
+             studentList.add(
+                 StudentData(
+                     id = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
+                     userFirstname = "Nikita",
+                     userPhone = "123456789",
+                     role = "Associate",
+                     batch = "2020-01-01T00:00:00.000Z",
+                     status = 1
+                 )
+             )
 
-            val mockTeamResult = TeamData(
-                id = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
-                userName = "Nikita",
-                userEmail = "example@gmail.com",
-                userPhone = "123456789",
-                userAddress = "example address",
-                userBlock = "example block",
-                userDistrict = "example district",
-                userPin = "102103",
-                userState = "example state",
-                userAadhar = "1234567890",
-                role = "Trainer",
-                status = 1,
-                associate = studentList
+             val mockTeamResult = TeamData(
+                 id = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
+                 userName = "Nikita",
+                 userEmail = "example@gmail.com",
+                 userPhone = "123456789",
+                 userAddress = "example address",
+                 userBlock = "example block",
+                 userDistrict = "example district",
+                 userPin = "102103",
+                 userState = "example state",
+                 userAadhar = "1234567890",
+                 role = "Trainer",
+                 status = 1,
+                 associate = studentList
+             )
+             delay(1000L)*/
+
+
+            val dataStore = LocalDataStore(context)
+            dataStore.saveBooleanValue(KEY_IS_LOGGED, true)
+            dataStore.saveStringValue(
+                KEY_USERNAME,
+                (teamResponse.userFirstName ?: "") + " " + (teamResponse.userLastName ?: "")
             )
-            delay(1000L)
-            emit(Response.Success(mockTeamResult))
+            dataStore.saveStringValue(KEY_USER_EMAIL, teamResponse.userEmail ?: "")
+            dataStore.saveStringValue(KEY_USERID, teamResponse.id ?: "")
+            dataStore.saveStringValue(KEY_USER_PHONE, teamResponse.userPhone ?: "")
+            dataStore.saveStringValue(KEY_USER_ADDRESS, teamResponse.userAddress ?: "")
+            dataStore.saveStringValue(KEY_USER_BLOCK, teamResponse.userBlock ?: "")
+            dataStore.saveStringValue(KEY_USER_DISTRICT, teamResponse.userDistrict ?: "")
+            dataStore.saveStringValue(KEY_USER_PINCODE, teamResponse.userPin ?: "")
+            dataStore.saveStringValue(KEY_USER_STATE, teamResponse.userState ?: "")
+            dataStore.saveStringValue(KEY_USER_AADHAR, teamResponse.userAadhar ?: "")
+            dataStore.saveStringValue(KEY_USER_ROLE, teamResponse.role ?: "")
+
+            emit(Response.Success(teamResponse))
         } catch (e: Exception) {
             emit(Response.Error(e.message ?: e.toString()))
         }
@@ -453,94 +488,116 @@ class RemoteRepositoryImpl @Inject constructor() : Repository {
             emit(Response.Loading)
             val apiService = ApiService.getInstance()
             try {
-                //val studentMerticsResponse = apiService.fetchStudentMetrics(id)
+                val studentMerticsResponse = apiService.fetchStudentMetrics(id)
 
-                var studentMerticsResponse = StudentMerticsResponse(
-                    id = id,
-                    userId = "ahjdausidtbiandgas",
-                    monthyear = "dadkjadkad",
-                    ev = 1,
-                    de = 2,
-                    jb = 1,
-                    aa = 5,
-                    p = 7,
-                    e = 9,
-                    a = 5,
-                    c = 2,
-                    ed = 1,
-                    isDeleted = 0
-                )
+                /* var studentMerticsResponse = StudentMerticsResponse(
+                     id = id,
+                     userId = "ahjdausidtbiandgas",
+                     monthyear = "dadkjadkad",
+                     ev = 1,
+                     de = 2,
+                     jb = 1,
+                     aa = 5,
+                     p = 7,
+                     e = 9,
+                     a = 5,
+                     c = 2,
+                     ed = 1,
+                     isDeleted = 0
+                 )
 
-                delay(1000L)
+                 delay(1000L)*/
                 emit(Response.Success(studentMerticsResponse))
             } catch (e: Exception) {
                 emit(Response.Error(e.message ?: e.toString()))
             }
         }
 
-
-    override fun changeToGraduate(
-        context: Context,
-        userId: String,
-        batch: String
-    ): Flow<Response<UpdateStudentResponse>> = flow {
-        emit(Response.Loading)
-        //val apiService = ApiService.getInstance()
-        try {
-            /*val changeToGraduateResponse = apiService.changeToGraduate(
-                userId, ChangeToGraduateResponse(
-                    roleId = "Graduate",
-                    batch = batch
-                )
-            )*/
-
-            val response = UpdateStudentResponse(
-                roleId = "Graduate",
-                batch = batch
-            )
-            delay(2000L)
-            emit(Response.Success(response))
-        } catch (e: Exception) {
-            emit(Response.Error(e.message ?: e.toString()))
-        }
-    }
-
-
     override fun addStudent(
         context: Context,
         student: UpdateStudentResponse,
     ): Flow<Response<UpdateStudentResponse>> = flow {
         emit(Response.Loading)
-        //val apiService = ApiService.getInstance()
+        val apiService = ApiService.getInstance()
         try {
-            //val changeToGraduateResponse = apiService.addStudent(student)
 
-            val response = UpdateStudentResponse(
-                userFirstname = "Test",
-                userEmail = "test@gmail.com",
-                userPhone = "965214848"
-            )
-            delay(2000L)
-            emit(Response.Success(response))
+            val dataStore = LocalDataStore(context)
+            val trainerId =
+                runBlocking { dataStore.getStringValue(Constants.KEY_USERID).first() } ?: ""
+
+            student.trainerId = trainerId
+            val addStudentResponse = apiService.addStudent(student)
+
+            emit(Response.Success(addStudentResponse))
         } catch (e: Exception) {
             emit(Response.Error(e.message ?: e.toString()))
         }
     }
 
-
-    override fun updateStudentStatus(
+    override fun changeToGraduate(
         context: Context,
-        userId: String,
-        status: Int,
-        role: String
+        user: StudentData
     ): Flow<Response<UpdateStudentResponse>> = flow {
         emit(Response.Loading)
         val apiService = ApiService.getInstance()
         try {
-            val updateStudentResponse = apiService.changeToGraduate(
+           /* val changeToGraduateResponse = apiService.changeToGraduate(
                 userId, UpdateStudentResponse(
-                    Status = status,
-                    roleId = "Associate"
+                    roleId = "Graduate",
+                    batch = batch
+                )
+            )*/
+
+            val dataStore = LocalDataStore(context)
+            val trainerId =
+                runBlocking { dataStore.getStringValue(Constants.KEY_USERID).first() } ?: ""
+
+            val updateStudentResponse = apiService.updateUser(
+                user.id ?: "", UpdateStudentResponse(
+                    status = user.status,
+                    userFirstname = user.userFirstname,
+                    userEmail = user.userEmail,
+                    userLastname = user.userLastname,
+                    userPhone = user.userPhone,
+                    batch = user.batch,
+                    roleId = "Graduate",
+                    trainerId = trainerId
+                )
+            )
+
+            /* val changeToGraduateResponse = UpdateStudentResponse(
+                 roleId = "Graduate",
+                 batch = batch
+             )
+             delay(2000L)*/
+            emit(Response.Success(updateStudentResponse))
+        } catch (e: Exception) {
+            emit(Response.Error(e.message ?: e.toString()))
+        }
+    }
+
+    override fun updateStudentStatus(
+        context: Context,
+        user: StudentData, status: Int
+    ): Flow<Response<UpdateStudentResponse>> = flow {
+        emit(Response.Loading)
+        val apiService = ApiService.getInstance()
+        try {
+            val dataStore = LocalDataStore(context)
+            val trainerId =
+                runBlocking { dataStore.getStringValue(Constants.KEY_USERID).first() } ?: ""
+
+
+            val updateStudentResponse = apiService.updateUser(
+                user.id ?: "", UpdateStudentResponse(
+                    status = status,
+                    userFirstname = user.userFirstname,
+                    userEmail = user.userEmail,
+                    userLastname = user.userLastname,
+                    userPhone = user.userPhone,
+                    batch = user.batch,
+                    roleId = user.role,
+                    trainerId = trainerId
                 )
             )
 
@@ -577,9 +634,10 @@ class RemoteRepositoryImpl @Inject constructor() : Repository {
             emit(Response.Loading)
             val apiService = ApiService.getInstance()
             try {
-                //val studentProfileMerticsResponse = apiService.fetchStudentProfileMetrics(userId, year)
+                val studentProfileMerticsResponse =
+                    apiService.fetchStudentProfileMetrics(userId, year)
 
-                val metricsList = mutableListOf<Metrics>() as ArrayList
+                /*val metricsList = mutableListOf<Metrics>() as ArrayList
 
                 metricsList.add(
                     Metrics(
@@ -762,19 +820,22 @@ class RemoteRepositoryImpl @Inject constructor() : Repository {
                     )
                 )
 
-                var studentMerticsResponse = StudentProfileMerticsResponse(
+                var studentProfileMerticsResponse = StudentProfileMerticsResponse(
                     metrics = metricsList
                 )
 
-                delay(1000L)
-                emit(Response.Success(studentMerticsResponse))
+                delay(1000L)*/
+                emit(Response.Success(studentProfileMerticsResponse))
             } catch (e: Exception) {
                 emit(Response.Error(e.message ?: e.toString()))
             }
         }
 
-    override fun logoutUser(context: Context): Flow<Response<Boolean>> {
-        TODO("Not yet implemented")
+    override fun logoutUser(context: Context): Flow<Response<Boolean>> = flow {
+        emit(Response.Loading)
+        val dataStore = LocalDataStore(context)
+        dataStore.clearAllPreferences()
+        emit(Response.Success(true))
     }
 
     override fun isUserLoggedIn(context: Context): Boolean {

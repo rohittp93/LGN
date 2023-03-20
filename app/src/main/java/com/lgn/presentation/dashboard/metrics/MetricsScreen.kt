@@ -67,7 +67,7 @@ fun MetricScreen(viewModel: MetricsViewModel = hiltViewModel(), navController: N
             showCustomDialog = !showCustomDialog
         }, onYearSelected = {
             yearPicked = it
-        }, "Select Year Of Completion")
+        }, "Select Year")
     }
 
 

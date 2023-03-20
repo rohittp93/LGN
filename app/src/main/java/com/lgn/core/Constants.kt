@@ -15,6 +15,7 @@ object Constants {
     const val KEY_USER_AADHAR = "user_aadhar"
     const val KEY_USER_ROLE = "user_role"
     const val KEY_USERNAME = "username"
+    const val KEY_USERID = "user_id"
 
     const val KEY_ACCESS_TOKEN = "access_token"
 

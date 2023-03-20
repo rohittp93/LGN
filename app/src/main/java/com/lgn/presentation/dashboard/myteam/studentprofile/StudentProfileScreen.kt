@@ -79,7 +79,7 @@ fun StudentProfileScreen(
             Log.d("dateFormated", dateFormated)
 
             user.id?.let { userId ->
-                viewModel.changeToGraduate(context, userId, dateFormated)
+                viewModel.changeToGraduate(context, user)
             }
         },
             title = "Select Year",
@@ -95,14 +95,15 @@ fun StudentProfileScreen(
         showDismissButton = true,
         onDismiss = viewModel::onDialogDismiss,
         onConfirm = {
-            user.id?.let {
+            user.userId?.let {
                 Log.d("RTAG", "updateStatus in dialog called")
 
                 viewModel.updateStatus(
                     context,
                     it,
                     if (user.status == 1) 0 else 1,
-                    user.role
+                    user.role,
+                    user
                 )
             }
             viewModel.onDialogDismiss()

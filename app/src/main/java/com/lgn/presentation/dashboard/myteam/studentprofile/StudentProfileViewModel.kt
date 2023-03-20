@@ -12,6 +12,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.lgn.domain.model.UpdateStudentResponse
 import com.lgn.domain.model.Response
+import com.lgn.domain.model.StudentData
 import com.lgn.domain.usecase.UseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -66,18 +67,18 @@ class StudentProfileViewModel @Inject constructor(
     }
 
 
-    fun changeToGraduate(context: Context, id: String, batch: String) {
+    fun changeToGraduate(context: Context, user: StudentData) {
         viewModelScope.launch {
-            useCase.changeToGraduate(context, id, batch).collect { response ->
+            useCase.changeToGraduate(context, user).collect { response ->
                 _changeToGraduateState.value = response
             }
         }
     }
 
-    fun updateStatus(context: Context, id: String, status: Int, role: String) {
+    fun updateStatus(context: Context, id: String, status: Int, role: String, user: StudentData) {
         Log.d("RTAG", "updateStatus in vm called")
         viewModelScope.launch {
-            useCase.updateStudentStatus(context, id, status, role).collect { response ->
+            useCase.updateStudentStatus(context, user, status).collect { response ->
                 studentStatusState.value = response
             }
         }

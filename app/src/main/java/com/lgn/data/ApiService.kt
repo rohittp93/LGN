@@ -42,7 +42,7 @@ interface ApiService {
     @PUT("metrics/{id}")
     suspend fun updateStudentMetrics(
         @Path(value = "id", encoded = true) id: String,
-        @Body studentMerticsResponse: StudentMerticsResponse
+        @Body studentMerticsResponse: UpdateStudentMerticsRequest
     ): StudentMerticsResponse
 
     @POST("metrics")
@@ -55,57 +55,65 @@ interface ApiService {
     ): StudentProfileMerticsResponse
 
     @PUT("user/{id}")
-    suspend fun changeToGraduate(
+    suspend fun updateUser(
         @Path(value = "id", encoded = true) id: String,
         @Body changeToGraduate: UpdateStudentResponse
     ): UpdateStudentResponse
 
-
-    @PUT("metrics/{id}")
-    suspend fun update(
-        @Path(value = "id", encoded = true) id: String,
-        @Body updateStudentResponse: UpdateStudentResponse
-    ): UpdateStudentResponse
-
-    @PUT("user")
+    @POST("user")
     suspend fun addStudent(@Body student: UpdateStudentResponse): UpdateStudentResponse
 
 
     companion object {
         var apiService: ApiService? = null
-        /*val bearerToken =
-            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYjE5YTc2OTgtYmI5MC0xMWVkLTlhMzMtOTgxMThkOGYyNTBlIiwicm9sZSI6IkFkbWluIiwidXNlcm5hbWUiOiJhZG1pbiIsImlhdCI6MTY3ODA0NzYwM30.gBXJyYftMsGAsOSGWETPwuPYxrwUmcNwCCDBCqm-fn0"
-*/
-
-        private val dataStore = LocalDataStore(LgnApp.appContext)
-        val accessToken =
-            runBlocking { dataStore.getStringValue(Constants.KEY_ACCESS_TOKEN).first() } ?: ""
-
+        var loginApiService: ApiService? = null
 
         fun addClient(): OkHttpClient {
+            val dataStore = LocalDataStore(LgnApp.appContext)
+            val accessToken =
+                runBlocking { dataStore.getStringValue(Constants.KEY_ACCESS_TOKEN).first() } ?: ""
+
             val httpClient = OkHttpClient.Builder()
 
             val builder = httpClient.addInterceptor(Interceptor { chain ->
                 val request: Request =
                     chain.request().newBuilder()
                         .addHeader("Authorization", "Bearer $accessToken")
-                        .addHeader("User-Agent", "Mozilla/5.0 (Linux; Android 13) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.5563.57 Mobile Safari/537.36")
                         .build()
                 chain.proceed(request)
             })
             return builder.build()
         }
 
-        fun getInstance(): ApiService {
-            if (accessToken.isEmpty()) {
-                apiService = Retrofit.Builder()
+
+        fun addUserAgentClient(): OkHttpClient {
+            val httpClient = OkHttpClient.Builder()
+
+            val builder = httpClient.addInterceptor(Interceptor { chain ->
+                val request: Request =
+                    chain.request().newBuilder()
+                        .addHeader(
+                            "User-Agent",
+                            "Mozilla/5.0 (Linux; Android 13) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.5563.57 Mobile Safari/537.36"
+                        )
+                        .build()
+                chain.proceed(request)
+            })
+            return builder.build()
+        }
+
+        fun getInstance(forLogin: Boolean? = false): ApiService {
+            if (forLogin == true) {
+                loginApiService = Retrofit.Builder()
+                    .client(addUserAgentClient())
                     .baseUrl("http://api.lgnindia.org/api/v1/")
                     .addConverterFactory(GsonConverterFactory.create())
                     .build().create(ApiService::class.java)
+                return loginApiService!!
             } else {
-
                 if (apiService == null) {
                     apiService = Retrofit.Builder()
+                        .client(addUserAgentClient())
                         .client(addClient())
                         .baseUrl("http://api.lgnindia.org/api/v1/")
                         .addConverterFactory(GsonConverterFactory.create())

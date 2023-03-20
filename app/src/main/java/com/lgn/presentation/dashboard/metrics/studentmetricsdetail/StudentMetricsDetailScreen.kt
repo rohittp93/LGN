@@ -78,7 +78,7 @@ fun StudentMetricsDetailScreen(
             navController.previousBackStackEntry?.savedStateHandle?.get<Users>("user") ?: Users()
 
         if (user?.id?.isNotEmpty() == true) {
-            viewModel.fetchStudentMetrics(context, user?.userId ?: "")
+            viewModel.fetchStudentMetrics(context, user?.id ?: "")
         }
     }
 
@@ -91,6 +91,7 @@ fun StudentMetricsDetailScreen(
         onConfirm = {
             updateMetricsViewModel.updateStudentMetrics(
                 context,
+                user.id ?: "",
                 userResponseData.apply {
                     isDeleted = 1
                 })

@@ -36,9 +36,9 @@ class UpdateMetricsViewModel @Inject constructor(
         //fetchStudentMetrics(application.applicationContext)
     }
 
-    fun updateStudentMetrics(context: Context, metrics: StudentMerticsResponse) {
+    fun updateStudentMetrics(context: Context, id: String, metrics: StudentMerticsResponse) {
         viewModelScope.launch {
-            useCase.updateStudentMetrics(context, metrics).collect { response ->
+            useCase.updateStudentMetrics(context, id, metrics).collect { response ->
                 _metricsUpdateState.value = response
             }
         }

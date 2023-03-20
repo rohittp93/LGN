@@ -143,7 +143,7 @@ fun UpdateMetricsBottomSheet(
                 .height(48.dp),
             colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
             onClick = {
-                visible = true
+                //visible = true
             }
         ) {
             Row(
@@ -471,6 +471,7 @@ fun UpdateMetricsBottomSheet(
                     if (addMetric) {
                         viewModel.updateStudentMetrics(
                             context,
+                            state.id ?: "",
                             StudentMerticsResponse(
                                 userId = state.userId,
                                 monthyear = state.monthyear,
@@ -489,8 +490,9 @@ fun UpdateMetricsBottomSheet(
                     } else {
                         viewModel.updateStudentMetrics(
                             context,
+                            state.id ?: "",
                             StudentMerticsResponse(
-                                id = state.id,
+                                id = state.userId,
                                 userId = state.userId,
                                 monthyear = state.monthyear,
                                 ev = state.ev,
