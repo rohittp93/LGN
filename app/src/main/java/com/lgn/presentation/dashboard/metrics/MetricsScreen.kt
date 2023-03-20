@@ -141,8 +141,6 @@ fun MetricScreen(viewModel: MetricsViewModel = hiltViewModel(), navController: N
                                         SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").format(date)
                                     Log.d("dateFormated", dateFormated)
 
-
-                                    // TODO: Change click to
                                     navController.currentBackStackEntry?.savedStateHandle?.set(
                                         "monthYear", dateFormated
                                     )

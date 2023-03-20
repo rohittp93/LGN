@@ -18,6 +18,8 @@ interface Repository {
 
     fun isUserLoggedIn(context: Context): Boolean
 
+    fun getUserProfileDetails(context: Context): UserProfile
+
     fun fetchTeam(context: Context): Flow<Response<TeamData>>
 
     fun fetchStudents(context: Context, monthYear: String): Flow<Response<List<Users>>>
@@ -30,7 +32,7 @@ interface Repository {
 
     fun changeToGraduate(context: Context, userId: String, batch: String): Flow<Response<UpdateStudentResponse>>
 
-    fun updateStudentStatus(context: Context, userId: String, status: Int): Flow<Response<UpdateStudentResponse>>
+    fun updateStudentStatus(context: Context, userId: String, status: Int, role: String): Flow<Response<UpdateStudentResponse>>
 
     fun addStudent(context: Context, student: UpdateStudentResponse): Flow<Response<UpdateStudentResponse>>
 

@@ -1,12 +1,9 @@
 package com.lgn.presentation.dashboard.myteam.studentprofile
 
 import android.util.Log
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.*
 import androidx.compose.ui.Modifier
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -85,7 +82,7 @@ fun StudentProfileScreen(
                 viewModel.changeToGraduate(context, userId, dateFormated)
             }
         },
-            title = "Select Year Of Completion",
+            title = "Select Year",
             buttonText = "SAVE"
         )
     }
@@ -99,10 +96,13 @@ fun StudentProfileScreen(
         onDismiss = viewModel::onDialogDismiss,
         onConfirm = {
             user.id?.let {
+                Log.d("RTAG", "updateStatus in dialog called")
+
                 viewModel.updateStatus(
                     context,
                     it,
-                    if (user.status == 1) 0 else 1
+                    if (user.status == 1) 0 else 1,
+                    user.role
                 )
             }
             viewModel.onDialogDismiss()
@@ -114,7 +114,7 @@ fun StudentProfileScreen(
                 ?: StudentData()
 
         if (viewModel.loadedFirstTime) {
-            user.role?.let { viewModel.updateRole(it) }
+            user.role.let { viewModel.updateRole(it) }
             viewModel.loadedFirstTime = false
         }
     }
@@ -180,7 +180,7 @@ fun StudentProfileScreen(
         )
         Spacer(modifier = Modifier.height(16.dp))
         Text(
-            text = user?.userName ?: "",
+            text = "${user.userFirstname ?: ""} ${user.userLastname ?: ""}",
             style = TextStyle(
                 fontWeight = FontWeight.Bold,
             ),
@@ -190,7 +190,7 @@ fun StudentProfileScreen(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        Row(
+        /*Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center,
             modifier = Modifier.padding(top = 4.dp)
@@ -214,7 +214,7 @@ fun StudentProfileScreen(
                 fontSize = 16.sp,
                 color = textColorGray
             )
-        }
+        }*/
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -242,30 +242,32 @@ fun StudentProfileScreen(
             )
         }
 
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center,
-            modifier = Modifier.padding(top = 8.dp)
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.account),
-                contentDescription = null,
-                colorFilter = ColorFilter.tint(
-                    green
-                ),
-                modifier = Modifier
-                    .height(20.dp)
-                    .width(20.dp)
-            )
-            Text(
-                text = viewModel.rolseState,
-                modifier = Modifier.padding(start = 8.dp),
-                style = TextStyle(
-                    fontWeight = FontWeight.Normal,
-                ),
-                fontSize = 16.sp,
-                color = textColorGray
-            )
+        if (user.role.isNotEmpty()) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier.padding(top = 8.dp)
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.account),
+                    contentDescription = null,
+                    colorFilter = ColorFilter.tint(
+                        green
+                    ),
+                    modifier = Modifier
+                        .height(20.dp)
+                        .width(20.dp)
+                )
+                Text(
+                    text = viewModel.rolseState,
+                    modifier = Modifier.padding(start = 8.dp),
+                    style = TextStyle(
+                        fontWeight = FontWeight.Normal,
+                    ),
+                    fontSize = 16.sp,
+                    color = textColorGray
+                )
+            }
         }
 
         Spacer(modifier = Modifier.height(32.dp))
@@ -328,35 +330,44 @@ fun StudentProfileScreen(
                     color = Color.White
                 )
             }
+
+
+            if (viewModel.showProgress.value) {
+                CustomProgressBar()
+            }
+
             when (val usersResponse = viewModel.changeToGraduateState.value) {
-                is Response.Loading -> CustomProgressBar()
+                is Response.Loading -> viewModel.showProgress(true)
                 is Response.Success -> {
+                    viewModel.showProgress(false)
+
                     navController.previousBackStackEntry
                         ?.savedStateHandle
                         ?.set("needsRefresh", true)
                     viewModel.updateRole("Graduate")
                 }
-                is Error -> {
-                    usersResponse.message?.let {
-                        Text(
-                            text = it,
-                            modifier = Modifier.padding(top = 24.dp),
-                            style = TextStyle(
-                                fontWeight = FontWeight.Bold,
-                                letterSpacing = 4.5.sp
-                            ),
-                            fontSize = 14.sp,
-                            color = hintColorGray
-                        )
-                    }
+                is Response.Error -> {
+                    viewModel.showProgress(false)
+                    showToast(context, usersResponse.message)
                 }
-                else -> {}
+                else -> {
+                    viewModel.showProgress(false)
+
+                }
             }
 
 
             when (val usersResponse = viewModel.studentStatusState.value) {
-                is Response.Loading -> CustomProgressBar()
+
+                is Response.Loading -> viewModel.showProgress(true)
+                is Response.Error -> {
+                    viewModel.showProgress(false)
+                    showToast(context, usersResponse.message)
+                    viewModel.studentStatusState.value = Response.Idle
+                }
                 is Response.Success -> {
+                    viewModel.showProgress(false)
+
                     if (!viewModel.exiting) {
                         navController.previousBackStackEntry
                             ?.savedStateHandle
@@ -365,25 +376,14 @@ fun StudentProfileScreen(
 
                         viewModel.exiting = true
                     }
+                    viewModel.studentStatusState.value = Response.Idle
                 }
-                is Error -> {
-                    usersResponse.message?.let {
-                        Text(
-                            text = it,
-                            modifier = Modifier.padding(top = 24.dp),
-                            style = TextStyle(
-                                fontWeight = FontWeight.Bold,
-                                letterSpacing = 4.5.sp
-                            ),
-                            fontSize = 14.sp,
-                            color = hintColorGray
-                        )
-                    }
+                else -> {
+                    Log.d("RTAG", "studentStatusState updated")
+                    viewModel.showProgress(false)
+                    //showToast(context, "Please wait")
                 }
-                else -> {}
             }
         }
-
-
     }
 }

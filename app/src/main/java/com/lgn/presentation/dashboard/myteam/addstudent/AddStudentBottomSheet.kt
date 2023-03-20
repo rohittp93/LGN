@@ -36,6 +36,7 @@ import java.util.*
 
 @Composable
 fun AddStudentBottomSheet(
+    navController: NavController,
     viewModel: AddStudentViewModel = hiltViewModel(),
     onCloseClicked: (Boolean) -> Unit
 ) {
@@ -45,8 +46,6 @@ fun AddStudentBottomSheet(
     var visible by remember {
         mutableStateOf(false)
     }
-
-
 
     Column(
         modifier = Modifier
@@ -61,7 +60,7 @@ fun AddStudentBottomSheet(
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(
-                text = "ADD STUDENT",
+                text = "ADD ASSOCIATE",
                 style = TextStyle(
                     fontWeight = FontWeight.Normal,
                 ),
@@ -160,6 +159,9 @@ fun AddStudentBottomSheet(
             }
             is Response.Success -> {
                 Log.d("RTAG ", "onCloseClicked called")
+                navController.previousBackStackEntry
+                    ?.savedStateHandle
+                    ?.set("needsRefresh", true)
                 LaunchedEffect(key1 = context) {
                     onCloseClicked(true)
                 }

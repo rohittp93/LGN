@@ -1,12 +1,13 @@
 package com.lgn.presentation.dashboard.myprofile
 
 
+import android.app.Application
 import android.content.Context
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.*
 import com.lgn.domain.model.Response
+import com.lgn.domain.model.StudentMerticsResponse
+import com.lgn.domain.model.UserProfile
 import com.lgn.domain.usecase.UseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,11 +17,26 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ProfileViewModel @Inject constructor(private val useCase: UseCases) : ViewModel() {
+class ProfileViewModel @Inject constructor(
+    private val useCase: UseCases,
+    application: Application
+) : AndroidViewModel(application) {
     private val _showDialog = MutableStateFlow(false)
     val showDialog: StateFlow<Boolean> = _showDialog.asStateFlow()
     private val _logoutState = MutableLiveData<Response<Boolean?>>(Response.Idle)
     val logoutState: LiveData<Response<Boolean?>> get() = _logoutState
+    var userProfile =
+        mutableStateOf(UserProfile())
+
+    init {
+        fetchUserProfileData(application.applicationContext)
+    }
+
+    private fun fetchUserProfileData(applicationContext: Context) {
+        viewModelScope.launch {
+            userProfile.value = useCase.getUserProfileDetails(applicationContext)
+        }
+    }
 
     fun onOpenDialogClicked() {
         _showDialog.value = true

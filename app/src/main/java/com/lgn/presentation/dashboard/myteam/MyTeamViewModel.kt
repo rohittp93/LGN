@@ -25,6 +25,7 @@ class MyTeamViewModel @Inject constructor(private val useCase: UseCases, applica
     var checkRefreshState = mutableStateOf(false)
     var userTypeFilter = mutableStateOf("Show All")
     var statusFilter = mutableStateOf("Both")
+    var yearFilterSelected = mutableStateOf("")
 
     private val _teamListState = mutableStateListOf<StudentData>()
     val teamListState: List<StudentData> = _teamListState

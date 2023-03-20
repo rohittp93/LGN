@@ -101,6 +101,8 @@ fun MyTeamScreen(viewModel: MyTeamViewModel = hiltViewModel(), navController: Na
         sheetShape = RoundedCornerShape(topEnd = 16.dp, topStart = 16.dp),
         sheetContent = {
             AddStudentBottomSheet(
+
+                navController,
                 onCloseClicked = { needsRefresh ->
                     coroutineScope.launch {
                         if (sheetState.isVisible) {
@@ -123,7 +125,14 @@ fun MyTeamScreen(viewModel: MyTeamViewModel = hiltViewModel(), navController: Na
                 .background(backgroundGray),
             contentAlignment = Alignment.Center
         ) {
-            PullRefreshIndicator(refreshing, state, Modifier.align(Alignment.TopCenter).zIndex(1f).padding(top= 60.dp))
+            PullRefreshIndicator(
+                refreshing,
+                state,
+                Modifier
+                    .align(Alignment.TopCenter)
+                    .zIndex(1f)
+                    .padding(top = 60.dp)
+            )
 
             Column(
                 horizontalAlignment = Alignment.Start,
@@ -181,6 +190,7 @@ fun MyTeamScreen(viewModel: MyTeamViewModel = hiltViewModel(), navController: Na
                 StudentFilterDialog(
                     userTypeFilter = viewModel.userTypeFilter,
                     statusFilter = viewModel.statusFilter,
+                    yearFilterSelected = viewModel.yearFilterSelected,
                     onDismiss = {
                         showCustomDialog = !showCustomDialog
                     },
@@ -189,15 +199,23 @@ fun MyTeamScreen(viewModel: MyTeamViewModel = hiltViewModel(), navController: Na
 
                         viewModel.userTypeFilter.value = sf.userType ?: "Show All"
                         viewModel.statusFilter.value = sf.statusType ?: "Both"
+                        viewModel.yearFilterSelected.value = sf.batch ?: ""
 
                         viewModel.updateFilterList(viewModel.teamListState.filter {
                             if (sf.statusType != "Both") {
-                                getFilterFromStatus(it.status) == sf.statusType
+                                getFilterFromStatus(it.status).equals(sf.statusType)
+
                             } else {
                                 it.status == 1 || it.status == 0
-                            } &&
+                            }
+                                    &&
                                     if (sf.userType != "Show All") {
-                                        it.role == sf.userType
+                                        it.role == sf.userType &&
+                                                if (sf.userType.equals("Graduate")) {
+                                                    convertToYear(it.batch).equals(convertToYear(sf.batch))
+                                                } else {
+                                                    it.batch.equals(it.batch)
+                                                }
                                     } else {
                                         (it.role == "Associate") || (it.role == "Graduate")
                                     }
@@ -212,7 +230,12 @@ fun MyTeamScreen(viewModel: MyTeamViewModel = hiltViewModel(), navController: Na
             when (val teamResponse = viewModel.teamState.value) {
                 is Response.Loading -> CustomProgressBar()
                 is Response.Success ->
-                    if (teamResponse.data.associate.isNotEmpty()) {
+                    if (
+                        if (viewModel.showFilterList.value)
+                            viewModel.filteredTeamListState.isNotEmpty()
+                        else
+                            teamResponse.data.associate.isNotEmpty()
+                    ) {
                         viewModel.updateList(teamResponse.data.associate)
                         Box(
                             modifier = Modifier
@@ -232,7 +255,6 @@ fun MyTeamScreen(viewModel: MyTeamViewModel = hiltViewModel(), navController: Na
                                             viewModel.filteredTeamListState
                                         else viewModel.teamListState
                                     ) { user ->
-
                                         Row(
                                             horizontalArrangement = Arrangement.Start,
                                             verticalAlignment = Alignment.CenterVertically,
@@ -267,6 +289,7 @@ fun MyTeamScreen(viewModel: MyTeamViewModel = hiltViewModel(), navController: Na
 
                                             Row(
                                                 horizontalArrangement = Arrangement.SpaceBetween,
+                                                verticalAlignment = Alignment.CenterVertically,
                                                 modifier = Modifier.fillMaxWidth()
                                             ) {
                                                 Column(
@@ -275,17 +298,19 @@ fun MyTeamScreen(viewModel: MyTeamViewModel = hiltViewModel(), navController: Na
                                                     modifier = Modifier.padding(start = 16.dp)
                                                 ) {
                                                     Text(
-                                                        text = "${user.userName}",
+                                                        text = "${user.userFirstname ?: ""} ${user.userLastname ?: ""}",
                                                         modifier = Modifier.padding(start = 16.dp),
                                                         color = textColorLightGray,
                                                         fontSize = 18.sp
                                                     )
-                                                    Text(
-                                                        text = "${user.role}",
-                                                        modifier = Modifier.padding(start = 16.dp),
-                                                        color = textColorLightGray,
-                                                        fontSize = 16.sp
-                                                    )
+                                                    if (user.role.isNotEmpty()) {
+                                                        Text(
+                                                            text = "${user.role}",
+                                                            modifier = Modifier.padding(start = 16.dp),
+                                                            color = textColorLightGray,
+                                                            fontSize = 16.sp
+                                                        )
+                                                    }
                                                 }
 
                                                 Image(
@@ -312,7 +337,7 @@ fun MyTeamScreen(viewModel: MyTeamViewModel = hiltViewModel(), navController: Na
                         }
                     } else {
                         Text(
-                            text = "No team available",
+                            text = if (viewModel.showFilterList.value) "No team available for the selected filter" else "No team available",
                             modifier = Modifier.padding(top = 24.dp),
                             style = TextStyle(
                                 fontWeight = FontWeight.Bold,

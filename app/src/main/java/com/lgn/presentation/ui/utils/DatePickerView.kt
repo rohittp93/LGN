@@ -1,7 +1,5 @@
 package com.lgn.presentation.ui.utils
 
-import android.app.TimePickerDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -28,7 +26,6 @@ fun DatePickerview(
     selectable: Boolean? = true,
     onSelectYearClicked: () -> Unit
 ) {
-    val activity = LocalContext.current as AppCompatActivity
 
     Box(
         modifier = Modifier

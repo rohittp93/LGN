@@ -3,6 +3,7 @@ package com.lgn.presentation.dashboard.myteam.studentprofile
 
 import android.app.Application
 import android.content.Context
+import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -27,14 +28,21 @@ class StudentProfileViewModel @Inject constructor(
     private val _changeToGraduateState = mutableStateOf<Response<UpdateStudentResponse>>(Response.Idle)
     val changeToGraduateState: State<Response<UpdateStudentResponse>> = _changeToGraduateState
 
-    private val _studentStatusState = mutableStateOf<Response<UpdateStudentResponse>>(Response.Idle)
-    val studentStatusState: State<Response<UpdateStudentResponse>> = _studentStatusState
+    val studentStatusState = mutableStateOf<Response<UpdateStudentResponse>>(Response.Idle)
 
     private val _showDialog = MutableStateFlow(false)
+
+    private val _showProgress = mutableStateOf<Boolean>(false)
+    val showProgress: State<Boolean> = _showProgress
+
     val showDialog: StateFlow<Boolean> = _showDialog.asStateFlow()
 
     fun onOpenDialogClicked() {
         _showDialog.value = true
+    }
+
+    fun showProgress(show: Boolean) {
+        _showProgress.value = show
     }
 
     fun onDialogConfirm() {
@@ -66,10 +74,11 @@ class StudentProfileViewModel @Inject constructor(
         }
     }
 
-    fun updateStatus(context: Context, id: String, status: Int) {
+    fun updateStatus(context: Context, id: String, status: Int, role: String) {
+        Log.d("RTAG", "updateStatus in vm called")
         viewModelScope.launch {
-            useCase.updateStudentStatus(context, id, status).collect { response ->
-                _studentStatusState.value = response
+            useCase.updateStudentStatus(context, id, status, role).collect { response ->
+                studentStatusState.value = response
             }
         }
     }

@@ -1,6 +1,7 @@
 package com.lgn.presentation.ui.utils
 
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.WindowInsets
@@ -27,6 +28,12 @@ fun convertToMonthAndYear(month: Int, year: Int): String {
     return formatter.format(calendar.time)
 }
 
+fun convertToMonthYear(year: String) : String {
+    val date = SimpleDateFormat("MM-yyyy").parse("01-$year")
+    val dateFormated =
+        SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").format(date)
+    return dateFormated
+}
 
 fun getStatusFromFilter(status: String) = when (status) {
     "Active" -> 1
@@ -51,6 +58,21 @@ fun convertToMonthAndYear(monthYear: String): String {
     val dateFormated =
         SimpleDateFormat("MMM yyyy").format(sdf)
     return dateFormated
+}
+
+
+fun convertToYear(monthYear: String?): String {
+    monthYear?.let {
+        val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").parse(monthYear)
+        val dateFormated =
+            SimpleDateFormat("yyyy").format(sdf)
+        return dateFormated
+    } ?: run {
+        val calendar = GregorianCalendar()
+        calendar.time = Date()
+
+        return calendar.get(Calendar.YEAR).toString()
+    }
 }
 
 fun convertDayToDate(milliSeconds: Long): Date {

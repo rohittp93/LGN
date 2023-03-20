@@ -4,8 +4,8 @@ import android.content.Context
 import com.lgn.domain.model.StudentMerticsResponse
 import com.lgn.domain.repository.Repository
 
-class UpdateStudentStatus (
+class GetUserProfileDetails (
     private val repository: Repository
 ) {
-    operator fun invoke(context: Context, userId: String, status: Int, role: String) = repository.updateStudentStatus(context, userId, status, role)
+    operator fun invoke(context: Context) = repository.getUserProfileDetails(context)
 }

@@ -11,6 +11,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
@@ -26,6 +27,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.lgn.R
 import com.lgn.domain.model.Response
+import com.lgn.domain.model.Users
 import com.lgn.presentation.Screen
 import com.lgn.presentation.dashboard.metrics.studentmetricsdetail.StudentMetricsDetailViewModel
 import com.lgn.presentation.dashboard.metrics.studentmetricsdetail.UpdateMetricsBottomSheet
@@ -73,6 +75,22 @@ fun AllMetricsScreen(
         //coroutineScope.launch { sheetState.hide() }
     }
 
+    val secondScreenResult = navController.currentBackStackEntry
+        ?.savedStateHandle
+        ?.getLiveData<Boolean>("needsRefresh")?.observeAsState()
+
+    secondScreenResult?.value?.let {
+        if (it) {
+            viewModel.fetchStudentMetrics(context, monthYear)
+            viewModel.checkRefreshState.value = false
+        }
+
+        //removing used value
+        navController.currentBackStackEntry
+            ?.savedStateHandle
+            ?.remove<Boolean>("needsRefresh")
+    }
+
 
     LaunchedEffect(key1 = context) {
         monthYear =
@@ -91,13 +109,17 @@ fun AllMetricsScreen(
         sheetElevation = 8.dp,
         sheetBackgroundColor = Color.White,
         sheetShape = RoundedCornerShape(topEnd = 16.dp, topStart = 16.dp),
-
         sheetContent = {
             UpdateMetricsBottomSheet(
+                user = viewModel.selectedUserState.value,
                 addMetric = true,
-                onCloseClicked = {
+                onCloseClicked = { showuldRefresh ->
                     coroutineScope.launch {
                         if (sheetState.isVisible) sheetState.hide()
+                    }
+
+                    if (showuldRefresh) {
+                        viewModel.fetchStudentMetrics(context, monthYear)
                     }
                 })
         },
@@ -208,7 +230,7 @@ fun AllMetricsScreen(
                                                     modifier = Modifier.padding(start = 16.dp)
                                                 ) {
                                                     Text(
-                                                        text = "${user.userName}",
+                                                        text = "${user.userFirstname ?: ""} ${user.userLastname ?: ""}",
                                                         modifier = Modifier.padding(start = 16.dp),
                                                         color = textColorLightGray,
                                                         fontSize = 18.sp
@@ -228,6 +250,7 @@ fun AllMetricsScreen(
                                                         .clickable {
                                                             multipleEventsCutter.processEvent {
                                                                 if ((user.id == null || user.id?.isEmpty() == true)) {
+                                                                    viewModel.setSelectedUser(user)
                                                                     coroutineScope.launch {
                                                                         if (sheetState.isVisible) sheetState.hide()
                                                                         else sheetState.show()
@@ -240,7 +263,7 @@ fun AllMetricsScreen(
                                                                 }
                                                             }
                                                         }
-                                                        .background(if (user.id?.isEmpty() == true) orange else green)
+                                                        .background(if (user.id == null || user.id?.isEmpty() == true) orange else green)
                                                         .padding(
                                                             start = 16.dp,
                                                             top = 8.dp,

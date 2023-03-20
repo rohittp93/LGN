@@ -1,5 +1,6 @@
 package com.lgn.presentation.dashboard.myteam.studentprofilemetrics
 
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.*
 import androidx.compose.ui.Modifier
@@ -46,7 +47,7 @@ fun StudentProfileMetricsScreen(
 ) {
     val context = LocalContext.current
 
-    var visible by remember {
+    var showCustomDialog by remember {
         mutableStateOf(false)
     }
 
@@ -60,6 +61,13 @@ fun StudentProfileMetricsScreen(
             it != ModalBottomSheetValue.HalfExpanded
         },
     )
+    val calendar = GregorianCalendar()
+    calendar.time = Date()
+
+    var yearPicked: Int by rememberSaveable {
+        mutableStateOf(calendar.get(Calendar.YEAR))
+    }
+
     val coroutineScope = rememberCoroutineScope()
     var date by remember {
         mutableStateOf("")
@@ -74,6 +82,27 @@ fun StudentProfileMetricsScreen(
 
     var user: StudentData by rememberSaveable {
         mutableStateOf(StudentData())
+    }
+
+
+
+    if (showCustomDialog) {
+        YearPickerDialog({
+            showCustomDialog = !showCustomDialog
+        }, onYearSelected = {
+            yearPicked = it
+            val date = SimpleDateFormat("MM-yyyy").parse("01-$yearPicked")
+            val dateFormated =
+                SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").format(date)
+            Log.d("dateFormated", dateFormated)
+
+            user.id?.let { userId ->
+                viewModel.fetchStudentProfileMetrics(context, userId, dateFormated)
+            }
+        },
+            title = "Select Year",
+            buttonText = "SELECT"
+        )
     }
 
     LaunchedEffect(key1 = context) {
@@ -119,7 +148,7 @@ fun StudentProfileMetricsScreen(
                 }
 
                 Text(
-                    text = user?.userName ?: "",
+                    text = "${user.userFirstname ?: ""} ${user.userLastname ?: ""}",
                     style = TextStyle(
                         fontWeight = FontWeight.Bold,
                     ),
@@ -129,7 +158,17 @@ fun StudentProfileMetricsScreen(
                 )
             }
         }
-
+        Box(
+            modifier = Modifier.padding(top = 16.dp)
+        ) {
+            DatePickerview(
+                label = if (yearPicked.toString()
+                        .isNotEmpty()
+                ) yearPicked.toString() else "Select Year",
+                onSelectYearClicked = {
+                    showCustomDialog = !showCustomDialog
+                })
+        }
         /*Button(
             border = BorderStroke(0.8.dp, textColorGray),
             shape = RoundedCornerShape(8.dp),
@@ -178,301 +217,323 @@ fun StudentProfileMetricsScreen(
                 is Response.Loading -> CustomProgressBar()
                 is Response.Success -> {
                     val metricsList = usersResponse.data.metrics
-                    LazyColumn(
-                        verticalArrangement = Arrangement.spacedBy(16.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 10.dp)
-                    ) {
-                        items(items = metricsList) { item ->
-                            Column(
-                                verticalArrangement = Arrangement.Top,
-                                horizontalAlignment = Alignment.CenterHorizontally
-                            ) {
-                                Text(
-                                    text = "Metrics: " + if (item.monthyear != null) convertToMonthAndYear(
-                                        item.monthyear ?: ""
-                                    ) else "",
-                                    modifier = Modifier.padding(start = 16.dp, bottom = 10.dp),
-                                    style = TextStyle(
-                                        fontWeight = FontWeight.Bold,
-                                    ),
-                                    color = Color.Black,
-                                    fontSize = 20.sp
-                                )
-                                Row(
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                    modifier = Modifier
-                                        .background(color = Color.White)
-                                        .padding(top = 4.dp, bottom = 4.dp)
-                                        .fillMaxWidth()
+
+                    if (metricsList.isEmpty()) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .align(Alignment.Center)
+                        ) {
+                            Text(
+                                text = "No Metrics Found",
+                                modifier = Modifier
+                                    .padding(top = 24.dp)
+                                    .align(Alignment.Center),
+                                style = TextStyle(
+                                    fontWeight = FontWeight.Bold,
+                                    letterSpacing = 4.5.sp
+                                ),
+                                fontSize = 14.sp,
+                                color = hintColorGray
+                            )
+                        }
+                    } else {
+                        LazyColumn(
+                            verticalArrangement = Arrangement.spacedBy(16.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 10.dp)
+                        ) {
+                            items(items = metricsList) { item ->
+                                Column(
+                                    verticalArrangement = Arrangement.Top,
+                                    horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
+                                    Text(
+                                        text = "Metrics: " + if (item.monthyear != null) convertToMonthAndYear(
+                                            item.monthyear ?: ""
+                                        ) else "",
+                                        modifier = Modifier.padding(start = 16.dp, bottom = 10.dp),
+                                        style = TextStyle(
+                                            fontWeight = FontWeight.Bold,
+                                        ),
+                                        color = Color.Black,
+                                        fontSize = 20.sp
+                                    )
                                     Row(
-                                        horizontalArrangement = Arrangement.SpaceAround,
-                                        modifier = Modifier.weight(1f)
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        modifier = Modifier
+                                            .background(color = Color.White)
+                                            .padding(top = 4.dp, bottom = 4.dp)
+                                            .fillMaxWidth()
                                     ) {
-                                        Text(
-                                            text = "EV",
-                                            modifier = Modifier.padding(start = 16.dp),
-                                            style = TextStyle(
-                                                fontWeight = FontWeight.Bold,
-                                            ),
-                                            color = Color.Black,
-                                            fontSize = 18.sp
-                                        )
-                                        Text(
-                                            text = item.ev.toString(),
-                                            modifier = Modifier.padding(start = 0.dp),
-                                            color = textColorLightGray,
-                                            fontSize = 18.sp
-                                        )
+                                        Row(
+                                            horizontalArrangement = Arrangement.SpaceAround,
+                                            modifier = Modifier.weight(1f)
+                                        ) {
+                                            Text(
+                                                text = "EV",
+                                                modifier = Modifier.padding(start = 16.dp),
+                                                style = TextStyle(
+                                                    fontWeight = FontWeight.Bold,
+                                                ),
+                                                color = Color.Black,
+                                                fontSize = 18.sp
+                                            )
+                                            Text(
+                                                text = item.ev.toString(),
+                                                modifier = Modifier.padding(start = 0.dp),
+                                                color = textColorLightGray,
+                                                fontSize = 18.sp
+                                            )
+                                        }
+
+
+                                        Row(
+                                            horizontalArrangement = Arrangement.SpaceAround,
+                                            modifier = Modifier.weight(1f)
+                                        ) {
+                                            Text(
+                                                text = "DE",
+                                                modifier = Modifier.padding(start = 0.dp),
+                                                style = TextStyle(
+                                                    fontWeight = FontWeight.Bold,
+                                                ),
+                                                color = Color.Black,
+                                                fontSize = 18.sp
+                                            )
+
+                                            Text(
+                                                text = item.de.toString(),
+                                                modifier = Modifier.padding(end = 16.dp),
+                                                color = textColorLightGray,
+                                                fontSize = 18.sp
+                                            )
+                                        }
+
                                     }
 
+                                    Spacer(modifier = Modifier.height(8.dp))
 
                                     Row(
-                                        horizontalArrangement = Arrangement.SpaceAround,
-                                        modifier = Modifier.weight(1f)
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        modifier = Modifier
+                                            .background(color = Color.White)
+                                            .padding(top = 4.dp, bottom = 4.dp)
+                                            .fillMaxWidth()
                                     ) {
-                                        Text(
-                                            text = "DE",
-                                            modifier = Modifier.padding(start = 0.dp),
-                                            style = TextStyle(
-                                                fontWeight = FontWeight.Bold,
-                                            ),
-                                            color = Color.Black,
-                                            fontSize = 18.sp
-                                        )
+                                        Row(
+                                            horizontalArrangement = Arrangement.SpaceAround,
+                                            modifier = Modifier.weight(1f)
+                                        ) {
+                                            Text(
+                                                text = "JB",
+                                                modifier = Modifier.padding(start = 16.dp),
+                                                style = TextStyle(
+                                                    fontWeight = FontWeight.Bold,
+                                                ),
+                                                color = Color.Black,
+                                                fontSize = 18.sp
+                                            )
+                                            Text(
+                                                text = item.jb.toString(),
+                                                modifier = Modifier.padding(start = 0.dp),
+                                                color = textColorLightGray,
+                                                fontSize = 18.sp
+                                            )
+                                        }
 
-                                        Text(
-                                            text = item.de.toString(),
-                                            modifier = Modifier.padding(end = 16.dp),
-                                            color = textColorLightGray,
-                                            fontSize = 18.sp
-                                        )
+
+                                        Row(
+                                            horizontalArrangement = Arrangement.SpaceAround,
+                                            modifier = Modifier.weight(1f)
+                                        ) {
+                                            Text(
+                                                text = "AA",
+                                                modifier = Modifier.padding(start = 0.dp),
+                                                style = TextStyle(
+                                                    fontWeight = FontWeight.Bold,
+                                                ),
+                                                color = Color.Black,
+                                                fontSize = 18.sp
+                                            )
+
+                                            Text(
+                                                text = item.aa.toString(),
+                                                modifier = Modifier.padding(end = 16.dp),
+                                                color = textColorLightGray,
+                                                fontSize = 18.sp
+                                            )
+                                        }
+
                                     }
 
-                                }
-
-                                Spacer(modifier = Modifier.height(8.dp))
-
-                                Row(
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                    modifier = Modifier
-                                        .background(color = Color.White)
-                                        .padding(top = 4.dp, bottom = 4.dp)
-                                        .fillMaxWidth()
-                                ) {
-                                    Row(
-                                        horizontalArrangement = Arrangement.SpaceAround,
-                                        modifier = Modifier.weight(1f)
-                                    ) {
-                                        Text(
-                                            text = "JB",
-                                            modifier = Modifier.padding(start = 16.dp),
-                                            style = TextStyle(
-                                                fontWeight = FontWeight.Bold,
-                                            ),
-                                            color = Color.Black,
-                                            fontSize = 18.sp
-                                        )
-                                        Text(
-                                            text = item.jb.toString(),
-                                            modifier = Modifier.padding(start = 0.dp),
-                                            color = textColorLightGray,
-                                            fontSize = 18.sp
-                                        )
-                                    }
-
-
-                                    Row(
-                                        horizontalArrangement = Arrangement.SpaceAround,
-                                        modifier = Modifier.weight(1f)
-                                    ) {
-                                        Text(
-                                            text = "AA",
-                                            modifier = Modifier.padding(start = 0.dp),
-                                            style = TextStyle(
-                                                fontWeight = FontWeight.Bold,
-                                            ),
-                                            color = Color.Black,
-                                            fontSize = 18.sp
-                                        )
-
-                                        Text(
-                                            text = item.aa.toString(),
-                                            modifier = Modifier.padding(end = 16.dp),
-                                            color = textColorLightGray,
-                                            fontSize = 18.sp
-                                        )
-                                    }
-
-                                }
-
-                                Spacer(modifier = Modifier.height(8.dp))
-
-                                Row(
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                    modifier = Modifier
-                                        .background(color = Color.White)
-                                        .padding(top = 4.dp, bottom = 4.dp)
-                                        .fillMaxWidth()
-                                ) {
-                                    Row(
-                                        horizontalArrangement = Arrangement.SpaceAround,
-                                        modifier = Modifier.weight(1f)
-                                    ) {
-                                        Text(
-                                            text = "P",
-                                            modifier = Modifier.padding(start = 16.dp),
-                                            style = TextStyle(
-                                                fontWeight = FontWeight.Bold,
-                                            ),
-                                            color = Color.Black,
-                                            fontSize = 18.sp
-                                        )
-                                        Text(
-                                            text = item.p.toString(),
-                                            modifier = Modifier.padding(start = 0.dp),
-                                            color = textColorLightGray,
-                                            fontSize = 18.sp
-                                        )
-                                    }
-
+                                    Spacer(modifier = Modifier.height(8.dp))
 
                                     Row(
-                                        horizontalArrangement = Arrangement.SpaceAround,
-                                        modifier = Modifier.weight(1f)
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        modifier = Modifier
+                                            .background(color = Color.White)
+                                            .padding(top = 4.dp, bottom = 4.dp)
+                                            .fillMaxWidth()
                                     ) {
-                                        Text(
-                                            text = "E",
-                                            modifier = Modifier.padding(start = 0.dp),
-                                            style = TextStyle(
-                                                fontWeight = FontWeight.Bold,
-                                            ),
-                                            color = Color.Black,
-                                            fontSize = 18.sp
-                                        )
+                                        Row(
+                                            horizontalArrangement = Arrangement.SpaceAround,
+                                            modifier = Modifier.weight(1f)
+                                        ) {
+                                            Text(
+                                                text = "P",
+                                                modifier = Modifier.padding(start = 16.dp),
+                                                style = TextStyle(
+                                                    fontWeight = FontWeight.Bold,
+                                                ),
+                                                color = Color.Black,
+                                                fontSize = 18.sp
+                                            )
+                                            Text(
+                                                text = item.p.toString(),
+                                                modifier = Modifier.padding(start = 0.dp),
+                                                color = textColorLightGray,
+                                                fontSize = 18.sp
+                                            )
+                                        }
 
-                                        Text(
-                                            text = item.e.toString(),
-                                            modifier = Modifier.padding(end = 16.dp),
-                                            color = textColorLightGray,
-                                            fontSize = 18.sp
-                                        )
+
+                                        Row(
+                                            horizontalArrangement = Arrangement.SpaceAround,
+                                            modifier = Modifier.weight(1f)
+                                        ) {
+                                            Text(
+                                                text = "E",
+                                                modifier = Modifier.padding(start = 0.dp),
+                                                style = TextStyle(
+                                                    fontWeight = FontWeight.Bold,
+                                                ),
+                                                color = Color.Black,
+                                                fontSize = 18.sp
+                                            )
+
+                                            Text(
+                                                text = item.e.toString(),
+                                                modifier = Modifier.padding(end = 16.dp),
+                                                color = textColorLightGray,
+                                                fontSize = 18.sp
+                                            )
+                                        }
+
                                     }
 
-                                }
-
-                                Spacer(modifier = Modifier.height(8.dp))
-
-
-                                Row(
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                    modifier = Modifier
-                                        .background(color = Color.White)
-                                        .padding(top = 4.dp, bottom = 4.dp)
-                                        .fillMaxWidth()
-                                ) {
-                                    Row(
-                                        horizontalArrangement = Arrangement.SpaceAround,
-                                        modifier = Modifier.weight(1f)
-                                    ) {
-                                        Text(
-                                            text = "A",
-                                            modifier = Modifier.padding(start = 16.dp),
-                                            style = TextStyle(
-                                                fontWeight = FontWeight.Bold,
-                                            ),
-                                            color = Color.Black,
-                                            fontSize = 18.sp
-                                        )
-                                        Text(
-                                            text = item.a.toString(),
-                                            modifier = Modifier.padding(start = 0.dp),
-                                            color = textColorLightGray,
-                                            fontSize = 18.sp
-                                        )
-                                    }
+                                    Spacer(modifier = Modifier.height(8.dp))
 
 
                                     Row(
-                                        horizontalArrangement = Arrangement.SpaceAround,
-                                        modifier = Modifier.weight(1f)
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        modifier = Modifier
+                                            .background(color = Color.White)
+                                            .padding(top = 4.dp, bottom = 4.dp)
+                                            .fillMaxWidth()
                                     ) {
-                                        Text(
-                                            text = "C",
-                                            modifier = Modifier.padding(start = 0.dp),
-                                            style = TextStyle(
-                                                fontWeight = FontWeight.Bold,
-                                            ),
-                                            color = Color.Black,
-                                            fontSize = 18.sp
-                                        )
+                                        Row(
+                                            horizontalArrangement = Arrangement.SpaceAround,
+                                            modifier = Modifier.weight(1f)
+                                        ) {
+                                            Text(
+                                                text = "A",
+                                                modifier = Modifier.padding(start = 16.dp),
+                                                style = TextStyle(
+                                                    fontWeight = FontWeight.Bold,
+                                                ),
+                                                color = Color.Black,
+                                                fontSize = 18.sp
+                                            )
+                                            Text(
+                                                text = item.a.toString(),
+                                                modifier = Modifier.padding(start = 0.dp),
+                                                color = textColorLightGray,
+                                                fontSize = 18.sp
+                                            )
+                                        }
 
-                                        Text(
-                                            text = item.c.toString(),
-                                            modifier = Modifier.padding(end = 16.dp),
-                                            color = textColorLightGray,
-                                            fontSize = 18.sp
-                                        )
+
+                                        Row(
+                                            horizontalArrangement = Arrangement.SpaceAround,
+                                            modifier = Modifier.weight(1f)
+                                        ) {
+                                            Text(
+                                                text = "C",
+                                                modifier = Modifier.padding(start = 0.dp),
+                                                style = TextStyle(
+                                                    fontWeight = FontWeight.Bold,
+                                                ),
+                                                color = Color.Black,
+                                                fontSize = 18.sp
+                                            )
+
+                                            Text(
+                                                text = item.c.toString(),
+                                                modifier = Modifier.padding(end = 16.dp),
+                                                color = textColorLightGray,
+                                                fontSize = 18.sp
+                                            )
+                                        }
+
                                     }
 
-                                }
-
-                                Spacer(modifier = Modifier.height(8.dp))
+                                    Spacer(modifier = Modifier.height(8.dp))
 
 
-                                Row(
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                    modifier = Modifier
-                                        .background(color = Color.White)
-                                        .padding(top = 4.dp, bottom = 4.dp)
-                                        .fillMaxWidth()
-                                ) {
                                     Row(
-                                        horizontalArrangement = Arrangement.SpaceAround,
-                                        modifier = Modifier.weight(1f)
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        modifier = Modifier
+                                            .background(color = Color.White)
+                                            .padding(top = 4.dp, bottom = 4.dp)
+                                            .fillMaxWidth()
                                     ) {
-                                        Text(
-                                            text = "ED",
-                                            modifier = Modifier.padding(start = 16.dp),
-                                            style = TextStyle(
-                                                fontWeight = FontWeight.Bold,
-                                            ),
-                                            color = Color.Black,
-                                            fontSize = 18.sp
-                                        )
-                                        Text(
-                                            text = item.ed.toString(),
-                                            modifier = Modifier.padding(start = 0.dp),
-                                            color = textColorLightGray,
-                                            fontSize = 18.sp
-                                        )
+                                        Row(
+                                            horizontalArrangement = Arrangement.SpaceAround,
+                                            modifier = Modifier.weight(1f)
+                                        ) {
+                                            Text(
+                                                text = "ED",
+                                                modifier = Modifier.padding(start = 16.dp),
+                                                style = TextStyle(
+                                                    fontWeight = FontWeight.Bold,
+                                                ),
+                                                color = Color.Black,
+                                                fontSize = 18.sp
+                                            )
+                                            Text(
+                                                text = item.ed.toString(),
+                                                modifier = Modifier.padding(start = 0.dp),
+                                                color = textColorLightGray,
+                                                fontSize = 18.sp
+                                            )
+                                        }
+
+
+                                        Row(
+                                            horizontalArrangement = Arrangement.SpaceAround,
+                                            modifier = Modifier.weight(1f)
+                                        ) {
+                                            Text(
+                                                text = "",
+                                                modifier = Modifier.padding(start = 0.dp),
+                                                style = TextStyle(
+                                                    fontWeight = FontWeight.Bold,
+                                                ),
+                                                color = Color.Black,
+                                                fontSize = 18.sp
+                                            )
+
+                                            Text(
+                                                text = "",
+                                                modifier = Modifier.padding(end = 16.dp),
+                                                color = textColorLightGray,
+                                                fontSize = 18.sp
+                                            )
+                                        }
+
                                     }
-
-
-                                    Row(
-                                        horizontalArrangement = Arrangement.SpaceAround,
-                                        modifier = Modifier.weight(1f)
-                                    ) {
-                                        Text(
-                                            text = "",
-                                            modifier = Modifier.padding(start = 0.dp),
-                                            style = TextStyle(
-                                                fontWeight = FontWeight.Bold,
-                                            ),
-                                            color = Color.Black,
-                                            fontSize = 18.sp
-                                        )
-
-                                        Text(
-                                            text = "",
-                                            modifier = Modifier.padding(end = 16.dp),
-                                            color = textColorLightGray,
-                                            fontSize = 18.sp
-                                        )
-                                    }
-
                                 }
                             }
                         }

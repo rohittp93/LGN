@@ -56,6 +56,7 @@ object AppModule {
         fetchStudentProfileMetrics = FetchStudentProfileMetrics(repository),
         changeToGraduate = ChangeToGraduate(repository),
         updateStudentStatus = UpdateStudentStatus(repository),
+        getUserProfileDetails = GetUserProfileDetails(repository),
         addStudent = AddStudent(repository)
     )
 }

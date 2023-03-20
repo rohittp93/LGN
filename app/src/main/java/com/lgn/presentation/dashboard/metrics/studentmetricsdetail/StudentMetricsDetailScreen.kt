@@ -78,7 +78,7 @@ fun StudentMetricsDetailScreen(
             navController.previousBackStackEntry?.savedStateHandle?.get<Users>("user") ?: Users()
 
         if (user?.id?.isNotEmpty() == true) {
-            viewModel.fetchStudentMetrics(context, user?.id ?: "")
+            viewModel.fetchStudentMetrics(context, user?.userId ?: "")
         }
     }
 
@@ -103,7 +103,6 @@ fun StudentMetricsDetailScreen(
         sheetElevation = 8.dp,
         sheetBackgroundColor = Color.White,
         sheetShape = RoundedCornerShape(topEnd = 16.dp, topStart = 16.dp),
-
         sheetContent = {
             UpdateMetricsBottomSheet(
                 user = user,
@@ -123,6 +122,7 @@ fun StudentMetricsDetailScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .background(color = backgroundGray)
+                //.verticalScroll(rememberScrollState())
                 .fillMaxSize()
         ) {
             Surface(elevation = 9.dp, color = Color.White) {
@@ -191,7 +191,7 @@ fun StudentMetricsDetailScreen(
                     modifier = Modifier.padding(start = 12.dp)
                 ) {
                     Text(
-                        text = user?.userName ?: "",
+                        text = "${user.userFirstname} ${user.userLastname}",
                         style = TextStyle(
                             fontWeight = FontWeight.Bold,
                         ),
@@ -200,26 +200,7 @@ fun StudentMetricsDetailScreen(
                     )
                 }
             }
-
-            val date = user?.monthyear?.let {
-                val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").parse(it)
-
-                val dateFormated =
-                    SimpleDateFormat("MMM yyyy").format(sdf)
-
-                Text(
-                    text = "Metrics: $dateFormated",
-                    style = TextStyle(
-                        fontWeight = FontWeight.Bold,
-                    ),
-                    fontSize = 18.sp,
-                    color = textColorGray
-                )
-            }
-
-
             Spacer(modifier = Modifier.height(8.dp))
-
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -513,7 +494,6 @@ fun StudentMetricsDetailScreen(
                                     .fillMaxWidth()
                                     .padding(top = 100.dp, start = 24.dp, end = 24.dp),
                                 onClick = {
-                                    //viewModel.onOpenDialogClicked()
                                     coroutineScope.launch {
                                         if (sheetState.isVisible) sheetState.hide()
                                         else sheetState.show()
@@ -563,6 +543,7 @@ fun StudentMetricsDetailScreen(
                                 Response.Idle -> {
                                     canClose = true
                                 }
+                                else -> {}
                             }
                         }
                         userResponseData = usersResponse.data
