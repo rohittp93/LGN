@@ -146,7 +146,7 @@ fun StudentFilterDialog(
                             ) yearPicked else "Select Year",
                             onSelectYearClicked = {
                                 showCustomDialog = !showCustomDialog
-                            })
+                            }, onCloseIconClicked = {})
                     }
                 }
 

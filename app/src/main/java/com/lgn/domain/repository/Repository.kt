@@ -28,7 +28,7 @@ interface Repository {
 
     fun updateStudentMetrics(context: Context, id: String, studentMetrics: StudentMerticsResponse): Flow<Response<StudentMerticsResponse>>
 
-    fun fetchStudentProfileMetrics(context: Context, userId: String, year: String): Flow<Response<StudentProfileMerticsResponse>>
+    fun fetchStudentProfileMetrics(context: Context, userId: String): Flow<Response<StudentProfileMerticsResponse>>
 
     fun changeToGraduate(context: Context, user: StudentData): Flow<Response<UpdateStudentResponse>>
 

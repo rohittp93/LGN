@@ -199,6 +199,59 @@ fun StudentMetricsDetailScreen(
                         fontSize = 18.sp,
                         color = textColorGray
                     )
+
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center,
+                        modifier = Modifier.padding(top = 8.dp)
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.mail),
+                            contentDescription = null,
+                            colorFilter = ColorFilter.tint(
+                                green
+                            ),
+                            modifier = Modifier
+                                .height(18.dp)
+                                .width(18.dp)
+                        )
+                        Text(
+                            text = user.email ?: "",
+                            modifier = Modifier.padding(start = 8.dp),
+                            style = TextStyle(
+                                fontWeight = FontWeight.Light,
+                            ),
+                            fontSize = 14.sp,
+                            color = textColorGray
+                        )
+                    }
+
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center,
+                        modifier = Modifier.padding(top = 8.dp)
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.phone),
+                            contentDescription = null,
+                            colorFilter = ColorFilter.tint(
+                                green
+                            ),
+                            modifier = Modifier
+                                .height(18.dp)
+                                .width(18.dp)
+                        )
+                        Text(
+                            text = user.phone ?: "",
+                            modifier = Modifier.padding(start = 8.dp),
+                            style = TextStyle(
+                                fontWeight = FontWeight.Light,
+                            ),
+                            fontSize = 14.sp,
+                            color = textColorGray
+                        )
+                    }
+
                 }
             }
             Spacer(modifier = Modifier.height(8.dp))

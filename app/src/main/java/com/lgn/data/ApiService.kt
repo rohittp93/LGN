@@ -50,8 +50,7 @@ interface ApiService {
 
     @GET("metrics/user/{id}")
     suspend fun fetchStudentProfileMetrics(
-        @Path(value = "id", encoded = true) id: String,
-        @Query("year") year: String
+        @Path(value = "id", encoded = true) id: String
     ): StudentProfileMerticsResponse
 
     @PUT("user/{id}")

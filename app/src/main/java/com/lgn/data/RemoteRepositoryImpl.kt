@@ -541,12 +541,12 @@ class RemoteRepositoryImpl @Inject constructor() : Repository {
         emit(Response.Loading)
         val apiService = ApiService.getInstance()
         try {
-           /* val changeToGraduateResponse = apiService.changeToGraduate(
-                userId, UpdateStudentResponse(
-                    roleId = "Graduate",
-                    batch = batch
-                )
-            )*/
+            /* val changeToGraduateResponse = apiService.changeToGraduate(
+                 userId, UpdateStudentResponse(
+                     roleId = "Graduate",
+                     batch = batch
+                 )
+             )*/
 
             val dataStore = LocalDataStore(context)
             val trainerId =
@@ -627,15 +627,14 @@ class RemoteRepositoryImpl @Inject constructor() : Repository {
 
     override fun fetchStudentProfileMetrics(
         context: Context,
-        userId: String,
-        year: String
+        userId: String
     ): Flow<Response<StudentProfileMerticsResponse>> =
         flow {
             emit(Response.Loading)
             val apiService = ApiService.getInstance()
             try {
                 val studentProfileMerticsResponse =
-                    apiService.fetchStudentProfileMetrics(userId, year)
+                    apiService.fetchStudentProfileMetrics(userId)
 
                 /*val metricsList = mutableListOf<Metrics>() as ArrayList
 

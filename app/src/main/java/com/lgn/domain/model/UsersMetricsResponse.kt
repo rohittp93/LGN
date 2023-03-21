@@ -12,6 +12,8 @@ data class Users (
     @SerializedName("id"        ) var id        : String? = null,
     @SerializedName("user_id"   ) var userId    : String? = null,
     @SerializedName("monthyear" ) var monthyear : String? = null,
+    @SerializedName("email" ) var email : String? = null,
+    @SerializedName("phone" ) var phone : String? = null,
     @SerializedName("user_name" ) var userName  : String? = null,
     @SerializedName("user_firstname" ) var userFirstname  : String? = null,
     @SerializedName("user_lastname" ) var userLastname  : String? = null,

@@ -110,6 +110,7 @@ fun UpdateMetricsBottomSheet(
                     .clickable {
                         if (canClose) {
                             onCloseClicked(false)
+                            viewModel.resetStudentMetrics()
                         } else {
                             showToast(context, "Please wait")
                         }
@@ -432,6 +433,7 @@ fun UpdateMetricsBottomSheet(
                 canClose = true
                 LaunchedEffect(key1 = context) {
                     onCloseClicked(true)
+                    viewModel.resetStudentMetrics()
                 }
             }
             is Response.Error -> {

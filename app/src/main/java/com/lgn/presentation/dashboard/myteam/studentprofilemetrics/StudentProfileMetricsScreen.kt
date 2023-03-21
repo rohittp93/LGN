@@ -73,8 +73,7 @@ fun StudentProfileMetricsScreen(
         mutableStateOf("")
     }
 
-    val year = Calendar.getInstance().get(Calendar.YEAR)
-
+    //val year = Calendar.getInstance().get(Calendar.YEAR)
 
     BackHandler(sheetState.isVisible) {
         //coroutineScope.launch { sheetState.hide() }
@@ -84,24 +83,33 @@ fun StudentProfileMetricsScreen(
         mutableStateOf(StudentData())
     }
 
-
-
     if (showCustomDialog) {
-        YearPickerDialog({
-            showCustomDialog = !showCustomDialog
-        }, onYearSelected = {
-            yearPicked = it
-            val date = SimpleDateFormat("MM-yyyy").parse("01-$yearPicked")
-            val dateFormated =
-                SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").format(date)
-            Log.d("dateFormated", dateFormated)
+        YearPickerDialog(
+            {
+                showCustomDialog = !showCustomDialog
+            },
+            onYearSelected = { yearSelected ->
+                viewModel.filterCleared.value = false
 
-            user.id?.let { userId ->
-                viewModel.fetchStudentProfileMetrics(context, userId, dateFormated)
-            }
-        },
+                yearPicked = yearSelected
+                /*val date = SimpleDateFormat("MM-yyyy").parse("01-$yearPicked")
+                val dateFormated =
+                    SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").format(date)
+                Log.d("dateFormated", dateFormated)*/
+
+                viewModel.updateFilterList(
+                    viewModel.metricsListState.filter { metric ->
+                        (convertToYear(metric.monthyear) == yearSelected.toString())
+                    }
+                )
+
+                /*user.id?.let { userId ->
+                    viewModel.fetchStudentProfileMetrics(context, userId)
+                }*/
+
+            },
             title = "Select Year",
-            buttonText = "SELECT"
+            buttonText = "SELECT",
         )
     }
 
@@ -111,7 +119,7 @@ fun StudentProfileMetricsScreen(
                 ?: StudentData()
 
         if (user.id?.isNotEmpty() == true) {
-            viewModel.fetchStudentProfileMetrics(context, user.id ?: "", year.toString())
+            viewModel.fetchStudentProfileMetrics(context, user.id ?: "")
         }
     }
 
@@ -164,9 +172,15 @@ fun StudentProfileMetricsScreen(
             DatePickerview(
                 label = if (yearPicked.toString()
                         .isNotEmpty()
+                    && !viewModel.filterCleared.value
                 ) yearPicked.toString() else "Select Year",
                 onSelectYearClicked = {
                     showCustomDialog = !showCustomDialog
+                },
+                iconEnd = if (viewModel.filterCleared.value) R.drawable.calendar else R.drawable.close,
+                onCloseIconClicked = {
+                    viewModel.filterCleared.value = true
+                    viewModel.updateFilterList(listOf())
                 })
         }
         /*Button(
@@ -217,15 +231,21 @@ fun StudentProfileMetricsScreen(
                 is Response.Loading -> CustomProgressBar()
                 is Response.Success -> {
                     val metricsList = usersResponse.data.metrics
+                    viewModel.updateList(metricsList)
 
-                    if (metricsList.isEmpty()) {
+                    if (
+                        if (!viewModel.filterCleared.value)
+                            viewModel.filteredMetricsListState.isEmpty()
+                        else
+                            metricsList.isEmpty()
+                    ) {
                         Box(
                             modifier = Modifier
                                 .fillMaxSize()
                                 .align(Alignment.Center)
                         ) {
                             Text(
-                                text = "No Metrics Found",
+                                text = if (!viewModel.filterCleared.value)  "No Metrics found for ${yearPicked.toString()}" else "No Metrics Found",
                                 modifier = Modifier
                                     .padding(top = 24.dp)
                                     .align(Alignment.Center),
@@ -244,7 +264,9 @@ fun StudentProfileMetricsScreen(
                                 .fillMaxWidth()
                                 .padding(top = 10.dp)
                         ) {
-                            items(items = metricsList) { item ->
+                            items(items = if (!viewModel.filterCleared.value)
+                                viewModel.filteredMetricsListState
+                            else viewModel.metricsListState) { item ->
                                 Column(
                                     verticalArrangement = Arrangement.Top,
                                     horizontalAlignment = Alignment.CenterHorizontally

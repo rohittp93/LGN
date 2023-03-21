@@ -118,7 +118,11 @@ fun MetricScreen(viewModel: MetricsViewModel = hiltViewModel(), navController: N
                     label = "Select Year",
                     onSelectYearClicked = {
                         showCustomDialog = !showCustomDialog
-                    })
+                    },
+                    onCloseIconClicked = {
+
+                    }
+                )
             }
 
             Spacer(modifier = Modifier.padding(10.dp))

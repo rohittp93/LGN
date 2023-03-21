@@ -4,13 +4,11 @@ package com.lgn.presentation.dashboard.myteam.studentprofilemetrics
 import android.app.Application
 import android.content.Context
 import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.lgn.domain.model.Response
-import com.lgn.domain.model.StudentMerticsResponse
-import com.lgn.domain.model.StudentProfileMerticsResponse
-import com.lgn.domain.model.Users
+import com.lgn.domain.model.*
 import com.lgn.domain.usecase.UseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,7 +24,14 @@ class StudentProfileMetricsViewModel @Inject constructor(
 ) : AndroidViewModel(application) {
     private val _usersState = mutableStateOf<Response<StudentProfileMerticsResponse>>(Response.Loading)
     val usersState: State<Response<StudentProfileMerticsResponse>> = _usersState
+    val filterCleared = mutableStateOf<Boolean>(true)
 
+
+    private val _metricsListState = mutableStateListOf<Metrics>()
+    val metricsListState: List<Metrics> = _metricsListState
+
+    private val _filteredMetricsListState = mutableStateListOf<Metrics>()
+    val filteredMetricsListState: List<Metrics> = _filteredMetricsListState
 
     private val _showDialog = MutableStateFlow(false)
     val showDialog: StateFlow<Boolean> = _showDialog.asStateFlow()
@@ -43,13 +48,24 @@ class StudentProfileMetricsViewModel @Inject constructor(
         _showDialog.value = false
     }
 
+
+    fun updateList(updatedList : List<Metrics>) {
+        _metricsListState.clear()
+        _metricsListState.addAll(updatedList)
+    }
+
+    fun updateFilterList(updatedList : List<Metrics>) {
+        _filteredMetricsListState.clear()
+        _filteredMetricsListState.addAll(updatedList)
+    }
+
     init {
         //fetchStudentMetrics(application.applicationContext)
     }
 
-    fun fetchStudentProfileMetrics(context: Context, userId: String, year: String) {
+    fun fetchStudentProfileMetrics(context: Context, userId: String) {
         viewModelScope.launch {
-            useCase.fetchStudentProfileMetrics(context, userId, year).collect { response ->
+            useCase.fetchStudentProfileMetrics(context, userId).collect { response ->
                 _usersState.value = response
             }
         }

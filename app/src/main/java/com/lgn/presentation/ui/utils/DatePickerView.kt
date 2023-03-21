@@ -1,5 +1,6 @@
 package com.lgn.presentation.ui.utils
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -24,7 +25,9 @@ import com.lgn.R
 fun DatePickerview(
     label: String,
     selectable: Boolean? = true,
-    onSelectYearClicked: () -> Unit
+    iconEnd: Int = R.drawable.calendar,
+    onSelectYearClicked: () -> Unit,
+    onCloseIconClicked: () -> Unit,
 ) {
 
     Box(
@@ -50,13 +53,17 @@ fun DatePickerview(
                 style = TextStyle(
                     fontWeight = FontWeight.Normal,
                 ),
-                fontSize = 14.sp,
+                fontSize = 16.sp,
                 color = borderColorGray
             )
             Icon(
-                painter = painterResource(id = R.drawable.calendar),
+                painter = painterResource(iconEnd),
                 "Calendar",
-                Modifier.width(16.dp),
+                Modifier
+                    .width(16.dp)
+                    .clickable {
+                        onCloseIconClicked()
+                    },
                 tint = borderColorGray
             )
         }

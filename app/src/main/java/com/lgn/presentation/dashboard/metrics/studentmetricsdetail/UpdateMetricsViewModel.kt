@@ -64,6 +64,27 @@ class UpdateMetricsViewModel @Inject constructor(
         initialLaunchCompleted = true
     }
 
+
+    fun resetStudentMetrics() {
+        state = state.copy(
+            id = "",
+            userId = "",
+            monthyear = "",
+            ev = 0,
+            de = 0,
+            jb = 0,
+            aa = 0,
+            p = 0,
+            e = 0,
+            a = 0,
+            c = 0,
+            ed = 0,
+            isDeleted = 0
+        )
+
+        initialLaunchCompleted = true
+    }
+
     fun updateAddMetricsValues(user: Users?) {
         user?.let {
             state = state.copy(
