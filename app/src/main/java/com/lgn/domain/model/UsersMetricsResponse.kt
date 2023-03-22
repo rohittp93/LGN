@@ -12,10 +12,16 @@ data class Users (
     @SerializedName("id"        ) var id        : String? = null,
     @SerializedName("user_id"   ) var userId    : String? = null,
     @SerializedName("monthyear" ) var monthyear : String? = null,
+    @SerializedName("email" ) var email : String? = null,
+    @SerializedName("phone" ) var phone : String? = null,
     @SerializedName("user_name" ) var userName  : String? = null,
+    @SerializedName("user_firstname" ) var userFirstname  : String? = null,
+    @SerializedName("user_lastname" ) var userLastname  : String? = null,
     @SerializedName("role"      ) var role      : String? = null
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
+        parcel.readString(),
+        parcel.readString(),
         parcel.readString(),
         parcel.readString(),
         parcel.readString(),
@@ -29,6 +35,8 @@ data class Users (
         parcel.writeString(userId)
         parcel.writeString(monthyear)
         parcel.writeString(userName)
+        parcel.writeString(userFirstname)
+        parcel.writeString(userLastname)
         parcel.writeString(role)
     }
 

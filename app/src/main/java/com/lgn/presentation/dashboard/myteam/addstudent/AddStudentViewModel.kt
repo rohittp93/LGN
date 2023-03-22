@@ -47,8 +47,11 @@ class AddStudentViewModel @Inject constructor(
 
     fun valueChanged(element: String, newText: String) {
         when(element) {
-             "name"-> {
-                 state = state.copy(name = newText)
+             "firstname"-> {
+                 state = state.copy(firstName = newText)
+            }
+            "lastname"-> {
+                 state = state.copy(lastName = newText)
             }
             "email"-> {
                 state = state.copy(email = newText)

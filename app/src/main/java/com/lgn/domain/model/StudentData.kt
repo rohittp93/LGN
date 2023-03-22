@@ -5,8 +5,10 @@ import com.google.gson.annotations.SerializedName
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
-data class TeamData (
+data class TeamData(
     @SerializedName("id") var id: String? = null,
+    @SerializedName("user_firstname") var userFirstName: String? = null,
+    @SerializedName("user_lastname") var userLastName: String? = null,
     @SerializedName("user_name") var userName: String? = null,
     @SerializedName("user_email") var userEmail: String? = null,
     @SerializedName("user_phone") var userPhone: String? = null,
@@ -23,12 +25,14 @@ data class TeamData (
 
 
 @Parcelize
-data class StudentData (
+data class StudentData(
     @SerializedName("id") var id: String? = null,
-    @SerializedName("user_name") var userName: String? = null,
+    @SerializedName("user_id") var userId: String? = null,
+    @SerializedName("user_firstname") var userFirstname: String? = null,
+    @SerializedName("user_lastname") var userLastname: String? = null,
     @SerializedName("user_email") var userEmail: String? = null,
     @SerializedName("user_phone") var userPhone: String? = null,
-    @SerializedName("role") var role: String? = null,
+    @SerializedName("role") var role: String = "",
     @SerializedName("batch") var batch: String? = null,
-    @SerializedName("status") var status: Int? = null,
+    @SerializedName("status") var status: Int? = null
 ) : Parcelable

@@ -7,5 +7,5 @@ import com.lgn.domain.repository.Repository
 class UpdateStudentMetrics (
     private val repository: Repository
 ) {
-    operator fun invoke(context: Context, studentMetrics: StudentMerticsResponse) = repository.updateStudentMetrics(context, studentMetrics)
+    operator fun invoke(context: Context, id: String, studentMetrics: StudentMerticsResponse) = repository.updateStudentMetrics(context,id, studentMetrics)
 }

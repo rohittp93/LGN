@@ -27,6 +27,7 @@ import com.lgn.domain.model.StudentMerticsResponse
 import com.lgn.domain.model.Users
 import com.lgn.presentation.ui.theme.*
 import com.lgn.presentation.ui.utils.CustomProgressBar
+import com.lgn.presentation.ui.utils.SimpleAlertDialog
 import com.lgn.presentation.ui.utils.showToast
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
@@ -46,6 +47,7 @@ fun StudentMetricsDetailScreen(
     var canClose by remember {
         mutableStateOf(false)
     }
+    val showDialogState: Boolean by viewModel.showDialog.collectAsState()
 
     var closeClicked by remember {
         mutableStateOf(false)
@@ -80,15 +82,32 @@ fun StudentMetricsDetailScreen(
         }
     }
 
+    SimpleAlertDialog(
+        title = "Delete Metric",
+        message = "Are you sure you want to delete this metric?",
+        show = showDialogState,
+        showDismissButton = true,
+        onDismiss = viewModel::onDialogDismiss,
+        onConfirm = {
+            updateMetricsViewModel.updateStudentMetrics(
+                context,
+                user.id ?: "",
+                userResponseData.apply {
+                    isDeleted = 1
+                })
+            viewModel.onDialogDismiss()
+        }
+    )
+
     ModalBottomSheetLayout(
         sheetState = sheetState,
         sheetElevation = 8.dp,
         sheetBackgroundColor = Color.White,
         sheetShape = RoundedCornerShape(topEnd = 16.dp, topStart = 16.dp),
-
         sheetContent = {
             UpdateMetricsBottomSheet(
                 user = user,
+                addMetric = false,
                 userResponseData = userResponseData,
                 onCloseClicked = {
                     coroutineScope.launch {
@@ -104,6 +123,7 @@ fun StudentMetricsDetailScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .background(color = backgroundGray)
+                //.verticalScroll(rememberScrollState())
                 .fillMaxSize()
         ) {
             Surface(elevation = 9.dp, color = Color.White) {
@@ -172,35 +192,69 @@ fun StudentMetricsDetailScreen(
                     modifier = Modifier.padding(start = 12.dp)
                 ) {
                     Text(
-                        text = user?.userName ?: "",
+                        text = "${user.userFirstname} ${user.userLastname}",
                         style = TextStyle(
                             fontWeight = FontWeight.Bold,
                         ),
                         fontSize = 18.sp,
                         color = textColorGray
                     )
+
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center,
+                        modifier = Modifier.padding(top = 8.dp)
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.mail),
+                            contentDescription = null,
+                            colorFilter = ColorFilter.tint(
+                                green
+                            ),
+                            modifier = Modifier
+                                .height(18.dp)
+                                .width(18.dp)
+                        )
+                        Text(
+                            text = user.email ?: "",
+                            modifier = Modifier.padding(start = 8.dp),
+                            style = TextStyle(
+                                fontWeight = FontWeight.Light,
+                            ),
+                            fontSize = 14.sp,
+                            color = textColorGray
+                        )
+                    }
+
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center,
+                        modifier = Modifier.padding(top = 8.dp)
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.phone),
+                            contentDescription = null,
+                            colorFilter = ColorFilter.tint(
+                                green
+                            ),
+                            modifier = Modifier
+                                .height(18.dp)
+                                .width(18.dp)
+                        )
+                        Text(
+                            text = user.phone ?: "",
+                            modifier = Modifier.padding(start = 8.dp),
+                            style = TextStyle(
+                                fontWeight = FontWeight.Light,
+                            ),
+                            fontSize = 14.sp,
+                            color = textColorGray
+                        )
+                    }
+
                 }
             }
-
-            val date = user?.monthyear?.let {
-                val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").parse(it)
-
-                val dateFormated =
-                    SimpleDateFormat("MMM yyyy").format(sdf)
-
-                Text(
-                    text = "Metrics: $dateFormated",
-                    style = TextStyle(
-                        fontWeight = FontWeight.Bold,
-                    ),
-                    fontSize = 18.sp,
-                    color = textColorGray
-                )
-            }
-
-
             Spacer(modifier = Modifier.height(8.dp))
-
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -494,7 +548,6 @@ fun StudentMetricsDetailScreen(
                                     .fillMaxWidth()
                                     .padding(top = 100.dp, start = 24.dp, end = 24.dp),
                                 onClick = {
-                                    //viewModel.onOpenDialogClicked()
                                     coroutineScope.launch {
                                         if (sheetState.isVisible) sheetState.hide()
                                         else sheetState.show()
@@ -511,11 +564,7 @@ fun StudentMetricsDetailScreen(
                                     .fillMaxWidth()
                                     .padding(top = 16.dp, start = 24.dp, end = 24.dp),
                                 onClick = {
-                                    updateMetricsViewModel.updateStudentMetrics(
-                                        context,
-                                        userResponseData.apply {
-                                            isDeleted = 1
-                                        })
+                                    viewModel.onOpenDialogClicked()
                                 },
                                 colors = ButtonDefaults.buttonColors(backgroundColor = green)
                             )
@@ -548,6 +597,7 @@ fun StudentMetricsDetailScreen(
                                 Response.Idle -> {
                                     canClose = true
                                 }
+                                else -> {}
                             }
                         }
                         userResponseData = usersResponse.data

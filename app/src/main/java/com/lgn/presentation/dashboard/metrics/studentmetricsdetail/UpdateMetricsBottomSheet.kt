@@ -1,30 +1,37 @@
 package com.lgn.presentation.dashboard.metrics.studentmetricsdetail
 
+import android.util.Log
+import android.util.Patterns
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.text.isDigitsOnly
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.lgn.R
 import com.lgn.domain.model.Response
 import com.lgn.domain.model.StudentMerticsResponse
+import com.lgn.domain.model.UpdateStudentResponse
 import com.lgn.domain.model.Users
 import com.lgn.presentation.ui.theme.green
 import com.lgn.presentation.ui.theme.hintColorGray
@@ -39,10 +46,13 @@ import java.util.*
 @Composable
 fun UpdateMetricsBottomSheet(
     viewModel: UpdateMetricsViewModel = hiltViewModel(),
-    onCloseClicked: () -> Unit,
+    onCloseClicked: (Boolean) -> Unit,
     user: Users? = null,
+    addMetric: Boolean = true,
     userResponseData: StudentMerticsResponse? = StudentMerticsResponse()
 ) {
+
+    Log.d("RTAG", "User object updated " + user?.userFirstname + " UserID: ${user?.userId}")
     val context = LocalContext.current
     val state = viewModel.state
 
@@ -67,10 +77,10 @@ fun UpdateMetricsBottomSheet(
             viewModel.updateStudentMetrics(it)
     }
 
-
     user?.monthyear?.let {
         date = convertToMonthAndYear(it)
     }
+    viewModel.updateAddMetricsValues(user)
 
     Column(
         modifier = Modifier
@@ -99,7 +109,8 @@ fun UpdateMetricsBottomSheet(
                     .width(15.dp)
                     .clickable {
                         if (canClose) {
-                            onCloseClicked()
+                            onCloseClicked(false)
+                            viewModel.resetStudentMetrics()
                         } else {
                             showToast(context, "Please wait")
                         }
@@ -133,7 +144,7 @@ fun UpdateMetricsBottomSheet(
                 .height(48.dp),
             colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
             onClick = {
-                visible = true
+                //visible = true
             }
         ) {
             Row(
@@ -178,13 +189,15 @@ fun UpdateMetricsBottomSheet(
                         color = textColorGray
                     )
                 },
+                singleLine = true,
                 colors = TextFieldDefaults.outlinedTextFieldColors(
                     focusedBorderColor = green,
                     unfocusedBorderColor = green, textColor = textColorGray
                 ),
                 modifier = Modifier.weight(1F),
                 onValueChange = { newText ->
-                    viewModel.valueChanged("ev", newText)
+                    if (newText.isDigitsOnly())
+                        viewModel.valueChanged("ev", newText)
                 },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
             )
@@ -198,12 +211,14 @@ fun UpdateMetricsBottomSheet(
                         color = textColorGray
                     )
                 },
+                singleLine = true,
                 colors = TextFieldDefaults.outlinedTextFieldColors(
                     focusedBorderColor = green,
                     unfocusedBorderColor = green, textColor = textColorGray
                 ),
                 onValueChange = { newText ->
-                    viewModel.valueChanged("de", newText)
+                    if (newText.isDigitsOnly())
+                        viewModel.valueChanged("de", newText)
 
                 },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
@@ -226,13 +241,15 @@ fun UpdateMetricsBottomSheet(
                         color = textColorGray
                     )
                 },
+                singleLine = true,
                 colors = TextFieldDefaults.outlinedTextFieldColors(
                     focusedBorderColor = green,
                     unfocusedBorderColor = green, textColor = textColorGray
                 ),
                 modifier = Modifier.weight(1F),
                 onValueChange = { newText ->
-                    viewModel.valueChanged("jb", newText)
+                    if (newText.isDigitsOnly())
+                        viewModel.valueChanged("jb", newText)
 
                 },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
@@ -248,12 +265,14 @@ fun UpdateMetricsBottomSheet(
                         color = textColorGray
                     )
                 },
+                singleLine = true,
                 colors = TextFieldDefaults.outlinedTextFieldColors(
                     focusedBorderColor = green,
                     unfocusedBorderColor = green, textColor = textColorGray
                 ),
                 onValueChange = { newText ->
-                    viewModel.valueChanged("aa", newText)
+                    if (newText.isDigitsOnly())
+                        viewModel.valueChanged("aa", newText)
                 },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
             )
@@ -275,13 +294,15 @@ fun UpdateMetricsBottomSheet(
                         color = textColorGray
                     )
                 },
+                singleLine = true,
                 colors = TextFieldDefaults.outlinedTextFieldColors(
                     focusedBorderColor = green,
                     unfocusedBorderColor = green, textColor = textColorGray
                 ),
                 modifier = Modifier.weight(1F),
                 onValueChange = { newText ->
-                    viewModel.valueChanged("p", newText)
+                    if (newText.isDigitsOnly())
+                        viewModel.valueChanged("p", newText)
 
                 },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
@@ -297,12 +318,14 @@ fun UpdateMetricsBottomSheet(
                         color = textColorGray
                     )
                 },
+                singleLine = true,
                 colors = TextFieldDefaults.outlinedTextFieldColors(
                     focusedBorderColor = green,
                     unfocusedBorderColor = green, textColor = textColorGray
                 ),
                 onValueChange = { newText ->
-                    viewModel.valueChanged("e", newText)
+                    if (newText.isDigitsOnly())
+                        viewModel.valueChanged("e", newText)
                 },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
             )
@@ -324,13 +347,15 @@ fun UpdateMetricsBottomSheet(
                         color = textColorGray
                     )
                 },
+                singleLine = true,
                 colors = TextFieldDefaults.outlinedTextFieldColors(
                     focusedBorderColor = green,
                     unfocusedBorderColor = green, textColor = textColorGray
                 ),
                 modifier = Modifier.weight(1F),
                 onValueChange = { newText ->
-                    viewModel.valueChanged("a", newText)
+                    if (newText.isDigitsOnly())
+                        viewModel.valueChanged("a", newText)
 
                 },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
@@ -346,12 +371,14 @@ fun UpdateMetricsBottomSheet(
                         color = textColorGray
                     )
                 },
+                singleLine = true,
                 colors = TextFieldDefaults.outlinedTextFieldColors(
                     focusedBorderColor = green,
                     unfocusedBorderColor = green, textColor = textColorGray
                 ),
                 onValueChange = { newText ->
-                    viewModel.valueChanged("c", newText)
+                    if (newText.isDigitsOnly())
+                        viewModel.valueChanged("c", newText)
 
                 },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
@@ -375,13 +402,15 @@ fun UpdateMetricsBottomSheet(
                         color = textColorGray
                     )
                 },
+                singleLine = true,
                 colors = TextFieldDefaults.outlinedTextFieldColors(
                     focusedBorderColor = green,
                     unfocusedBorderColor = green, textColor = textColorGray
                 ),
                 modifier = Modifier.weight(1F),
                 onValueChange = { newText ->
-                    viewModel.valueChanged("ed", newText)
+                    if (newText.isDigitsOnly())
+                        viewModel.valueChanged("ed", newText)
 
                 },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
@@ -392,14 +421,19 @@ fun UpdateMetricsBottomSheet(
         when (viewModel.metricsUpdateState.value) {
             is Response.Loading -> {
                 canClose = false
-                Box(modifier = Modifier.fillMaxWidth().height(40.dp)) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(40.dp)
+                ) {
                     CustomProgressBar()
                 }
             }
             is Response.Success -> {
                 canClose = true
                 LaunchedEffect(key1 = context) {
-                    onCloseClicked()
+                    onCloseClicked(true)
+                    viewModel.resetStudentMetrics()
                 }
             }
             is Response.Error -> {
@@ -414,24 +448,69 @@ fun UpdateMetricsBottomSheet(
             modifier = Modifier
                 .fillMaxWidth(),
             onClick = {
-                viewModel.updateStudentMetrics(
-                    context,
-                    StudentMerticsResponse(
-                        userId = state.id,
-                        monthyear = state.monthyear,
-                        ev = state.ev,
-                        de = state.de,
-                        jb = state.jb,
-                        aa = state.aa,
-                        p = state.p,
-                        e = state.e,
-                        a = state.a,
-                        c = state.c,
-                        ed = state.ed,
-                        isDeleted = state.isDeleted,
 
+                var errorShown = false
+                if (date.isEmpty()) {
+                    showToast(context, "Please add date")
+                    errorShown = true
+                }
+
+                if (state.ev.toString().isEmpty()
+                    || state.de.toString().isEmpty()
+                    || state.jb.toString().isEmpty()
+                    || state.aa.toString().isEmpty()
+                    || state.p.toString().isEmpty()
+                    || state.e.toString().isEmpty()
+                    || state.a.toString().isEmpty()
+                    || state.c.toString().isEmpty()
+                    || state.ed.toString().isEmpty()
+                ) {
+                    showToast(context, "Please enter all required fields")
+                    errorShown = true
+                }
+
+                if (!errorShown) {
+                    if (addMetric) {
+                        viewModel.updateStudentMetrics(
+                            context,
+                            state.id ?: "",
+                            StudentMerticsResponse(
+                                userId = state.userId,
+                                monthyear = state.monthyear,
+                                ev = state.ev,
+                                de = state.de,
+                                jb = state.jb,
+                                aa = state.aa,
+                                p = state.p,
+                                e = state.e,
+                                a = state.a,
+                                c = state.c,
+                                ed = state.ed,
+                                isDeleted = 0
+                            )
                         )
-                )
+                    } else {
+                        viewModel.updateStudentMetrics(
+                            context,
+                            state.id ?: "",
+                            StudentMerticsResponse(
+                                id = state.userId,
+                                userId = state.userId,
+                                monthyear = state.monthyear,
+                                ev = state.ev,
+                                de = state.de,
+                                jb = state.jb,
+                                aa = state.aa,
+                                p = state.p,
+                                e = state.e,
+                                a = state.a,
+                                c = state.c,
+                                ed = state.ed,
+                                isDeleted = state.isDeleted,
+                            )
+                        )
+                    }
+                }
             },
             colors = ButtonDefaults.buttonColors(backgroundColor = green)
         )

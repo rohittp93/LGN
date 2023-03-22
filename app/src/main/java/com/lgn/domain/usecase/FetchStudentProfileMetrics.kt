@@ -7,5 +7,5 @@ import com.lgn.domain.repository.Repository
 class FetchStudentProfileMetrics (
     private val repository: Repository
 ) {
-    operator fun invoke(context: Context, userId: String, year: String) = repository.fetchStudentProfileMetrics(context, userId, year)
+    operator fun invoke(context: Context, userId: String) = repository.fetchStudentProfileMetrics(context, userId)
 }

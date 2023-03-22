@@ -11,6 +11,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.lgn.domain.model.Response
 import com.lgn.domain.model.StudentMerticsResponse
+import com.lgn.domain.model.Users
 import com.lgn.domain.usecase.UpdateStudentMetrics
 import com.lgn.domain.usecase.UseCases
 import com.lgn.presentation.ui.utils.StudentMetricState
@@ -35,9 +36,9 @@ class UpdateMetricsViewModel @Inject constructor(
         //fetchStudentMetrics(application.applicationContext)
     }
 
-    fun updateStudentMetrics(context: Context, metrics: StudentMerticsResponse) {
+    fun updateStudentMetrics(context: Context, id: String, metrics: StudentMerticsResponse) {
         viewModelScope.launch {
-            useCase.updateStudentMetrics(context, metrics).collect { response ->
+            useCase.updateStudentMetrics(context, id, metrics).collect { response ->
                 _metricsUpdateState.value = response
             }
         }
@@ -63,36 +64,67 @@ class UpdateMetricsViewModel @Inject constructor(
         initialLaunchCompleted = true
     }
 
+
+    fun resetStudentMetrics() {
+        state = state.copy(
+            id = "",
+            userId = "",
+            monthyear = "",
+            ev = 0,
+            de = 0,
+            jb = 0,
+            aa = 0,
+            p = 0,
+            e = 0,
+            a = 0,
+            c = 0,
+            ed = 0,
+            isDeleted = 0
+        )
+
+        initialLaunchCompleted = true
+    }
+
+    fun updateAddMetricsValues(user: Users?) {
+        user?.let {
+            state = state.copy(
+                userId = user.userId,
+                monthyear = user.monthyear,
+                isDeleted = 0,
+            )
+        }
+    }
+
+
     fun valueChanged(element: String, newText: String) {
-        when(element) {
-             "ev"-> {
-                 state = state.copy(ev = if (newText.isNotEmpty()) newText.toInt() else -1)
+        when (element) {
+            "ev" -> {
+                state = state.copy(ev = if (newText.isNotEmpty()) newText.toInt() else -1)
             }
-            "de"-> {
+            "de" -> {
                 state = state.copy(de = if (newText.isNotEmpty()) newText.toInt() else -1)
             }
-            "jb"-> {
+            "jb" -> {
                 state = state.copy(jb = if (newText.isNotEmpty()) newText.toInt() else -1)
             }
-            "aa"-> {
-                state = state.copy(aa= if (newText.isNotEmpty()) newText.toInt() else -1)
+            "aa" -> {
+                state = state.copy(aa = if (newText.isNotEmpty()) newText.toInt() else -1)
             }
-            "p"-> {
+            "p" -> {
                 state = state.copy(p = if (newText.isNotEmpty()) newText.toInt() else -1)
             }
-            "e"-> {
+            "e" -> {
                 state = state.copy(e = if (newText.isNotEmpty()) newText.toInt() else -1)
             }
-            "a"-> {
+            "a" -> {
                 state = state.copy(a = if (newText.isNotEmpty()) newText.toInt() else -1)
             }
-            "c"-> {
+            "c" -> {
                 state = state.copy(c = if (newText.isNotEmpty()) newText.toInt() else -1)
             }
-            "ed"-> {
+            "ed" -> {
                 state = state.copy(ed = if (newText.isNotEmpty()) newText.toInt() else -1)
             }
-
         }
     }
 }

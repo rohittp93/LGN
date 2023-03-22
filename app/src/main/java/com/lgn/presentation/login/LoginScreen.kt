@@ -82,27 +82,32 @@ fun LoginScreen(viewModel: LoginViewModel = hiltViewModel(), navController: NavC
                         submitButtonState = SSButtonState.LOADING
                     }
                     is Response.Success -> {
-                        (loginState.value as Response.Success).data.user?.id?.let {
-                            submitButtonState = SSButtonState.SUCCESS
-                            if(!hasHandledNavigation.value) {
-                                navController.navigate(Graph.DASHBOARD) {
-                                    launchSingleTop = true
-                                    hasHandledNavigation.value= true
-                                    popUpTo(Screen.LoginScreen.route) {
-                                        inclusive = true
-                                    }
-                                }
-                            }
-                        } ?: run {
-                            submitButtonState = SSButtonState.FAILIURE
-                            LaunchedEffect(key1 = context) {
-                                showToast(context, "Please verify your email")
-                            }
-                        }
+                       if ((loginState.value as Response.Success).data.message!=null &&
+                           (loginState.value as Response.Success).data.message?.isNotEmpty() == true) {
+                           submitButtonState = SSButtonState.FAILIURE
+                           LaunchedEffect(key1 = context) {
+                               showToast(context, "Please verify your email")
+                           }
+                       } else {
+                           submitButtonState = SSButtonState.SUCCESS
+                           if(!hasHandledNavigation.value) {
+                               navController.navigate(Graph.DASHBOARD) {
+                                   launchSingleTop = true
+                                   hasHandledNavigation.value= true
+                                   popUpTo(Screen.LoginScreen.route) {
+                                       inclusive = true
+                                   }
+                               }
+                           }
+                       }
+
                     }
                     is Response.Error -> {
                         submitButtonState = SSButtonState.FAILIURE
                         LaunchedEffect(key1 = context) {
+                            /*loginState.value?.message?.let {
+
+                            }*/
                             showToast(context, (loginState.value as Response.Error).message)
                         }
                         submitButtonState = SSButtonState.IDLE
@@ -154,7 +159,7 @@ fun LoginScreen(viewModel: LoginViewModel = hiltViewModel(), navController: NavC
                                     textColor = textColorGray
                                 ),
                                 placeholder = { Text(text = "User Code", color = borderColorGray) },
-                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                                 singleLine = true,
                                 modifier = Modifier
                                     .fillMaxWidth(.8f)
@@ -227,5 +232,5 @@ fun LoginScreen(viewModel: LoginViewModel = hiltViewModel(), navController: NavC
 
 // Function to generate a Toast
 private fun showToast(context: Context, message: String) {
-    Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
 }

@@ -28,7 +28,9 @@ import com.lgn.R
 import com.lgn.presentation.Screen
 import com.lgn.presentation.ui.theme.*
 import com.lgn.presentation.ui.utils.DatePickerview
+import com.lgn.presentation.ui.utils.MultipleEventsCutter
 import com.lgn.presentation.ui.utils.YearPickerDialog
+import com.lgn.presentation.ui.utils.get
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
 import java.text.SimpleDateFormat
@@ -57,12 +59,15 @@ fun MetricScreen(viewModel: MetricsViewModel = hiltViewModel(), navController: N
         mutableStateOf(calendar.get(Calendar.YEAR))
     }
 
+    val multipleEventsCutter = remember { MultipleEventsCutter.get() }
+
+
     if (showCustomDialog) {
         YearPickerDialog({
             showCustomDialog = !showCustomDialog
         }, onYearSelected = {
             yearPicked = it
-        }, "Select Year Of Completion")
+        }, "Select Year")
     }
 
 
@@ -113,7 +118,11 @@ fun MetricScreen(viewModel: MetricsViewModel = hiltViewModel(), navController: N
                     label = "Select Year",
                     onSelectYearClicked = {
                         showCustomDialog = !showCustomDialog
-                    })
+                    },
+                    onCloseIconClicked = {
+
+                    }
+                )
             }
 
             Spacer(modifier = Modifier.padding(10.dp))
@@ -128,19 +137,19 @@ fun MetricScreen(viewModel: MetricsViewModel = hiltViewModel(), navController: N
                         modifier = Modifier
                             .background(color = Color.White)
                             .clickable {
+                                multipleEventsCutter.processEvent {
+                                    val month = String.format("%02d", months.indexOf(item) + 1)
+                                    val date =
+                                        SimpleDateFormat("MM-yyyy").parse("$month-$yearPicked")
+                                    val dateFormated =
+                                        SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").format(date)
+                                    Log.d("dateFormated", dateFormated)
 
-                                val month = String.format("%02d", months.indexOf(item) + 1)
-                                val date = SimpleDateFormat("MM-yyyy").parse("$month-$yearPicked")
-                                val dateFormated =
-                                    SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").format(date)
-                                Log.d("dateFormated", dateFormated)
-
-
-                                // TODO: Change click to
-                                navController.currentBackStackEntry?.savedStateHandle?.set(
-                                    "monthYear", dateFormated
-                                )
-                                navController.navigate(Screen.AllStudentMetricScreen.route)
+                                    navController.currentBackStackEntry?.savedStateHandle?.set(
+                                        "monthYear", dateFormated
+                                    )
+                                    navController.navigate(Screen.AllStudentMetricScreen.route)
+                                }
                             }
                             .fillMaxWidth()
                             .padding(20.dp)

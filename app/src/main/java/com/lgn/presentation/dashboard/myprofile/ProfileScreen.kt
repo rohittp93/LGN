@@ -134,7 +134,7 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel(), navController: 
                     modifier = Modifier.padding(start = 12.dp)
                 ) {
                     Text(
-                        text = "Trainer 1",
+                        text = viewModel.userProfile.value.userName ?: "",
                         style = TextStyle(
                             fontWeight = FontWeight.Bold,
                         ),
@@ -157,7 +157,7 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel(), navController: 
                                 .width(18.dp)
                         )
                         Text(
-                            text = "trainer1@gmail.com",
+                            text = viewModel.userProfile.value.userEmail ?: "",
                             modifier = Modifier.padding(start = 8.dp),
                             style = TextStyle(
                                 fontWeight = FontWeight.Light,
@@ -183,7 +183,7 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel(), navController: 
                                 .width(18.dp)
                         )
                         Text(
-                            text = "+919545407890",
+                            text = viewModel.userProfile.value.userPhone ?: "",
                             modifier = Modifier.padding(start = 8.dp),
                             style = TextStyle(
                                 fontWeight = FontWeight.Light,
@@ -223,7 +223,7 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel(), navController: 
                         color = textColorLightGray
                     )
                     Text(
-                        text = "Nequo Porro quisquam est qui dolorem ipsum",
+                        text = viewModel.userProfile.value.userAddress ?: "",
                         modifier = Modifier.padding(top = 4.dp),
                         style = TextStyle(
                             fontWeight = FontWeight.Normal,
@@ -235,7 +235,9 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel(), navController: 
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Column(
-                            modifier = Modifier.weight(1f).fillMaxWidth(),
+                            modifier = Modifier
+                                .weight(1f)
+                                .fillMaxWidth(),
                         ) {
                             Text(
                                 text = "Block",
@@ -247,7 +249,7 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel(), navController: 
                                 color = textColorLightGray
                             )
                             Text(
-                                text = "Block Test",
+                                text = viewModel.userProfile.value.userBlock ?: "",
                                 modifier = Modifier.padding(top = 4.dp),
                                 style = TextStyle(
                                     fontWeight = FontWeight.Normal,
@@ -258,7 +260,9 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel(), navController: 
                         }
 
                         Column(
-                            modifier = Modifier.weight(1f).fillMaxWidth(),
+                            modifier = Modifier
+                                .weight(1f)
+                                .fillMaxWidth(),
                         ) {
                             Text(
                                 text = "District",
@@ -270,7 +274,7 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel(), navController: 
                                 color = textColorLightGray
                             )
                             Text(
-                                text = "Test District",
+                                text = viewModel.userProfile.value.userDistrict ?: "",
                                 modifier = Modifier.padding(top = 4.dp),
                                 style = TextStyle(
                                     fontWeight = FontWeight.Normal,
@@ -284,7 +288,9 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel(), navController: 
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Column(
-                            modifier = Modifier.weight(1f).fillMaxWidth(),
+                            modifier = Modifier
+                                .weight(1f)
+                                .fillMaxWidth(),
                         ) {
                             Text(
                                 text = "Pincode",
@@ -296,7 +302,7 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel(), navController: 
                                 color = textColorLightGray
                             )
                             Text(
-                                text = "102103",
+                                text = viewModel.userProfile.value.userPin ?: "",
                                 modifier = Modifier.padding(top = 4.dp),
                                 style = TextStyle(
                                     fontWeight = FontWeight.Normal,
@@ -307,7 +313,9 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel(), navController: 
                         }
 
                         Column(
-                            modifier = Modifier.weight(1f).fillMaxWidth(),
+                            modifier = Modifier
+                                .weight(1f)
+                                .fillMaxWidth(),
                         ) {
                             Text(
                                 text = "State",
@@ -319,7 +327,7 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel(), navController: 
                                 color = textColorLightGray
                             )
                             Text(
-                                text = "Test State",
+                                text = viewModel.userProfile.value.userState ?: "",
                                 modifier = Modifier.padding(top = 4.dp),
                                 style = TextStyle(
                                     fontWeight = FontWeight.Normal,
@@ -334,7 +342,9 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel(), navController: 
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Column(
-                            modifier = Modifier.weight(1f).fillMaxWidth(),
+                            modifier = Modifier
+                                .weight(1f)
+                                .fillMaxWidth(),
                         ) {
                             Text(
                                 text = "Aadhar Card No.",
@@ -346,7 +356,7 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel(), navController: 
                                 color = textColorLightGray
                             )
                             Text(
-                                text = "123456789",
+                                text = viewModel.userProfile.value.userAadhar ?: "",
                                 modifier = Modifier.padding(top = 4.dp),
                                 style = TextStyle(
                                     fontWeight = FontWeight.Normal,

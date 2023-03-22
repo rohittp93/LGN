@@ -14,4 +14,5 @@ data class UseCases(
     val fetchStudentProfileMetrics: FetchStudentProfileMetrics,
     val changeToGraduate: ChangeToGraduate,
     val updateStudentStatus: UpdateStudentStatus,
+    val getUserProfileDetails: GetUserProfileDetails,
     )

@@ -11,6 +11,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
@@ -26,11 +27,14 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.lgn.R
 import com.lgn.domain.model.Response
+import com.lgn.domain.model.Users
 import com.lgn.presentation.Screen
 import com.lgn.presentation.dashboard.metrics.studentmetricsdetail.StudentMetricsDetailViewModel
 import com.lgn.presentation.dashboard.metrics.studentmetricsdetail.UpdateMetricsBottomSheet
 import com.lgn.presentation.ui.theme.*
 import com.lgn.presentation.ui.utils.CustomProgressBar
+import com.lgn.presentation.ui.utils.MultipleEventsCutter
+import com.lgn.presentation.ui.utils.get
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.launch
@@ -53,6 +57,8 @@ fun AllMetricsScreen(
         mutableStateOf(false)
     }
 
+    val multipleEventsCutter = remember { MultipleEventsCutter.get() }
+
     var closeClicked by remember {
         mutableStateOf(false)
     }
@@ -67,6 +73,22 @@ fun AllMetricsScreen(
 
     BackHandler(sheetState.isVisible) {
         //coroutineScope.launch { sheetState.hide() }
+    }
+
+    val secondScreenResult = navController.currentBackStackEntry
+        ?.savedStateHandle
+        ?.getLiveData<Boolean>("needsRefresh")?.observeAsState()
+
+    secondScreenResult?.value?.let {
+        if (it) {
+            viewModel.fetchStudentMetrics(context, monthYear)
+            viewModel.checkRefreshState.value = false
+        }
+
+        //removing used value
+        navController.currentBackStackEntry
+            ?.savedStateHandle
+            ?.remove<Boolean>("needsRefresh")
     }
 
 
@@ -87,12 +109,17 @@ fun AllMetricsScreen(
         sheetElevation = 8.dp,
         sheetBackgroundColor = Color.White,
         sheetShape = RoundedCornerShape(topEnd = 16.dp, topStart = 16.dp),
-
         sheetContent = {
             UpdateMetricsBottomSheet(
-                onCloseClicked = {
+                user = viewModel.selectedUserState.value,
+                addMetric = true,
+                onCloseClicked = { showuldRefresh ->
                     coroutineScope.launch {
                         if (sheetState.isVisible) sheetState.hide()
+                    }
+
+                    if (showuldRefresh) {
+                        viewModel.fetchStudentMetrics(context, monthYear)
                     }
                 })
         },
@@ -123,7 +150,9 @@ fun AllMetricsScreen(
                                 .height(45.dp)
                                 .padding(start = 16.dp, top = 8.dp, bottom = 8.dp, end = 8.dp)
                                 .clickable {
-                                    navController.popBackStack()
+                                    multipleEventsCutter.processEvent {
+                                        navController.popBackStack()
+                                    }
                                 }
                         )
                     }
@@ -174,12 +203,6 @@ fun AllMetricsScreen(
                                             verticalAlignment = Alignment.CenterVertically,
                                             modifier = Modifier
                                                 .background(color = Color.White)
-                                                .clickable {
-                                                    /* navController.currentBackStackEntry?.savedStateHandle?.set(
-                                                        "monthYear", dateFormated
-                                                    )
-                                                    navController.navigate(Screen.AllStudentMetricScreen.route)*/
-                                                }
                                                 .fillMaxWidth()
                                                 .padding(20.dp)
                                         ) {
@@ -207,7 +230,7 @@ fun AllMetricsScreen(
                                                     modifier = Modifier.padding(start = 16.dp)
                                                 ) {
                                                     Text(
-                                                        text = "${user.userName}",
+                                                        text = "${user.userFirstname ?: ""} ${user.userLastname ?: ""}",
                                                         modifier = Modifier.padding(start = 16.dp),
                                                         color = textColorLightGray,
                                                         fontSize = 18.sp
@@ -225,19 +248,22 @@ fun AllMetricsScreen(
                                                     modifier = Modifier
                                                         .padding(start = 16.dp)
                                                         .clickable {
-                                                            if ((user.id == null || user.id?.isEmpty() == true)) {
-                                                                coroutineScope.launch {
-                                                                    if (sheetState.isVisible) sheetState.hide()
-                                                                    else sheetState.show()
+                                                            multipleEventsCutter.processEvent {
+                                                                if ((user.id == null || user.id?.isEmpty() == true)) {
+                                                                    viewModel.setSelectedUser(user)
+                                                                    coroutineScope.launch {
+                                                                        if (sheetState.isVisible) sheetState.hide()
+                                                                        else sheetState.show()
+                                                                    }
+                                                                } else {
+                                                                    navController.currentBackStackEntry?.savedStateHandle?.set(
+                                                                        "user", user
+                                                                    )
+                                                                    navController.navigate(Screen.StudentMetricsDetail.route)
                                                                 }
-                                                            } else {
-                                                                navController.currentBackStackEntry?.savedStateHandle?.set(
-                                                                    "user", user
-                                                                )
-                                                                navController.navigate(Screen.StudentMetricsDetail.route)
                                                             }
                                                         }
-                                                        .background(if (user.id?.isEmpty() == true) orange else green)
+                                                        .background(if (user.id == null || user.id?.isEmpty() == true) orange else green)
                                                         .padding(
                                                             start = 16.dp,
                                                             top = 8.dp,

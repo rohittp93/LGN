@@ -11,7 +11,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -24,6 +28,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.lgn.R
@@ -31,10 +36,7 @@ import com.lgn.domain.model.Response
 import com.lgn.presentation.Screen
 import com.lgn.presentation.dashboard.myteam.addstudent.AddStudentBottomSheet
 import com.lgn.presentation.ui.theme.*
-import com.lgn.presentation.ui.utils.CustomProgressBar
-import com.lgn.presentation.ui.utils.StudentFilterDialog
-import com.lgn.presentation.ui.utils.getFilterFromStatus
-import com.lgn.presentation.ui.utils.getStatusFromFilter
+import com.lgn.presentation.ui.utils.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.launch
@@ -51,6 +53,17 @@ fun MyTeamScreen(viewModel: MyTeamViewModel = hiltViewModel(), navController: Na
     var showCustomDialog by remember {
         mutableStateOf(false)
     }
+    val multipleEventsCutter = remember { MultipleEventsCutter.get() }
+    val refreshScope = rememberCoroutineScope()
+    var refreshing by remember { mutableStateOf(false) }
+
+    fun refresh() = refreshScope.launch {
+        refreshing = true
+        viewModel.fetchTeam(context)
+        refreshing = false
+    }
+
+    val state = rememberPullRefreshState(refreshing, ::refresh)
 
     val sheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
@@ -65,6 +78,21 @@ fun MyTeamScreen(viewModel: MyTeamViewModel = hiltViewModel(), navController: Na
         //coroutineScope.launch { sheetState.hide() }
     }
 
+    val secondScreenResult = navController.currentBackStackEntry
+        ?.savedStateHandle
+        ?.getLiveData<Boolean>("needsRefresh")?.observeAsState()
+
+    secondScreenResult?.value?.let {
+        if (it) {
+            viewModel.fetchTeam(context)
+            viewModel.checkRefreshState.value = false
+        }
+
+        //removing used value
+        navController.currentBackStackEntry
+            ?.savedStateHandle
+            ?.remove<Boolean>("needsRefresh")
+    }
 
     ModalBottomSheetLayout(
         sheetState = sheetState,
@@ -73,11 +101,16 @@ fun MyTeamScreen(viewModel: MyTeamViewModel = hiltViewModel(), navController: Na
         sheetShape = RoundedCornerShape(topEnd = 16.dp, topStart = 16.dp),
         sheetContent = {
             AddStudentBottomSheet(
-                onCloseClicked = {
-                    coroutineScope.launch {
-                        Log.d("RTAG ", "onCloseClicked reached myteamscreen. sheetState.isVisible ${sheetState.isVisible}")
 
-                        if (sheetState.isVisible) sheetState.hide()
+                navController,
+                onCloseClicked = { needsRefresh ->
+                    coroutineScope.launch {
+                        if (sheetState.isVisible) {
+                            sheetState.hide()
+                            if (needsRefresh) {
+                                viewModel.fetchTeam(context)
+                            }
+                        }
                     }
                 })
         },
@@ -87,10 +120,20 @@ fun MyTeamScreen(viewModel: MyTeamViewModel = hiltViewModel(), navController: Na
         Box(
             modifier = Modifier
                 .fillMaxSize()
+                .pullRefresh(state)
                 .padding(bottom = 56.dp)
                 .background(backgroundGray),
             contentAlignment = Alignment.Center
         ) {
+            PullRefreshIndicator(
+                refreshing,
+                state,
+                Modifier
+                    .align(Alignment.TopCenter)
+                    .zIndex(1f)
+                    .padding(top = 60.dp)
+            )
+
             Column(
                 horizontalAlignment = Alignment.Start,
                 verticalArrangement = Arrangement.Top,
@@ -121,10 +164,12 @@ fun MyTeamScreen(viewModel: MyTeamViewModel = hiltViewModel(), navController: Na
                                 ),
                                 modifier = Modifier
                                     .height(26.dp)
-                                    .padding(end = 16.dp)
-                                    .clickable {
-                                        showCustomDialog = !showCustomDialog
+                                    .clickable() {
+                                        multipleEventsCutter.processEvent {
+                                            showCustomDialog = !showCustomDialog
+                                        }
                                     }
+                                    .padding(end = 16.dp)
                             )
                         }
                         Text(
@@ -145,6 +190,7 @@ fun MyTeamScreen(viewModel: MyTeamViewModel = hiltViewModel(), navController: Na
                 StudentFilterDialog(
                     userTypeFilter = viewModel.userTypeFilter,
                     statusFilter = viewModel.statusFilter,
+                    yearFilterSelected = viewModel.yearFilterSelected,
                     onDismiss = {
                         showCustomDialog = !showCustomDialog
                     },
@@ -153,15 +199,23 @@ fun MyTeamScreen(viewModel: MyTeamViewModel = hiltViewModel(), navController: Na
 
                         viewModel.userTypeFilter.value = sf.userType ?: "Show All"
                         viewModel.statusFilter.value = sf.statusType ?: "Both"
+                        viewModel.yearFilterSelected.value = sf.batch ?: ""
 
                         viewModel.updateFilterList(viewModel.teamListState.filter {
-                            if(sf.statusType != "Both"){
-                                getFilterFromStatus(it.status) == sf.statusType
+                            if (sf.statusType != "Both") {
+                                getFilterFromStatus(it.status).equals(sf.statusType)
+
                             } else {
                                 it.status == 1 || it.status == 0
-                            } &&
-                                    if(sf.userType != "Show All") {
-                                        it.role == sf.userType
+                            }
+                                    &&
+                                    if (sf.userType != "Show All") {
+                                        it.role == sf.userType &&
+                                                if (sf.userType.equals("Graduate")) {
+                                                    convertToYear(it.batch).equals(convertToYear(sf.batch))
+                                                } else {
+                                                    it.batch.equals(it.batch)
+                                                }
                                     } else {
                                         (it.role == "Associate") || (it.role == "Graduate")
                                     }
@@ -176,7 +230,12 @@ fun MyTeamScreen(viewModel: MyTeamViewModel = hiltViewModel(), navController: Na
             when (val teamResponse = viewModel.teamState.value) {
                 is Response.Loading -> CustomProgressBar()
                 is Response.Success ->
-                    if (teamResponse.data.associate.isNotEmpty()) {
+                    if (
+                        if (viewModel.showFilterList.value)
+                            viewModel.filteredTeamListState.isNotEmpty()
+                        else
+                            teamResponse.data.associate.isNotEmpty()
+                    ) {
                         viewModel.updateList(teamResponse.data.associate)
                         Box(
                             modifier = Modifier
@@ -190,96 +249,87 @@ fun MyTeamScreen(viewModel: MyTeamViewModel = hiltViewModel(), navController: Na
                                     .fillMaxWidth()
                                     .padding(top = 10.dp)
                             ) {
-                                items(items = if(viewModel.showFilterList.value)
-                                    viewModel.filteredTeamListState
-                                else viewModel.teamListState
-                                ) { user ->
-                                    Row(
-                                        horizontalArrangement = Arrangement.Start,
-                                        verticalAlignment = Alignment.CenterVertically,
-                                        modifier = Modifier
-                                            .background(color = Color.White)
-                                            .clickable {
-                                                navController.currentBackStackEntry?.savedStateHandle?.set(
-                                                    "studentData", user
-                                                )
-                                                navController.navigate(Screen.StudentProfileScreen.route)
-                                            }
-                                            .fillMaxWidth()
-                                            .padding(20.dp)
-                                    ) {
-                                        Image(
-                                            painter = painterResource(id = R.drawable.people),
-                                            contentDescription = null,
-                                            colorFilter = ColorFilter.tint(
-                                                Color.White
-                                            ),
-                                            modifier = Modifier
-                                                .clip(CircleShape)
-                                                .background(color = green)
-                                                .height(50.dp)
-                                                .width(50.dp)
-                                                .padding(10.dp)
-                                        )
-
+                                if (!refreshing) {
+                                    items(
+                                        items = if (viewModel.showFilterList.value)
+                                            viewModel.filteredTeamListState
+                                        else viewModel.teamListState
+                                    ) { user ->
                                         Row(
-                                            horizontalArrangement = Arrangement.SpaceBetween,
-                                            modifier = Modifier.fillMaxWidth()
-                                        ) {
-                                            Column(
-                                                verticalArrangement = Arrangement.Center,
-                                                horizontalAlignment = Alignment.Start,
-                                                modifier = Modifier.padding(start = 16.dp)
-                                            ) {
-                                                Text(
-                                                    text = "${user.userName}",
-                                                    modifier = Modifier.padding(start = 16.dp),
-                                                    color = textColorLightGray,
-                                                    fontSize = 18.sp
-                                                )
-                                                Text(
-                                                    text = "${user.role}",
-                                                    modifier = Modifier.padding(start = 16.dp),
-                                                    color = textColorLightGray,
-                                                    fontSize = 16.sp
-                                                )
-                                            }
-
-                                            /*Text(
-                                                text = if (user.id?.isEmpty() == true) "ADD" else "VIEW",
-                                                modifier = Modifier
-                                                    .padding(start = 16.dp)
-                                                    .clickable {
+                                            horizontalArrangement = Arrangement.Start,
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            modifier = Modifier
+                                                .background(color = Color.White)
+                                                .clickable {
+                                                    multipleEventsCutter.processEvent {
                                                         navController.currentBackStackEntry?.savedStateHandle?.set(
-                                                            "user", user
+                                                            "studentData", user
                                                         )
-                                                        navController.navigate(Screen.StudentMetricsDetail.route)
+                                                        navController.navigate(Screen.StudentProfileScreen.route)
+                                                        viewModel.checkRefreshState.value = true
                                                     }
-                                                    .background(if (user.id?.isEmpty() == true) orange else green)
-                                                    .padding(
-                                                        start = 16.dp,
-                                                        top = 8.dp,
-                                                        bottom = 8.dp,
-                                                        end = 16.dp
-                                                    ),
-                                                color = Color.White,
-                                                fontSize = 14.sp
-                                            )*/
+                                                }
 
+                                                .fillMaxWidth()
+                                                .padding(20.dp)
+                                        ) {
                                             Image(
-                                                painter = if (user.status == 1) painterResource(id = R.drawable.tick) else painterResource(
-                                                    id = R.drawable.cross
-                                                ),
+                                                painter = painterResource(id = R.drawable.people),
                                                 contentDescription = null,
                                                 colorFilter = ColorFilter.tint(
-                                                    if (user.status == 1) green else errorRed
+                                                    Color.White
                                                 ),
                                                 modifier = Modifier
                                                     .clip(CircleShape)
+                                                    .background(color = green)
                                                     .height(50.dp)
                                                     .width(50.dp)
                                                     .padding(10.dp)
                                             )
+
+                                            Row(
+                                                horizontalArrangement = Arrangement.SpaceBetween,
+                                                verticalAlignment = Alignment.CenterVertically,
+                                                modifier = Modifier.fillMaxWidth()
+                                            ) {
+                                                Column(
+                                                    verticalArrangement = Arrangement.Center,
+                                                    horizontalAlignment = Alignment.Start,
+                                                    modifier = Modifier.padding(start = 16.dp)
+                                                ) {
+                                                    Text(
+                                                        text = "${user.userFirstname ?: ""} ${user.userLastname ?: ""}",
+                                                        modifier = Modifier.padding(start = 16.dp),
+                                                        color = textColorLightGray,
+                                                        fontSize = 18.sp
+                                                    )
+                                                    if (user.role.isNotEmpty()) {
+                                                        Text(
+                                                            text = "${user.role}",
+                                                            modifier = Modifier.padding(start = 16.dp),
+                                                            color = textColorLightGray,
+                                                            fontSize = 16.sp
+                                                        )
+                                                    }
+                                                }
+
+                                                Image(
+                                                    painter = if (user.status == 1) painterResource(
+                                                        id = R.drawable.tick
+                                                    ) else painterResource(
+                                                        id = R.drawable.cross
+                                                    ),
+                                                    contentDescription = null,
+                                                    colorFilter = ColorFilter.tint(
+                                                        if (user.status == 1) green else errorRed
+                                                    ),
+                                                    modifier = Modifier
+                                                        .clip(CircleShape)
+                                                        .height(50.dp)
+                                                        .width(50.dp)
+                                                        .padding(10.dp)
+                                                )
+                                            }
                                         }
                                     }
                                 }
@@ -287,7 +337,7 @@ fun MyTeamScreen(viewModel: MyTeamViewModel = hiltViewModel(), navController: Na
                         }
                     } else {
                         Text(
-                            text = "No team available",
+                            text = if (viewModel.showFilterList.value) "No team available for the selected filter" else "No team available",
                             modifier = Modifier.padding(top = 24.dp),
                             style = TextStyle(
                                 fontWeight = FontWeight.Bold,
@@ -318,8 +368,10 @@ fun MyTeamScreen(viewModel: MyTeamViewModel = hiltViewModel(), navController: Na
                     .align(Alignment.BottomEnd)
                     .padding(bottom = 20.dp, end = 20.dp),
                 onClick = {
-                    coroutineScope.launch {
-                        if (!sheetState.isVisible) sheetState.show()
+                    multipleEventsCutter.processEvent {
+                        coroutineScope.launch {
+                            if (!sheetState.isVisible) sheetState.show()
+                        }
                     }
                 },
             ) {
@@ -327,6 +379,6 @@ fun MyTeamScreen(viewModel: MyTeamViewModel = hiltViewModel(), navController: Na
             }
         }
     }
-
-
 }
+
+

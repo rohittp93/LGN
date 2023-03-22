@@ -57,7 +57,7 @@ fun StudentItem(
                     .fillMaxWidth()
                     .padding(start = 8.dp, end = 0.dp)) {
                     Text(
-                        text = student.userName ?: "",
+                        text = "${student.userFirstname} ${student.userLastname}",
                         color = Color.DarkGray,
                         fontSize = 22.sp,
                         maxLines = 2,

@@ -22,8 +22,10 @@ class MyTeamViewModel @Inject constructor(private val useCase: UseCases, applica
     private val _teamState = mutableStateOf<Response<TeamData>>(Response.Loading)
     val teamState: State<Response<TeamData>> = _teamState
     var showFilterList = mutableStateOf(true)
+    var checkRefreshState = mutableStateOf(false)
     var userTypeFilter = mutableStateOf("Show All")
     var statusFilter = mutableStateOf("Both")
+    var yearFilterSelected = mutableStateOf("")
 
     private val _teamListState = mutableStateListOf<StudentData>()
     val teamListState: List<StudentData> = _teamListState
@@ -52,7 +54,7 @@ class MyTeamViewModel @Inject constructor(private val useCase: UseCases, applica
         _filteredTeamListState.addAll(updatedList)
     }
 
-    private fun fetchTeam(context: Context) {
+    fun fetchTeam(context: Context) {
         showFilterList(false)
         viewModelScope.launch {
             useCase.fetchTeam(context).collect { response ->
