@@ -118,9 +118,9 @@ fun UpdateMetricsBottomSheet(
             )
         }
 
-        Spacer(modifier = Modifier.height(32.dp))
+       // Spacer(modifier = Modifier.height(32.dp))
 
-        MonthPicker(
+        /*MonthPicker(
             visible = visible,
             currentMonth = currentMonth,
             currentYear = year,
@@ -131,10 +131,10 @@ fun UpdateMetricsBottomSheet(
             cancelClicked = {
                 visible = false
             }
-        )
+        )*/
 
 
-        Button(
+      /*  Button(
             border = BorderStroke(0.8.dp, textColorGray),
             shape = RoundedCornerShape(8.dp),
             elevation = null,
@@ -168,7 +168,7 @@ fun UpdateMetricsBottomSheet(
                         .width(18.dp)
                 )
             }
-        }
+        }*/
 
 
 
@@ -176,7 +176,7 @@ fun UpdateMetricsBottomSheet(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 18.dp),
+                .padding(top = 16.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(24.dp)
         ) {

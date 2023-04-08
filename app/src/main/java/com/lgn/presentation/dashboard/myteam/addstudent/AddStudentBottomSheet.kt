@@ -8,17 +8,22 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -34,6 +39,7 @@ import com.lgn.presentation.ui.utils.convertToMonthAndYear
 import com.lgn.presentation.ui.utils.showToast
 import java.util.*
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun AddStudentBottomSheet(
     navController: NavController,
@@ -42,6 +48,8 @@ fun AddStudentBottomSheet(
 ) {
     val context = LocalContext.current
     val state = viewModel.state
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
 
     var visible by remember {
         mutableStateOf(false)
@@ -75,6 +83,10 @@ fun AddStudentBottomSheet(
                     .height(15.dp)
                     .width(15.dp)
                     .clickable {
+                        state.email = ""
+                        state.firstName = ""
+                        state.lastName = ""
+                        state.phone = ""
                         onCloseClicked(false)
                     }
             )
@@ -92,6 +104,7 @@ fun AddStudentBottomSheet(
                 )
             },
             modifier = Modifier.fillMaxWidth(),
+            singleLine = true,
             colors = TextFieldDefaults.outlinedTextFieldColors(
                 focusedBorderColor = green,
                 unfocusedBorderColor = green, textColor = textColorGray
@@ -99,7 +112,8 @@ fun AddStudentBottomSheet(
             onValueChange = { newText ->
                 viewModel.valueChanged("firstname", newText)
             },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text,
+                imeAction = ImeAction.Next)
         )
         Spacer(modifier = Modifier.height(16.dp))
         OutlinedTextField(
@@ -111,6 +125,7 @@ fun AddStudentBottomSheet(
                     color = textColorGray
                 )
             },
+            singleLine = true,
             modifier = Modifier.fillMaxWidth(),
             colors = TextFieldDefaults.outlinedTextFieldColors(
                 focusedBorderColor = green,
@@ -119,7 +134,8 @@ fun AddStudentBottomSheet(
             onValueChange = { newText ->
                 viewModel.valueChanged("lastname", newText)
             },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text,
+                imeAction = ImeAction.Next)
         )
         Spacer(modifier = Modifier.height(16.dp))
         OutlinedTextField(
@@ -132,7 +148,7 @@ fun AddStudentBottomSheet(
                 )
             },
             modifier = Modifier.fillMaxWidth(),
-
+            singleLine = true,
             colors = TextFieldDefaults.outlinedTextFieldColors(
                 focusedBorderColor = green,
                 unfocusedBorderColor = green, textColor = textColorGray
@@ -140,7 +156,8 @@ fun AddStudentBottomSheet(
             onValueChange = { newText ->
                 viewModel.valueChanged("email", newText)
             },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email,
+                imeAction = ImeAction.Next)
         )
         Spacer(modifier = Modifier.height(16.dp))
         OutlinedTextField(
@@ -153,7 +170,7 @@ fun AddStudentBottomSheet(
                 )
             },
             modifier = Modifier.fillMaxWidth(),
-
+            singleLine = true,
             colors = TextFieldDefaults.outlinedTextFieldColors(
                 focusedBorderColor = green,
                 unfocusedBorderColor = green, textColor = textColorGray
@@ -161,11 +178,13 @@ fun AddStudentBottomSheet(
             onValueChange = { newText ->
                 viewModel.valueChanged("phone", newText)
             },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone)
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone,
+                imeAction = ImeAction.Done),
+            keyboardActions = KeyboardActions(
+                onDone = {keyboardController?.hide()})
         )
 
         Spacer(modifier = Modifier.height(52.dp))
-
 
         when (viewModel.studentAddedeState.value) {
             is Response.Loading -> {
@@ -230,6 +249,7 @@ fun AddStudentBottomSheet(
                 }
 
                 if (!errorShown) {
+                    focusManager.clearFocus()
                     viewModel.addStudent(
                         context,
                         UpdateStudentResponse(

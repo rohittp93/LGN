@@ -78,6 +78,8 @@ fun StudentProfileScreen(
                 SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").format(date)
             Log.d("dateFormated", dateFormated)
 
+            user.batch = dateFormated
+
             user.id?.let { userId ->
                 viewModel.changeToGraduate(context, user)
             }

@@ -12,7 +12,7 @@ private val DarkColorPalette = darkColors(
     secondary = green
 )
 
-private val LightColorPalette = lightColors(
+private val LightColorPalette = darkColors(
     primary = primaryColor,
     primaryVariant = statusBarColor,
     secondary = green
