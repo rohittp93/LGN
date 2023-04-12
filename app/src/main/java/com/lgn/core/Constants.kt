@@ -16,6 +16,14 @@ object Constants {
     const val KEY_USER_ROLE = "user_role"
     const val KEY_USERNAME = "username"
     const val KEY_USERID = "user_id"
+    //NEW PROFILE KEYS
+    const val KEY_DOB = "user_dob"
+    const val KEY_CITY = "user_city"
+    const val KEY_TRAINING_CITY = "user_training_city"
+    const val KEY_TRAINING_DISTRICT = "user_training_district"
+    const val KEY_TRAINING_PIN = "user_training_pin"
+    const val KEY_TRAINING_STATE = "user_training_state"
+
 
     const val KEY_ACCESS_TOKEN = "access_token"
 

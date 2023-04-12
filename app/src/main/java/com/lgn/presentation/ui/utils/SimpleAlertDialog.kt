@@ -15,7 +15,8 @@ fun SimpleAlertDialog(
     show: Boolean,
     showDismissButton: Boolean,
     onDismiss: () -> Unit,
-    onConfirm: () -> Unit
+    onConfirm: () -> Unit,
+    positiveText: String = "OK"
 ) {
     if (show) {
         AlertDialog(
@@ -23,7 +24,7 @@ fun SimpleAlertDialog(
             onDismissRequest = onDismiss,
             confirmButton = {
                 TextButton(onClick = onConfirm)
-                { Text(text = "OK") }
+                { Text(text = positiveText) }
             },
             dismissButton = if (showDismissButton) {
                 {

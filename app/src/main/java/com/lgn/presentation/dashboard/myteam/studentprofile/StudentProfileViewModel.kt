@@ -38,6 +38,11 @@ class StudentProfileViewModel @Inject constructor(
 
     val showDialog: StateFlow<Boolean> = _showDialog.asStateFlow()
 
+
+    private val _showGraduateDialog = MutableStateFlow(false)
+    val showGraduateDialog: StateFlow<Boolean> = _showGraduateDialog.asStateFlow()
+
+
     fun onOpenDialogClicked() {
         _showDialog.value = true
     }
@@ -52,6 +57,18 @@ class StudentProfileViewModel @Inject constructor(
 
     fun onDialogDismiss() {
         _showDialog.value = false
+    }
+
+    fun onOpenGraduateDialogClicked() {
+        _showGraduateDialog.value = true
+    }
+
+    fun onGraduateDialogConfirm() {
+        _showGraduateDialog.value = false
+    }
+
+    fun onGraduateDialogDismiss() {
+        _showGraduateDialog.value = false
     }
 
     var rolseState by mutableStateOf("Associate")

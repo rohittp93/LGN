@@ -17,4 +17,12 @@ data class UserProfile(
     var userState: String? = null,
     var userAadhar: String? = null,
     var role: String? = null,
+
+    var user_dob: String? = null,
+    var user_city: String? = null,
+    var training_city: String? = null,
+    var training_district: String? = null,
+    var training_pin: String? = null,
+    var training_state: String? = null,
+
 ) : Parcelable

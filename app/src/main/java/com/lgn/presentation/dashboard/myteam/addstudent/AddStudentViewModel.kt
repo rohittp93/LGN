@@ -53,8 +53,11 @@ class AddStudentViewModel @Inject constructor(
             "lastname"-> {
                  state = state.copy(lastName = newText)
             }
-            "email"-> {
-                state = state.copy(email = newText)
+            "userPosition"-> {
+                state = state.copy(userPosition = newText)
+            }
+            "batch"-> {
+                state = state.copy(batch = newText)
             }
             "phone"-> {
                 state = state.copy(phone = newText)

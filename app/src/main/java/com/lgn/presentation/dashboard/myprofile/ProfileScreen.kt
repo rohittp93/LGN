@@ -75,9 +75,8 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel(), navController: 
             .background(backgroundGray),
         contentAlignment = Alignment.Center
     ) {
+
         Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Top,
             modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight()
@@ -110,286 +109,514 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel(), navController: 
                 }
             }
 
-            Row(
-                Modifier
-                    .fillMaxWidth()
-                    .padding(top = 24.dp, end = 24.dp, start = 24.dp, bottom = 34.dp),
-                horizontalArrangement = Arrangement.Start,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.account),
-                    contentDescription = null,
-                    colorFilter = ColorFilter.tint(
-                        Color.White
-                    ),
-                    modifier = Modifier
-                        .clip(CircleShape)
-                        .background(color = green)
-                        .height(70.dp)
-                        .width(70.dp)
-                        .padding(10.dp)
-                )
-                Column(
-                    modifier = Modifier.padding(start = 12.dp)
-                ) {
-                    Text(
-                        text = viewModel.userProfile.value.userName ?: "",
-                        style = TextStyle(
-                            fontWeight = FontWeight.Bold,
-                        ),
-                        fontSize = 18.sp,
-                        color = textColorGray
-                    )
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center,
-                        modifier = Modifier.padding(top = 8.dp)
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.mail),
-                            contentDescription = null,
-                            colorFilter = ColorFilter.tint(
-                                green
-                            ),
-                            modifier = Modifier
-                                .height(18.dp)
-                                .width(18.dp)
-                        )
-                        Text(
-                            text = viewModel.userProfile.value.userEmail ?: "",
-                            modifier = Modifier.padding(start = 8.dp),
-                            style = TextStyle(
-                                fontWeight = FontWeight.Light,
-                            ),
-                            fontSize = 14.sp,
-                            color = textColorGray
-                        )
-                    }
-
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center,
-                        modifier = Modifier.padding(top = 8.dp)
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.phone),
-                            contentDescription = null,
-                            colorFilter = ColorFilter.tint(
-                                green
-                            ),
-                            modifier = Modifier
-                                .height(18.dp)
-                                .width(18.dp)
-                        )
-                        Text(
-                            text = viewModel.userProfile.value.userPhone ?: "",
-                            modifier = Modifier.padding(start = 8.dp),
-                            style = TextStyle(
-                                fontWeight = FontWeight.Light,
-                            ),
-                            fontSize = 14.sp,
-                            color = textColorGray
-                        )
-                    }
-
-                }
-            }
-
-            Box(
-                modifier = Modifier.padding(horizontal = 24.dp)
-            ) {
-                Column(
-                    modifier = Modifier
-                        .background(color = Color.White)
-                        .padding(16.dp)
-                        .fillMaxWidth()
-                ) {
-                    Text(
-                        text = "Personal Details",
-                        style = TextStyle(
-                            fontWeight = FontWeight.Black,
-                        ),
-                        fontSize = 16.sp,
-                        color = textColorGray
-                    )
-                    Text(
-                        text = "Address",
-                        modifier = Modifier.padding(top = 16.dp),
-                        style = TextStyle(
-                            fontWeight = FontWeight.Light,
-                        ),
-                        fontSize = 14.sp,
-                        color = textColorLightGray
-                    )
-                    Text(
-                        text = viewModel.userProfile.value.userAddress ?: "",
-                        modifier = Modifier.padding(top = 4.dp),
-                        style = TextStyle(
-                            fontWeight = FontWeight.Normal,
-                        ),
-                        fontSize = 16.sp,
-                        color = textColorGray
-                    )
-                    Row(
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Column(
-                            modifier = Modifier
-                                .weight(1f)
-                                .fillMaxWidth(),
-                        ) {
-                            Text(
-                                text = "Block",
-                                modifier = Modifier.padding(top = 16.dp),
-                                style = TextStyle(
-                                    fontWeight = FontWeight.Light,
-                                ),
-                                fontSize = 14.sp,
-                                color = textColorLightGray
-                            )
-                            Text(
-                                text = viewModel.userProfile.value.userBlock ?: "",
-                                modifier = Modifier.padding(top = 4.dp),
-                                style = TextStyle(
-                                    fontWeight = FontWeight.Normal,
-                                ),
-                                fontSize = 16.sp,
-                                color = textColorGray
-                            )
-                        }
-
-                        Column(
-                            modifier = Modifier
-                                .weight(1f)
-                                .fillMaxWidth(),
-                        ) {
-                            Text(
-                                text = "District",
-                                modifier = Modifier.padding(top = 16.dp),
-                                style = TextStyle(
-                                    fontWeight = FontWeight.Light,
-                                ),
-                                fontSize = 14.sp,
-                                color = textColorLightGray
-                            )
-                            Text(
-                                text = viewModel.userProfile.value.userDistrict ?: "",
-                                modifier = Modifier.padding(top = 4.dp),
-                                style = TextStyle(
-                                    fontWeight = FontWeight.Normal,
-                                ),
-                                fontSize = 16.sp,
-                                color = textColorGray
-                            )
-                        }
-                    }
-                    Row(
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Column(
-                            modifier = Modifier
-                                .weight(1f)
-                                .fillMaxWidth(),
-                        ) {
-                            Text(
-                                text = "Pincode",
-                                modifier = Modifier.padding(top = 16.dp),
-                                style = TextStyle(
-                                    fontWeight = FontWeight.Light,
-                                ),
-                                fontSize = 14.sp,
-                                color = textColorLightGray
-                            )
-                            Text(
-                                text = viewModel.userProfile.value.userPin ?: "",
-                                modifier = Modifier.padding(top = 4.dp),
-                                style = TextStyle(
-                                    fontWeight = FontWeight.Normal,
-                                ),
-                                fontSize = 16.sp,
-                                color = textColorGray
-                            )
-                        }
-
-                        Column(
-                            modifier = Modifier
-                                .weight(1f)
-                                .fillMaxWidth(),
-                        ) {
-                            Text(
-                                text = "State",
-                                modifier = Modifier.padding(top = 16.dp),
-                                style = TextStyle(
-                                    fontWeight = FontWeight.Light,
-                                ),
-                                fontSize = 14.sp,
-                                color = textColorLightGray
-                            )
-                            Text(
-                                text = viewModel.userProfile.value.userState ?: "",
-                                modifier = Modifier.padding(top = 4.dp),
-                                style = TextStyle(
-                                    fontWeight = FontWeight.Normal,
-                                ),
-                                fontSize = 16.sp,
-                                color = textColorGray
-                            )
-                        }
-                    }
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Column(
-                            modifier = Modifier
-                                .weight(1f)
-                                .fillMaxWidth(),
-                        ) {
-                            Text(
-                                text = "Aadhar Card No.",
-                                modifier = Modifier.padding(top = 16.dp),
-                                style = TextStyle(
-                                    fontWeight = FontWeight.Light,
-                                ),
-                                fontSize = 14.sp,
-                                color = textColorLightGray
-                            )
-                            Text(
-                                text = viewModel.userProfile.value.userAadhar ?: "",
-                                modifier = Modifier.padding(top = 4.dp),
-                                style = TextStyle(
-                                    fontWeight = FontWeight.Normal,
-                                ),
-                                fontSize = 16.sp,
-                                color = textColorGray
-                            )
-                        }
-                    }
-                }
-            }
-
-        }
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 20.dp, end = 20.dp, bottom = 40.dp)
-                .align(Alignment.BottomCenter)
-        ) {
-            Button(
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Top,
                 modifier = Modifier
-                    .fillMaxWidth(),
-                onClick = {
-                    viewModel.onOpenDialogClicked()
-                },
-                colors = ButtonDefaults.buttonColors(backgroundColor = green)
-            )
-            {
-                Text(text = "LOGOUT", color = Color.White)
+                    .fillMaxWidth()
+                    .fillMaxHeight()
+            ) {
+
+
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(top = 24.dp, end = 24.dp, start = 24.dp, bottom = 34.dp),
+                    horizontalArrangement = Arrangement.Start,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.account),
+                        contentDescription = null,
+                        colorFilter = ColorFilter.tint(
+                            Color.White
+                        ),
+                        modifier = Modifier
+                            .clip(CircleShape)
+                            .background(color = green)
+                            .height(70.dp)
+                            .width(70.dp)
+                            .padding(10.dp)
+                    )
+                    Column(
+                        modifier = Modifier.padding(start = 12.dp)
+                    ) {
+                        Text(
+                            text = viewModel.userProfile.value.userName ?: "-",
+                            style = TextStyle(
+                                fontWeight = FontWeight.Bold,
+                            ),
+                            fontSize = 18.sp,
+                            color = textColorGray
+                        )
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center,
+                            modifier = Modifier.padding(top = 8.dp)
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.mail),
+                                contentDescription = null,
+                                colorFilter = ColorFilter.tint(
+                                    green
+                                ),
+                                modifier = Modifier
+                                    .height(18.dp)
+                                    .width(18.dp)
+                            )
+                            Text(
+                                text = viewModel.userProfile.value.userEmail ?: "-",
+                                modifier = Modifier.padding(start = 8.dp),
+                                style = TextStyle(
+                                    fontWeight = FontWeight.Light,
+                                ),
+                                fontSize = 14.sp,
+                                color = textColorGray
+                            )
+                        }
+
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center,
+                            modifier = Modifier.padding(top = 8.dp)
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.phone),
+                                contentDescription = null,
+                                colorFilter = ColorFilter.tint(
+                                    green
+                                ),
+                                modifier = Modifier
+                                    .height(18.dp)
+                                    .width(18.dp)
+                            )
+                            Text(
+                                text = viewModel.userProfile.value.userPhone ?: "-",
+                                modifier = Modifier.padding(start = 8.dp),
+                                style = TextStyle(
+                                    fontWeight = FontWeight.Light,
+                                ),
+                                fontSize = 14.sp,
+                                color = textColorGray
+                            )
+                        }
+
+                    }
+                }
+
+                Box(
+                    modifier = Modifier.padding(horizontal = 24.dp)
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .background(color = Color.White)
+                            .padding(16.dp)
+                            .fillMaxWidth()
+                    ) {
+                        Text(
+                            text = "Personal Details",
+                            style = TextStyle(
+                                fontWeight = FontWeight.Black,
+                            ),
+                            fontSize = 16.sp,
+                            color = textColorGray
+                        )
+
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .fillMaxWidth(),
+                            ) {
+                                Text(
+                                    text = "D.O.B",
+                                    modifier = Modifier.padding(top = 16.dp),
+                                    style = TextStyle(
+                                        fontWeight = FontWeight.Light,
+                                    ),
+                                    fontSize = 14.sp,
+                                    color = textColorLightGray
+                                )
+                                Text(
+                                    text = viewModel.userProfile.value.user_dob ?: "-",
+                                    modifier = Modifier.padding(top = 4.dp),
+                                    style = TextStyle(
+                                        fontWeight = FontWeight.Normal,
+                                    ),
+                                    fontSize = 16.sp,
+                                    color = textColorGray
+                                )
+                            }
+
+                            Column(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .fillMaxWidth(),
+                            ) {
+                                Text(
+                                    text = "Aadhar Card No.",
+                                    modifier = Modifier.padding(top = 16.dp),
+                                    style = TextStyle(
+                                        fontWeight = FontWeight.Light,
+                                    ),
+                                    fontSize = 14.sp,
+                                    color = textColorLightGray
+                                )
+                                Text(
+                                    text = viewModel.userProfile.value.userAadhar ?: "-",
+                                    modifier = Modifier.padding(top = 4.dp),
+                                    style = TextStyle(
+                                        fontWeight = FontWeight.Normal,
+                                    ),
+                                    fontSize = 16.sp,
+                                    color = textColorGray
+                                )
+                            }
+                        }
+                    }
+                }
+
+
+                Box(
+                    modifier = Modifier.padding(start = 24.dp, end = 24.dp, top = 8.dp)
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .background(color = Color.White)
+                            .padding(16.dp)
+                            .fillMaxWidth()
+                    ) {
+                        Text(
+                            text = "Residential Address",
+                            style = TextStyle(
+                                fontWeight = FontWeight.Black,
+                            ),
+                            fontSize = 16.sp,
+                            color = textColorGray
+                        )
+
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .fillMaxWidth(),
+                            ) {
+                                Text(
+                                    text = "Address",
+                                    modifier = Modifier.padding(top = 16.dp),
+                                    style = TextStyle(
+                                        fontWeight = FontWeight.Light,
+                                    ),
+                                    fontSize = 14.sp,
+                                    color = textColorLightGray
+                                )
+                                Text(
+                                    text = viewModel.userProfile.value.userAddress ?: "-",
+                                    modifier = Modifier.padding(top = 4.dp),
+                                    style = TextStyle(
+                                        fontWeight = FontWeight.Normal,
+                                    ),
+                                    fontSize = 16.sp,
+                                    color = textColorGray
+                                )
+                            }
+                        }
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .fillMaxWidth(),
+                            ) {
+                                Text(
+                                    text = "Block",
+                                    modifier = Modifier.padding(top = 16.dp),
+                                    style = TextStyle(
+                                        fontWeight = FontWeight.Light,
+                                    ),
+                                    fontSize = 14.sp,
+                                    color = textColorLightGray
+                                )
+                                Text(
+                                    text = viewModel.userProfile.value.userBlock ?: "-",
+                                    modifier = Modifier.padding(top = 4.dp),
+                                    style = TextStyle(
+                                        fontWeight = FontWeight.Normal,
+                                    ),
+                                    fontSize = 16.sp,
+                                    color = textColorGray
+                                )
+                            }
+                            Column(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .fillMaxWidth(),
+                            ) {
+                                Text(
+                                    text = "City/Town/Village",
+                                    modifier = Modifier.padding(top = 16.dp),
+                                    style = TextStyle(
+                                        fontWeight = FontWeight.Light,
+                                    ),
+                                    fontSize = 14.sp,
+                                    color = textColorLightGray
+                                )
+                                Text(
+                                    text = viewModel.userProfile.value.user_city ?: "-",
+                                    modifier = Modifier.padding(top = 4.dp),
+                                    style = TextStyle(
+                                        fontWeight = FontWeight.Normal,
+                                    ),
+                                    fontSize = 16.sp,
+                                    color = textColorGray
+                                )
+                            }
+
+                        }
+                        Row(
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+
+                            Column(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .fillMaxWidth(),
+                            ) {
+                                Text(
+                                    text = "District",
+                                    modifier = Modifier.padding(top = 16.dp),
+                                    style = TextStyle(
+                                        fontWeight = FontWeight.Light,
+                                    ),
+                                    fontSize = 14.sp,
+                                    color = textColorLightGray
+                                )
+                                Text(
+                                    text = viewModel.userProfile.value.userDistrict ?: "-",
+                                    modifier = Modifier.padding(top = 4.dp),
+                                    style = TextStyle(
+                                        fontWeight = FontWeight.Normal,
+                                    ),
+                                    fontSize = 16.sp,
+                                    color = textColorGray
+                                )
+                            }
+
+                            Column(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .fillMaxWidth(),
+                            ) {
+                                Text(
+                                    text = "Pincode",
+                                    modifier = Modifier.padding(top = 16.dp),
+                                    style = TextStyle(
+                                        fontWeight = FontWeight.Light,
+                                    ),
+                                    fontSize = 14.sp,
+                                    color = textColorLightGray
+                                )
+                                Text(
+                                    text = viewModel.userProfile.value.userPin ?: "-",
+                                    modifier = Modifier.padding(top = 4.dp),
+                                    style = TextStyle(
+                                        fontWeight = FontWeight.Normal,
+                                    ),
+                                    fontSize = 16.sp,
+                                    color = textColorGray
+                                )
+                            }
+                        }
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .fillMaxWidth(),
+                            ) {
+                                Text(
+                                    text = "State",
+                                    modifier = Modifier.padding(top = 16.dp),
+                                    style = TextStyle(
+                                        fontWeight = FontWeight.Light,
+                                    ),
+                                    fontSize = 14.sp,
+                                    color = textColorLightGray
+                                )
+                                Text(
+                                    text = viewModel.userProfile.value.userState ?: "-",
+                                    modifier = Modifier.padding(top = 4.dp),
+                                    style = TextStyle(
+                                        fontWeight = FontWeight.Normal,
+                                    ),
+                                    fontSize = 16.sp,
+                                    color = textColorGray
+                                )
+                            }
+                        }
+                    }
+                }
+
+
+
+                Box(
+                    modifier = Modifier.padding(start = 24.dp, end = 24.dp, top = 8.dp)
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .background(color = Color.White)
+                            .padding(16.dp)
+                            .fillMaxWidth()
+                    ) {
+                        Text(
+                            text = "Training Location",
+                            style = TextStyle(
+                                fontWeight = FontWeight.Black,
+                            ),
+                            fontSize = 16.sp,
+                            color = textColorGray
+                        )
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .fillMaxWidth(),
+                            ) {
+                                Text(
+                                    text = "City/Town/Village",
+                                    modifier = Modifier.padding(top = 16.dp),
+                                    style = TextStyle(
+                                        fontWeight = FontWeight.Light,
+                                    ),
+                                    fontSize = 14.sp,
+                                    color = textColorLightGray
+                                )
+                                Text(
+                                    text = viewModel.userProfile.value.training_city ?: "-",
+                                    modifier = Modifier.padding(top = 4.dp),
+                                    style = TextStyle(
+                                        fontWeight = FontWeight.Normal,
+                                    ),
+                                    fontSize = 16.sp,
+                                    color = textColorGray
+                                )
+                            }
+                            Column(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .fillMaxWidth(),
+                            ) {
+                                Text(
+                                    text = "District",
+                                    modifier = Modifier.padding(top = 16.dp),
+                                    style = TextStyle(
+                                        fontWeight = FontWeight.Light,
+                                    ),
+                                    fontSize = 14.sp,
+                                    color = textColorLightGray
+                                )
+                                Text(
+                                    text = viewModel.userProfile.value.training_district ?: "-",
+                                    modifier = Modifier.padding(top = 4.dp),
+                                    style = TextStyle(
+                                        fontWeight = FontWeight.Normal,
+                                    ),
+                                    fontSize = 16.sp,
+                                    color = textColorGray
+                                )
+                            }
+                        }
+                        Row(
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .fillMaxWidth(),
+                            ) {
+                                Text(
+                                    text = "Pincode",
+                                    modifier = Modifier.padding(top = 16.dp),
+                                    style = TextStyle(
+                                        fontWeight = FontWeight.Light,
+                                    ),
+                                    fontSize = 14.sp,
+                                    color = textColorLightGray
+                                )
+                                Text(
+                                    text = viewModel.userProfile.value.training_pin ?: "-",
+                                    modifier = Modifier.padding(top = 4.dp),
+                                    style = TextStyle(
+                                        fontWeight = FontWeight.Normal,
+                                    ),
+                                    fontSize = 16.sp,
+                                    color = textColorGray
+                                )
+                            }
+
+                            Column(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .fillMaxWidth(),
+                            ) {
+                                Text(
+                                    text = "State",
+                                    modifier = Modifier.padding(top = 16.dp),
+                                    style = TextStyle(
+                                        fontWeight = FontWeight.Light,
+                                    ),
+                                    fontSize = 14.sp,
+                                    color = textColorLightGray
+                                )
+                                Text(
+                                    text = viewModel.userProfile.value.training_state ?: "-",
+                                    modifier = Modifier.padding(top = 4.dp),
+                                    style = TextStyle(
+                                        fontWeight = FontWeight.Normal,
+                                    ),
+                                    fontSize = 16.sp,
+                                    color = textColorGray
+                                )
+                            }
+                        }
+                    }
+                }
+
+
+            }
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 20.dp, top = 40.dp, end = 20.dp, bottom = 40.dp)
+                    //.align(Alignment.BottomCenter)
+            ) {
+                Button(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    onClick = {
+                        viewModel.onOpenDialogClicked()
+                    },
+                    colors = ButtonDefaults.buttonColors(backgroundColor = green)
+                )
+                {
+                    Text(text = "LOGOUT", color = Color.White)
+                }
             }
         }
-
     }
 }

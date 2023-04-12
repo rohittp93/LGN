@@ -42,6 +42,7 @@ fun StudentProfileScreen(
 ) {
     val context = LocalContext.current
     val showDialogState: Boolean by viewModel.showDialog.collectAsState()
+    val showGraduateDialogState: Boolean by viewModel.showGraduateDialog.collectAsState()
 
     var closeClicked by remember {
         mutableStateOf(false)
@@ -89,6 +90,19 @@ fun StudentProfileScreen(
         )
     }
 
+    SimpleAlertDialog(
+        title = "Change to Graduate",
+        message = "Are you sure you want to change this Associate to Graduate",
+        show = showGraduateDialogState,
+        showDismissButton = true,
+        onDismiss = viewModel::onGraduateDialogDismiss,
+        positiveText = "Yes",
+        onConfirm = {
+            user.id?.let { userId ->
+                viewModel.changeToGraduate(context, user)
+            }
+        }
+    )
 
     SimpleAlertDialog(
         title = if (user.status == 1) "DEACTIVATE" else "ACTIVATE",
@@ -305,7 +319,7 @@ fun StudentProfileScreen(
                         .fillMaxWidth(),
                     onClick = {
                         multipleEventsCutter.processEvent {
-                            showCustomDialog = !showCustomDialog
+                            viewModel.onOpenGraduateDialogClicked()
                         }
                     },
                     colors = ButtonDefaults.buttonColors(backgroundColor = green)
@@ -320,7 +334,6 @@ fun StudentProfileScreen(
                 onClick = {
                     multipleEventsCutter.processEvent {
                         multipleEventsCutter.processEvent {
-
                             viewModel.onOpenDialogClicked()
                         }
                     }

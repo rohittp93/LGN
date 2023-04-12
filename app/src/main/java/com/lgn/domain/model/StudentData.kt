@@ -20,6 +20,14 @@ data class TeamData(
     @SerializedName("user_aadhar") var userAadhar: String? = null,
     @SerializedName("role") var role: String? = null,
     @SerializedName("status") var status: Int? = null,
+    //new keys
+    @SerializedName("user_dob") var dob: String? = null,
+    @SerializedName("user_city") var city: String? = null,
+    @SerializedName("training_city") var training_city: String? = null,
+    @SerializedName("training_district") var training_district: String? = null,
+    @SerializedName("training_pin") var training_pin: String? = null,
+    @SerializedName("training_state") var training_state: String? = null,
+
     @SerializedName("associate") var associate: List<StudentData> = listOf()
 ) : Parcelable
 

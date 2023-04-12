@@ -4,7 +4,13 @@ import android.content.Context
 import android.widget.Toast
 import com.lgn.core.Constants
 import com.lgn.core.Constants.KEY_ACCESS_TOKEN
+import com.lgn.core.Constants.KEY_CITY
+import com.lgn.core.Constants.KEY_DOB
 import com.lgn.core.Constants.KEY_IS_LOGGED
+import com.lgn.core.Constants.KEY_TRAINING_CITY
+import com.lgn.core.Constants.KEY_TRAINING_DISTRICT
+import com.lgn.core.Constants.KEY_TRAINING_PIN
+import com.lgn.core.Constants.KEY_TRAINING_STATE
 import com.lgn.core.Constants.KEY_USERID
 import com.lgn.core.Constants.KEY_USERNAME
 import com.lgn.core.Constants.KEY_USER_AADHAR
@@ -80,6 +86,13 @@ class RemoteRepositoryImpl @Inject constructor() : Repository {
             dataStore.saveStringValue(KEY_USER_ROLE, authResult.user?.role ?: "")
             dataStore.saveBooleanValue(KEY_IS_LOGGED, true)
 
+            dataStore.saveStringValue(KEY_DOB, authResult.user?.dob ?: "")
+            dataStore.saveStringValue(KEY_CITY, authResult.user?.city ?: "")
+            dataStore.saveStringValue(KEY_TRAINING_CITY, authResult.user?.training_city ?: "")
+            dataStore.saveStringValue(KEY_TRAINING_DISTRICT, authResult.user?.training_district ?: "")
+            dataStore.saveStringValue(KEY_TRAINING_PIN, authResult.user?.training_pin ?: "")
+            dataStore.saveStringValue(KEY_TRAINING_STATE, authResult.user?.training_state ?: "")
+
             authResult.accessToken?.let {
                 dataStore.saveStringValue(KEY_ACCESS_TOKEN, it)
             }
@@ -136,6 +149,23 @@ class RemoteRepositoryImpl @Inject constructor() : Repository {
         val role =
             runBlocking { dataStore.getStringValue(Constants.KEY_USER_ROLE).first() } ?: ""
 
+        val dob =
+            runBlocking { dataStore.getStringValue(Constants.KEY_DOB).first() } ?: ""
+
+        val city =
+            runBlocking { dataStore.getStringValue(Constants.KEY_CITY).first() } ?: ""
+
+        val trainingCity =
+            runBlocking { dataStore.getStringValue(Constants.KEY_TRAINING_CITY).first() } ?: ""
+
+        val trainingDistrict =
+            runBlocking { dataStore.getStringValue(Constants.KEY_TRAINING_DISTRICT).first() } ?: ""
+
+        val trainingPin =
+            runBlocking { dataStore.getStringValue(Constants.KEY_TRAINING_PIN).first() } ?: ""
+
+        val trainingState =
+            runBlocking { dataStore.getStringValue(Constants.KEY_TRAINING_STATE).first() } ?: ""
 
         return UserProfile(
             userName = userName,
@@ -147,8 +177,13 @@ class RemoteRepositoryImpl @Inject constructor() : Repository {
             userBlock = block,
             userAddress = address,
             userPhone = phone,
-            userEmail = email
-
+            userEmail = email,
+            user_dob = dob,
+            user_city = city,
+            training_city = trainingCity,
+            training_district = trainingDistrict,
+            training_pin = trainingPin,
+            training_state = trainingState,
         )
     }
 
@@ -200,120 +235,6 @@ class RemoteRepositoryImpl @Inject constructor() : Repository {
         try {
             val teamResponse = apiService.fetchTeam()
 
-            /* val studentList = mutableListOf<StudentData>()
-             studentList.add(
-                 StudentData(
-                     id = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
-                     userFirstname = "Nikita",
-                     userPhone = "123456789",
-                     role = "Associate",
-                     batch = "2020-01-01T00:00:00.000Z",
-                     status = 1
-                 )
-             )
-
-             studentList.add(
-                 StudentData(
-                     id = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
-                     userFirstname = "Rohit",
-                     userPhone = "123456789",
-                     role = "Graduate",
-                     batch = "2020-01-01T00:00:00.000Z",
-                     status = 0
-                 )
-             )
-             studentList.add(
-                 StudentData(
-                     id = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
-                     userFirstname = "Nikita",
-                     userPhone = "123456789",
-                     role = "Associate",
-                     batch = "2020-01-01T00:00:00.000Z",
-                     status = 1
-                 )
-             )
-
-             studentList.add(
-                 StudentData(
-                     id = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
-                     userFirstname = "Rohit",
-                     userPhone = "123456789",
-                     role = "Graduate",
-                     batch = "2020-01-01T00:00:00.000Z",
-                     status = 0
-                 )
-             )
-             studentList.add(
-                 StudentData(
-                     id = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
-                     userFirstname = "Nikita",
-                     userPhone = "123456789",
-                     role = "Associate",
-                     batch = "2020-01-01T00:00:00.000Z",
-                     status = 1
-                 )
-             )
-
-             studentList.add(
-                 StudentData(
-                     id = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
-                     userFirstname = "Rohit",
-                     userPhone = "123456789",
-                     role = "Graduate",
-                     batch = "2020-01-01T00:00:00.000Z",
-                     status = 0
-                 )
-             )
-             studentList.add(
-                 StudentData(
-                     id = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
-                     userFirstname = "Nikita",
-                     userPhone = "123456789",
-                     role = "Associate",
-                     batch = "2020-01-01T00:00:00.000Z",
-                     status = 1
-                 )
-             )
-
-             studentList.add(
-                 StudentData(
-                     id = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
-                     userFirstname = "Rohit",
-                     userPhone = "123456789",
-                     role = "Graduate",
-                     batch = "2020-01-01T00:00:00.000Z",
-                     status = 0
-                 )
-             )
-             studentList.add(
-                 StudentData(
-                     id = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
-                     userFirstname = "Nikita",
-                     userPhone = "123456789",
-                     role = "Associate",
-                     batch = "2020-01-01T00:00:00.000Z",
-                     status = 1
-                 )
-             )
-
-             val mockTeamResult = TeamData(
-                 id = "4d95797e-1f69-4ffa-b7dd-23b245ebe6bc",
-                 userName = "Nikita",
-                 userEmail = "example@gmail.com",
-                 userPhone = "123456789",
-                 userAddress = "example address",
-                 userBlock = "example block",
-                 userDistrict = "example district",
-                 userPin = "102103",
-                 userState = "example state",
-                 userAadhar = "1234567890",
-                 role = "Trainer",
-                 status = 1,
-                 associate = studentList
-             )
-             delay(1000L)*/
-
-
             val dataStore = LocalDataStore(context)
             dataStore.saveBooleanValue(KEY_IS_LOGGED, true)
             dataStore.saveStringValue(
@@ -330,6 +251,13 @@ class RemoteRepositoryImpl @Inject constructor() : Repository {
             dataStore.saveStringValue(KEY_USER_STATE, teamResponse.userState ?: "")
             dataStore.saveStringValue(KEY_USER_AADHAR, teamResponse.userAadhar ?: "")
             dataStore.saveStringValue(KEY_USER_ROLE, teamResponse.role ?: "")
+
+            dataStore.saveStringValue(KEY_DOB, teamResponse.dob ?: "")
+            dataStore.saveStringValue(KEY_CITY, teamResponse.city ?: "")
+            dataStore.saveStringValue(KEY_TRAINING_CITY, teamResponse.training_city ?: "")
+            dataStore.saveStringValue(KEY_TRAINING_DISTRICT, teamResponse.training_district ?: "")
+            dataStore.saveStringValue(KEY_TRAINING_PIN, teamResponse.training_pin ?: "")
+            dataStore.saveStringValue(KEY_TRAINING_STATE, teamResponse.training_state ?: "")
 
             emit(Response.Success(teamResponse))
         } catch (e: Exception) {

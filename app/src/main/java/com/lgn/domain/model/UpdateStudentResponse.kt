@@ -17,5 +17,6 @@ data class UpdateStudentResponse (
     @SerializedName("role") var roleId: String? = null,
     @SerializedName("batch") var batch: String? = null,
     @SerializedName("trainer_id") var trainerId: String? = null,
+    @SerializedName("user_position") var user_position: String? = null,
     @SerializedName("status") var status: Int? = null
 )

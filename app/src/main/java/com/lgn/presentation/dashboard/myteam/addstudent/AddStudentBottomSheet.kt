@@ -2,6 +2,7 @@ package com.lgn.presentation.dashboard.myteam.addstudent
 
 import android.util.Log
 import android.util.Patterns
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -12,6 +13,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -33,13 +35,10 @@ import com.lgn.R
 import com.lgn.domain.model.*
 import com.lgn.presentation.ui.theme.green
 import com.lgn.presentation.ui.theme.textColorGray
-import com.lgn.presentation.ui.utils.CustomProgressBar
-import com.lgn.presentation.ui.utils.MonthPicker
-import com.lgn.presentation.ui.utils.convertToMonthAndYear
-import com.lgn.presentation.ui.utils.showToast
+import com.lgn.presentation.ui.utils.*
 import java.util.*
 
-@OptIn(ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterialApi::class)
 @Composable
 fun AddStudentBottomSheet(
     navController: NavController,
@@ -50,7 +49,35 @@ fun AddStudentBottomSheet(
     val state = viewModel.state
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
+    var showCustomDialog by remember {
+        mutableStateOf(false)
+    }
+    val listItems = listOf("Lead Pastor", "Assistant Pastor", "Lay-leader")
+    val contextForToast = LocalContext.current.applicationContext
 
+    // state of the menu
+    var expanded by remember { mutableStateOf(false) }
+
+    // remember the selected item
+    var selectedItem by remember { mutableStateOf(listItems[0]) }
+
+    val calendar = GregorianCalendar()
+    calendar.time = Date()
+
+    var yearPicked: String by rememberSaveable {
+        mutableStateOf(
+            calendar.get(Calendar.YEAR)
+                .toString()
+        )
+    }
+
+    var monthYear: String by rememberSaveable {
+        mutableStateOf(
+            convertToMonthYear(
+                calendar.get(Calendar.YEAR).toString()
+            )
+        )
+    }
     var visible by remember {
         mutableStateOf(false)
     }
@@ -60,7 +87,7 @@ fun AddStudentBottomSheet(
             .padding(top = 16.dp, bottom = 16.dp, start = 24.dp, end = 24.dp)
             .background(color = Color.White),
         verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.Start
     ) {
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -83,9 +110,10 @@ fun AddStudentBottomSheet(
                     .height(15.dp)
                     .width(15.dp)
                     .clickable {
-                        state.email = ""
+                        state.batch = ""
                         state.firstName = ""
                         state.lastName = ""
+                        state.userPosition = ""
                         state.phone = ""
                         onCloseClicked(false)
                     }
@@ -112,8 +140,10 @@ fun AddStudentBottomSheet(
             onValueChange = { newText ->
                 viewModel.valueChanged("firstname", newText)
             },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text,
-                imeAction = ImeAction.Next)
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Text,
+                imeAction = ImeAction.Next
+            )
         )
         Spacer(modifier = Modifier.height(16.dp))
         OutlinedTextField(
@@ -134,30 +164,10 @@ fun AddStudentBottomSheet(
             onValueChange = { newText ->
                 viewModel.valueChanged("lastname", newText)
             },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text,
-                imeAction = ImeAction.Next)
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        OutlinedTextField(
-            value = state.email,
-            label = {
-                Text(
-                    text = "Email",
-                    fontSize = 16.sp,
-                    color = textColorGray
-                )
-            },
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = true,
-            colors = TextFieldDefaults.outlinedTextFieldColors(
-                focusedBorderColor = green,
-                unfocusedBorderColor = green, textColor = textColorGray
-            ),
-            onValueChange = { newText ->
-                viewModel.valueChanged("email", newText)
-            },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email,
-                imeAction = ImeAction.Next)
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Text,
+                imeAction = ImeAction.Next
+            )
         )
         Spacer(modifier = Modifier.height(16.dp))
         OutlinedTextField(
@@ -178,12 +188,107 @@ fun AddStudentBottomSheet(
             onValueChange = { newText ->
                 viewModel.valueChanged("phone", newText)
             },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone,
-                imeAction = ImeAction.Done),
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Phone,
+                imeAction = ImeAction.Done
+            ),
             keyboardActions = KeyboardActions(
-                onDone = {keyboardController?.hide()})
+                onDone = { keyboardController?.hide() })
         )
 
+        Spacer(modifier = Modifier.height(16.dp))
+
+        if (showCustomDialog) {
+            YearPickerDialog({
+                showCustomDialog = !showCustomDialog
+            }, onYearSelected = {
+                yearPicked = it.toString()
+                monthYear = convertToMonthYear(yearPicked)
+                viewModel.valueChanged("batch", monthYear)
+            },
+                title = "Select Year",
+                buttonText = "SELECT"
+            )
+        }
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,) {
+            Text("Batch : ",  style = TextStyle(
+                fontWeight = FontWeight.Normal,
+            ),
+                fontSize = 16.sp,
+                color = textColorGray)
+            Spacer(modifier = Modifier.width(16.dp))
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                DatePickerview(
+                    label = if (yearPicked
+                            .isNotEmpty()
+                    ) yearPicked else "Select Year",
+                    onSelectYearClicked = {
+                        showCustomDialog = !showCustomDialog
+                    }, onCloseIconClicked = {})
+            }
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // box
+        ExposedDropdownMenuBox(
+            expanded = expanded,
+            onExpandedChange = {
+                expanded = it
+            }
+        ) {
+            // text field
+            TextField(
+                value = selectedItem,
+                onValueChange = {},
+                readOnly = true,
+                label = { Text(text = "Position in Church") },
+                trailingIcon = {
+                    ExposedDropdownMenuDefaults.TrailingIcon(
+                        expanded = expanded
+                    )
+                },
+                colors = ExposedDropdownMenuDefaults.textFieldColors(
+                    textColor = textColorGray,
+                    disabledIndicatorColor = textColorGray,
+                    unfocusedIndicatorColor = textColorGray,
+                    unfocusedLabelColor = textColorGray,
+                    disabledLabelColor = textColorGray,
+                    trailingIconColor = textColorGray,
+                    focusedTrailingIconColor = textColorGray,
+                    disabledTrailingIconColor = textColorGray,
+                    errorTrailingIconColor = textColorGray,
+                ),
+                //colors = ExposedDropdownMenuDefaults.textFieldColors()
+            )
+
+            ExposedDropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false }
+            ) {
+                // this is a column scope
+                // all the items are added vertically
+                listItems.forEach { selectedOption ->
+                    // menu item
+                    DropdownMenuItem(
+                        onClick = {
+                            selectedItem = selectedOption
+                            viewModel.valueChanged("userPosition", selectedOption)
+                            expanded = false
+                        },
+                        content = {
+                            Text(text = selectedOption)
+                        }
+                    )/* {
+                        Text(text = selectedOption)
+                    }*/
+                }
+            }
+        }
         Spacer(modifier = Modifier.height(52.dp))
 
         when (viewModel.studentAddedeState.value) {
@@ -202,11 +307,11 @@ fun AddStudentBottomSheet(
                     ?.savedStateHandle
                     ?.set("needsRefresh", true)
                 LaunchedEffect(key1 = context) {
-                    state.email = ""
+                    state.batch = ""
                     state.firstName = ""
                     state.lastName = ""
+                    state.userPosition = ""
                     state.phone = ""
-
                     onCloseClicked(true)
                 }
             }
@@ -229,22 +334,20 @@ fun AddStudentBottomSheet(
                     showToast(context, "Please enter last name")
                     errorShown = true
                 }
-                if (state.email.isEmpty()) {
-                    showToast(context, "Please enter email")
+                if (state.batch.equals("Select Year")) {
+                    showToast(context, "Please select batch")
                     errorShown = true
                 }
-
                 if (state.phone.isEmpty()) {
                     showToast(context, "Please enter phone")
                     errorShown = true
                 }
-
-                if (!Patterns.EMAIL_ADDRESS.matcher(state.email).matches()) {
-                    showToast(context, "Please enter valid email ID")
-                    errorShown = true
-                }
                 if (state.phone.length != 10) {
                     showToast(context, "Please enter correct phone number")
+                    errorShown = true
+                }
+                if (state.userPosition.isEmpty()) {
+                    showToast(context, "Please enter position in Church")
                     errorShown = true
                 }
 
@@ -255,8 +358,9 @@ fun AddStudentBottomSheet(
                         UpdateStudentResponse(
                             userFirstname = state.firstName,
                             userLastname = state.lastName,
-                            userEmail = state.email,
                             userPhone = state.phone,
+                            user_position = state.userPosition,
+                            batch = state.batch,
                             roleId = "Associate",
                             status = 1,
                         )
