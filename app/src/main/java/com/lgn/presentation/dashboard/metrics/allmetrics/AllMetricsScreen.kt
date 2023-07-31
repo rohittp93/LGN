@@ -14,15 +14,21 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.lgn.R
@@ -40,7 +46,7 @@ import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
 @Composable
 @InternalCoroutinesApi
 @ExperimentalCoroutinesApi
@@ -198,14 +204,8 @@ fun AllMetricsScreen(
                                         .padding(top = 10.dp)
                                 ) {
                                     items(items = usersResponse.data) { user ->
-                                        Row(
-                                            horizontalArrangement = Arrangement.Start,
-                                            verticalAlignment = Alignment.CenterVertically,
-                                            modifier = Modifier
-                                                .background(color = Color.White)
-                                                .fillMaxWidth()
-                                                .padding(20.dp)
-                                        ) {
+                                        ConstraintLayout(modifier = Modifier.fillMaxWidth()) {
+                                            val (image, name, button) = createRefs()
                                             Image(
                                                 painter = painterResource(id = R.drawable.people),
                                                 contentDescription = null,
@@ -218,20 +218,33 @@ fun AllMetricsScreen(
                                                     .height(50.dp)
                                                     .width(50.dp)
                                                     .padding(10.dp)
+                                                    .constrainAs(image) {
+                                                        start.linkTo(parent.start, margin = 20.dp)
+                                                        top.linkTo(parent.top, margin = 10.dp)
+                                                        bottom.linkTo(parent.bottom, margin = 10.dp)
+                                                    }
                                             )
 
                                             Row(
                                                 horizontalArrangement = Arrangement.SpaceBetween,
-                                                modifier = Modifier.fillMaxWidth()
+                                                modifier = Modifier
+                                                    .constrainAs(name) {
+                                                        start.linkTo(image.end, margin = 16.dp)
+                                                        top.linkTo(parent.top, margin = 10.dp)
+                                                        end.linkTo(button.start, margin = 10.dp)
+                                                        bottom.linkTo(parent.bottom, margin = 10.dp)
+                                                        width = Dimension.fillToConstraints
+                                                    }
                                             ) {
                                                 Column(
                                                     verticalArrangement = Arrangement.Center,
                                                     horizontalAlignment = Alignment.Start,
-                                                    modifier = Modifier.padding(start = 16.dp)
                                                 ) {
                                                     Text(
                                                         text = "${user.userFirstname ?: ""} ${user.userLastname ?: ""}",
                                                         modifier = Modifier.padding(start = 16.dp),
+                                                        maxLines = 2,
+                                                        overflow = TextOverflow.Ellipsis,
                                                         color = textColorLightGray,
                                                         fontSize = 18.sp
                                                     )
@@ -242,34 +255,38 @@ fun AllMetricsScreen(
                                                         fontSize = 16.sp
                                                     )
                                                 }
+                                            }
 
-                                                Text(
-                                                    text = if (user.id == null || user.id?.isEmpty() == true) "ADD" else "VIEW",
-                                                    modifier = Modifier
-                                                        .padding(start = 16.dp)
-                                                        .clickable {
-                                                            multipleEventsCutter.processEvent {
-                                                                if ((user.id == null || user.id?.isEmpty() == true)) {
-                                                                    viewModel.setSelectedUser(user)
-                                                                    coroutineScope.launch {
-                                                                        if (sheetState.isVisible) sheetState.hide()
-                                                                        else sheetState.show()
-                                                                    }
-                                                                } else {
-                                                                    navController.currentBackStackEntry?.savedStateHandle?.set(
-                                                                        "user", user
-                                                                    )
-                                                                    navController.navigate(Screen.StudentMetricsDetail.route)
+                                            Box(
+                                                contentAlignment = Alignment.Center,
+                                                modifier = Modifier
+                                                    .width(80.dp)
+                                                    .height(35.dp)
+                                                    .background(if (user.id == null || user.id?.isEmpty() == true) orange else green)
+                                                    .clickable {
+                                                        multipleEventsCutter.processEvent {
+                                                            if ((user.id == null || user.id?.isEmpty() == true)) {
+                                                                viewModel.setSelectedUser(user)
+                                                                coroutineScope.launch {
+                                                                    if (sheetState.isVisible) sheetState.hide()
+                                                                    else sheetState.show()
                                                                 }
+                                                            } else {
+                                                                navController.currentBackStackEntry?.savedStateHandle?.set(
+                                                                    "user", user
+                                                                )
+                                                                navController.navigate(Screen.StudentMetricsDetail.route)
                                                             }
                                                         }
-                                                        .background(if (user.id == null || user.id?.isEmpty() == true) orange else green)
-                                                        .padding(
-                                                            start = 16.dp,
-                                                            top = 8.dp,
-                                                            bottom = 8.dp,
-                                                            end = 16.dp
-                                                        ),
+                                                    }
+                                                    .constrainAs(button) {
+                                                        end.linkTo(parent.end, margin = 10.dp)
+                                                        top.linkTo(parent.top, margin = 10.dp)
+                                                    }
+                                            ) {
+                                                Text(
+                                                    text = if (user.id == null || user.id?.isEmpty() == true) "ADD" else "VIEW",
+                                                    textAlign = TextAlign.Center,
                                                     color = Color.White,
                                                     fontSize = 14.sp
                                                 )

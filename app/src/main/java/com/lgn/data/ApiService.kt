@@ -18,13 +18,27 @@ import java.io.IOException;
 interface ApiService {
     @POST("auth/login")
     suspend fun login(@Body loginRequest: LoginRequest): AuthResult
+/*
+    @GET("user/{monthyear}?{limit}")
+    suspend fun fetchStudents(
+        @Path(
+            value = "monthyear",
+            encoded = true
+        ) monthYear: String,
+        @Path(
+            value = "limit",
+            encoded = true
+        ) limit: Int,
+    ): UsersMetricsResponse*/
+
 
     @GET("user/{monthyear}")
     suspend fun fetchStudents(
         @Path(
             value = "monthyear",
             encoded = true
-        ) monthYear: String
+        ) monthYear: String,
+        @Query("limit") limit: Int
     ): UsersMetricsResponse
 
 

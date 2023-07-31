@@ -271,7 +271,7 @@ class RemoteRepositoryImpl @Inject constructor() : Repository {
             emit(Response.Loading)
             val apiService = ApiService.getInstance()
             try {
-                val userResult = apiService?.fetchStudents(monthYear)
+                val userResult = apiService?.fetchStudents(monthYear, 100)
                 val students = userResult?.users as ArrayList
 
                 /*val studentList = mutableListOf<Users>()
