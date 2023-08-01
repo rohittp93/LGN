@@ -1,5 +1,8 @@
 package com.lgn.presentation.dashboard.myprofile
 
+import android.content.ComponentName
+import android.content.Intent
+import android.content.pm.PackageManager
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.ui.Modifier
@@ -43,13 +46,26 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel(), navController: 
 
     when (registerState.value) {
         is Response.Success -> {
+            val context = LocalContext.current
+            val packageManager: PackageManager = context.packageManager
+            val intent: Intent = packageManager.getLaunchIntentForPackage(context.packageName)!!
+            val componentName: ComponentName = intent.component!!
+            val restartIntent: Intent = Intent.makeRestartActivityTask(componentName)
+            context.startActivity(restartIntent)
+            Runtime.getRuntime().exit(0)
+
             LaunchedEffect(key1 = context) {
-                navController.navigate(Graph.ROOT) {
-                    launchSingleTop = true
-                    popUpTo(Screen.SplashScreen.route) {
-                        inclusive = true
+                //navController.popBackStack()
+
+
+            /*navController.navigate(Graph.AUTHENTICATION){
+                    popUpTo(Graph.AUTHENTICATION){
+                        saveState = false
+                        inclusive = false
                     }
-                }
+                    restoreState = false
+                    launchSingleTop = true
+                }*/
             }
         }
         else -> {
@@ -155,32 +171,6 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel(), navController: 
                             modifier = Modifier.padding(top = 8.dp)
                         ) {
                             Image(
-                                painter = painterResource(id = R.drawable.mail),
-                                contentDescription = null,
-                                colorFilter = ColorFilter.tint(
-                                    green
-                                ),
-                                modifier = Modifier
-                                    .height(18.dp)
-                                    .width(18.dp)
-                            )
-                            Text(
-                                text = viewModel.userProfile.value.userEmail ?: "-",
-                                modifier = Modifier.padding(start = 8.dp),
-                                style = TextStyle(
-                                    fontWeight = FontWeight.Light,
-                                ),
-                                fontSize = 14.sp,
-                                color = textColorGray
-                            )
-                        }
-
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Center,
-                            modifier = Modifier.padding(top = 8.dp)
-                        ) {
-                            Image(
                                 painter = painterResource(id = R.drawable.phone),
                                 contentDescription = null,
                                 colorFilter = ColorFilter.tint(
@@ -251,7 +241,7 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel(), navController: 
                                 )
                             }
 
-                            Column(
+                            /*Column(
                                 modifier = Modifier
                                     .weight(1f)
                                     .fillMaxWidth(),
@@ -274,7 +264,7 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel(), navController: 
                                     fontSize = 16.sp,
                                     color = textColorGray
                                 )
-                            }
+                            }*/
                         }
                     }
                 }

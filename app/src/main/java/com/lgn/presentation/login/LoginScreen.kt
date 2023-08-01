@@ -100,14 +100,10 @@ fun LoginScreen(viewModel: LoginViewModel = hiltViewModel(), navController: NavC
                                }
                            }
                        }
-
                     }
                     is Response.Error -> {
                         submitButtonState = SSButtonState.FAILIURE
                         LaunchedEffect(key1 = context) {
-                            /*loginState.value?.message?.let {
-
-                            }*/
                             showToast(context, (loginState.value as Response.Error).message)
                         }
                         submitButtonState = SSButtonState.IDLE
@@ -159,7 +155,7 @@ fun LoginScreen(viewModel: LoginViewModel = hiltViewModel(), navController: NavC
                                     textColor = textColorGray
                                 ),
                                 placeholder = { Text(text = "User Code", color = borderColorGray) },
-                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
                                 singleLine = true,
                                 modifier = Modifier
                                     .fillMaxWidth(.8f)

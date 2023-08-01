@@ -28,6 +28,7 @@ fun DashNavGraph(navController: NavHostController, paddingValues: PaddingValues)
         route = Graph.DASHBOARD,
         startDestination = Screen.HomeScreen.route
     ) {
+
         composable(route = Screen.HomeScreen.route) {
             MyTeamScreen(navController = navController)
         }
@@ -97,20 +98,6 @@ fun NavGraphBuilder.metricsNavGraph(navController: NavHostController) {
         composable(route = Screen.StudentMetricsDetail.route) {
             StudentMetricsDetailScreen(navController = navController)
         }
-       /* composable(
-            route = Screen.AddTableScreen.route,
-        ) {*/
-            //var result = TableData()
-            var isUpdating = false
-            /*LaunchedEffect(key1 = it) {
-                result =
-                    navController.previousBackStackEntry?.savedStateHandle?.get<TableData>("table")
-                        ?: TableData()
-                Log.d("DashTAg", "${result.tableName}")
-            }*/
-
-            //AddTableScreen(navController = navController)
-        //}
     }
 }
 
